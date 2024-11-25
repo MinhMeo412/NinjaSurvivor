@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+ <dict>
+  <key>frames</key>
+  <dict>
+   <key>./apple</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{145,164}</string>
+    <key>spriteSourceSize</key>
+    <string>{141,160}</string>
+    <key>textureRect</key>
+    <string>{{530,0},{145,164}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 1 0 2 4 0 4 2 5 4 5 6 5 7 6 5 2 8 9 5 8 4 10 0</string>
+    <key>vertices</key>
+    <string>141 123 23 160 0 98 122 160 85 0 33 7 32 0 32 4 0 29 13 8 141 23</string>
+    <key>verticesUV</key>
+    <string>671 123 553 160 530 98 652 160 615 0 563 7 562 0 562 4 530 29 543 8 671 23</string>
+   </dict>
+   <key>./banana</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{164,159}</string>
+    <key>spriteSourceSize</key>
+    <string>{160,155}</string>
+    <key>textureRect</key>
+    <string>{{365,0},{164,159}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 0 2 3 4 0 5 4 3 5 6 4 5 3 7 3 8 7 3 9 8</string>
+    <key>vertices</key>
+    <string>45 155 0 119 0 84 73 54 108 155 160 91 142 141 160 28 127 0 89 0</string>
+    <key>verticesUV</key>
+    <string>410 155 365 119 365 84 438 54 473 155 525 91 507 141 525 28 492 0 454 0</string>
+   </dict>
+   <key>./basket</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{204,134}</string>
+    <key>spriteSourceSize</key>
+    <string>{200,130}</string>
+    <key>textureRect</key>
+    <string>{{0,0},{204,134}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 1 0 4 3 0 4 0 5 5 6 4 0 7 5 5 7 8 7 9 8 10 0 2 10 11 0 10 12 11 12 13 11 2 14 10</string>
+    <key>vertices</key>
+    <string>79 23 3 130 0 116 194 130 200 110 183 34 200 44 144 0 200 6 200 0 13 33 43 0 1 4 1 0 0 41</string>
+    <key>verticesUV</key>
+    <string>79 23 3 130 0 116 194 130 200 110 183 34 200 44 144 0 200 6 200 0 13 33 43 0 1 4 1 0 0 41</string>
+   </dict>
+   <key>./melon</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{144,164}</string>
+    <key>spriteSourceSize</key>
+    <string>{140,160}</string>
+    <key>textureRect</key>
+    <string>{{675,0},{144,164}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 0 2 0 3 4 2 5 3 5 6 3</string>
+    <key>vertices</key>
+    <string>33 160 0 127 0 84 140 90 140 160 81 0 116 0</string>
+    <key>verticesUV</key>
+    <string>708 160 675 127 675 84 815 90 815 160 756 0 791 0</string>
+   </dict>
+   <key>./orange</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{159,164}</string>
+    <key>spriteSourceSize</key>
+    <string>{155,160}</string>
+    <key>textureRect</key>
+    <string>{{205,0},{159,164}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 2 1 4 2 3 4 5 2 6 5 4 3 7 4 8 7 3 3 9 8 10 9 3 4 7 11</string>
+    <key>vertices</key>
+    <string>19 146 0 81 58 160 9 61 155 72 122 160 155 128 112 0 28 0 0 28 0 64 125 3</string>
+    <key>verticesUV</key>
+    <string>224 146 205 81 263 160 214 61 360 72 327 160 360 128 317 0 233 0 205 28 205 64 330 3</string>
+   </dict>
+   <key>./pineapple</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{138,164}</string>
+    <key>spriteSourceSize</key>
+    <string>{134,160}</string>
+    <key>textureRect</key>
+    <string>{{820,0},{138,164}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 3 0 2 4 0 3 1 5 2 1 6 5 2 5 7 2 7 8 9 2 8 7 5 10 5 11 10</string>
+    <key>vertices</key>
+    <string>17 160 0 144 108 65 121 91 102 160 7 20 0 21 114 0 134 15 134 50 0 0 0 10</string>
+    <key>verticesUV</key>
+    <string>837 160 820 144 928 65 941 91 922 160 827 20 820 21 934 0 954 15 954 50 820 0 820 10</string>
+   </dict>
+  </dict>
+  <key>metadata</key>
+  <dict>
+   <key>format</key>
+   <integer>3</integer>
+   <key>size</key>
+   <string>{957,163}</string>
+   <key>textureFileName</key>
+   <string>Fruit.png</string>
+  </dict>
+ </dict>
+</plist>
