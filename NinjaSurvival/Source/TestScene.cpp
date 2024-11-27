@@ -239,8 +239,10 @@ void TestScene::update(float delta)
 
 void TestScene::menuCloseCallback(ax::Object* sender)
 {
+
+    _director->popScene();
     // Close the axmol game scene and quit the application
-    _director->end();
+    //_director->end();
 
     /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use
      * _director->end() as given above,instead trigger a custom event created in RootViewController.mm
