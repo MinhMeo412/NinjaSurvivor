@@ -1,0 +1,13 @@
+# Ignore everything
+*
+
+# Allow README and LICENSE files
+!README
+!LICENSE
+
+# Allow Source and Content folders
+!NinjaSurvival/
+!NinjaSurvival/Source/
+!NinjaSurvival/Content/
+!NinjaSurvival/Source/**
+!NinjaSurvival/Content/**
