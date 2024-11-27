@@ -1,10 +1,10 @@
-# Ignore everything in NinjaSurvival
+# Ignore everything inside NinjaSurvival
 NinjaSurvival/*
 
-# Allow Source and Content folders inside NinjaSurvival
+# Allow Source and Content folders
 !NinjaSurvival/Source/
 !NinjaSurvival/Content/
 
-# Allow everything inside Source and Content
+# Allow all content inside Source and Content
 !NinjaSurvival/Source/**
 !NinjaSurvival/Content/**
