@@ -1,13 +1,24 @@
-#ifndef __MAIN_SCENE_H__
-#define __MAIN_SCENE_H__
+#ifndef __TEST_SCENE_H__
+#define __TEST_SCENE_H__
 
 #include "axmol.h"
 
 
-class MainScene : public ax::Scene
+class TestScene : public ax::Scene
 {
+    enum class GameState
+    {
+        init = 0,
+        update,
+        pause,
+        end,
+        menu1,
+        menu2,
+    };
+    
 public:
     bool init() override;
+    void update(float delta) override;
 
     // touch
     void onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event);
@@ -26,10 +37,9 @@ public:
 
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
-    void menuPlayCallback(ax::Object* sender);
 
 private:
-
+    GameState _gameState = GameState::init;
 };
 
-#endif  // __MAIN_SCENE_H__
+#endif  // __TEST_SCENE_H__
