@@ -1,0 +1,2 @@
+# Chuyển tất cả các tệp văn bản về LF khi commit
+* text=auto
