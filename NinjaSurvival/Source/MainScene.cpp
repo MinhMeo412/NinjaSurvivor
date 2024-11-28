@@ -1,5 +1,5 @@
 #include "MainScene.h"
-#include "TestScene.h"
+#include "GameScene.h"
 
 using namespace ax;
 
@@ -129,28 +129,7 @@ bool MainScene::init()
     }
 
 
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-    spriteFrameCache->addSpriteFramesWithFile("character.plist");
-    Vector<SpriteFrame*> frames;
-    for (int i = 0; i <= 2; i++)
-    {  
-        std::string frameName = StringUtils::format("./character_down%d", i);
-        auto frame            = spriteFrameCache->getSpriteFrameByName(frameName);
-        if (frame)
-        {
-            frames.pushBack(frame);
-        }
-    }
-
-    auto character = Sprite::createWithSpriteFrame(frames.front());  // Frame đầu tiên
-    character->setPosition(Vec2(200, 200));
-    character->setScale(5);
-    auto animation = Animation::createWithSpriteFrames(frames, 0.2f);
-    auto animate   = Animate::create(animation);
-    this->addChild(character);
-
-    // Chạy animation
-    character->runAction(RepeatForever::create(animate));
+    
 
     return true;
 }
@@ -230,7 +209,7 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
-    auto scene = utils::createInstance<TestScene>();
+    auto scene = utils::createInstance<GameScene>();
 
-    _director->pushScene(TransitionFade::create(2.0f, scene));
+    _director->replaceScene(TransitionFade::create(0.5f, scene));
 }
