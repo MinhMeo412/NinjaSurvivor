@@ -128,6 +128,34 @@ bool MainScene::init()
         drawNode->drawRect(safeOrigin + Vec2(1, 1), safeOrigin + safeArea.size, Color4B::BLUE);
     }
 
+    // Character
+    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    spriteFrameCache->addSpriteFramesWithFile("character.plist");
+
+    auto character = Sprite::createWithSpriteFrameName("./character_down0");  // Frame đầu tiên
+    character->setPosition(Vec2(200, 200));
+    character->setScale(3.0f);
+    this->addChild(character, 3);
+
+    Vector<SpriteFrame*> animFrames;
+    for (int i = 0; i <= 2; i++)
+    {
+        std::string frameName = "./character_down" + std::to_string(i);
+        auto frame            = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+        if (frame != nullptr)
+        {
+            animFrames.pushBack(frame);
+        }
+    }
+
+    auto animation = Animation::createWithSpriteFrames(animFrames, 0.2f);
+    auto animate   = Animate::create(animation);
+
+    auto moveBy = MoveBy::create(4,Vec2(500,0));
+    //character->runAction(moveBy);
+    //character->runAction(RepeatForever::create(animate));
+    auto move = Spawn::createWithTwoActions(moveBy, Repeat::create(animate, ceil(4 / (0.2f * 3))));
+    character->runAction(move);
 
     
 
