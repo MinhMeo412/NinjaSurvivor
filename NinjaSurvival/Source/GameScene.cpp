@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "MainScene.h"
+#include "Character.h"
 
 using namespace ax;
 
@@ -72,11 +73,6 @@ bool GameScene::init()
     // mouseListener->onMouseScroll = AX_CALLBACK_1(GameScene::onMouseScroll, this);
     //_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
-     auto keyboardListener           = EventListenerKeyboard::create();
-     keyboardListener->onKeyPressed  = AX_CALLBACK_2(GameScene::onKeyPressed, this);
-     keyboardListener->onKeyReleased = AX_CALLBACK_2(GameScene::onKeyReleased, this);
-     _eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 11);
-
     auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
     UILayer->addChild(drawNode, 10);
@@ -97,17 +93,23 @@ bool GameScene::init()
 
 
     //Character
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-    spriteFrameCache->addSpriteFramesWithFile("character.plist");
+    //auto spriteFrameCache = SpriteFrameCache::getInstance();
+    //spriteFrameCache->addSpriteFramesWithFile("character.plist");
 
-    character = Sprite::createWithSpriteFrameName("./character_down0");  // Frame đầu tiên
-    character->setPosition(Vec2(200, 200));
-    character->setScale(1.0f);
-    this->addChild(character,3);
+    //character = Sprite::createWithSpriteFrameName("./character_down0");  // Frame đầu tiên
+    //character->setPosition(Vec2(200, 200));
+    //character->setScale(1.0f);
+    //this->addChild(character,3);
 
-
+    /*character = Character::create("character.plist", "./character_down0");
+    character->setPosition(200, 200);
+    this->addChild(character, 3);*/
     
-
+       character = Character::create("character1.png");  // Đảm bảo đường dẫn tới hình ảnh đúng
+    if (character)
+    {
+        addChild(character,3);  // Thêm character vào scene
+    }
 
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
@@ -168,47 +170,44 @@ void GameScene::onMouseScroll(Event* event)
     AXLOG("onMouseScroll detected, X:%f  Y:%f", e->getScrollX(), e->getScrollY());
 }
 
-void GameScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
-{
-    pressedKeys.insert(code);
-}
 
-void GameScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
-{
-    pressedKeys.erase(code);
-}
 
 void GameScene::update(float delta)
 {
-    // Kiểm tra nếu phím mũi tên nào đang được nhấn và cập nhật vị trí nhân vật
-    movement = Vec2(0, 0);  // Mặc định không di chuyển
+    //// Kiểm tra nếu phím mũi tên nào đang được nhấn và cập nhật vị trí nhân vật
+    //movement = Vec2(0, 0);  // Mặc định không di chuyển
 
-    // Kiểm tra các phím đang được nhấn và thay đổi hướng di chuyển
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
-    {
-        movement.x = -150 * delta;  // Di chuyển sang trái, sử dụng deltaTime để di chuyển mượt mà
-    }
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
-    {
-        movement.x = 150 * delta;  // Di chuyển sang phải, sử dụng deltaTime để di chuyển mượt mà
-    }
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-    {
-        movement.y = 150 * delta;  // Di chuyển lên, sử dụng deltaTime để di chuyển mượt mà
-    }
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-    {
-        movement.y = -150 * delta;  // Di chuyển xuống, sử dụng deltaTime để di chuyển mượt mà
-    }
+    //// Kiểm tra các phím đang được nhấn và thay đổi hướng di chuyển
+    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
+    //{
+    //    movement.x = -150 * delta;  // Di chuyển sang trái, sử dụng deltaTime để di chuyển mượt mà
+    //}
+    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
+    //{
+    //    movement.x = 150 * delta;  // Di chuyển sang phải, sử dụng deltaTime để di chuyển mượt mà
+    //}
+    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
+    //{
+    //    movement.y = 150 * delta;  // Di chuyển lên, sử dụng deltaTime để di chuyển mượt mà
+    //}
+    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
+    //{
+    //    movement.y = -150 * delta;  // Di chuyển xuống, sử dụng deltaTime để di chuyển mượt mà
+    //}
+
+
+    character->update(delta);
 
 
     auto visibleSize = _director->getVisibleSize();
     // Cập nhật vị trí nhân vật dựa trên hướng di chuyển
-    character->setPosition(character->getPosition() + movement);
+    //character->setPosition(character->getPosition() + movement);
     auto camera = this->getCameras().front();
     camera->setPosition(character->getPosition());
     UILayer->setPosition(
         Vec2(camera->getPosition().x - visibleSize.width / 2, camera->getPosition().y - visibleSize.height / 2));
+
+
 
     switch (_gameState)
     {

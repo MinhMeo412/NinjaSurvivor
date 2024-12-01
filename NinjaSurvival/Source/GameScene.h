@@ -2,6 +2,7 @@
 #define __GAME_SCENE_H__
 
 #include "axmol.h"
+#include "Character.h"
 
 
 class GameScene : public ax::Scene
@@ -31,10 +32,6 @@ public:
     void onMouseMove(ax::Event* event);
     void onMouseScroll(ax::Event* event);
 
-    // Keyboard
-    void onKeyPressed(ax::EventKeyboard::KeyCode code, ax::Event* event);
-    void onKeyReleased(ax::EventKeyboard::KeyCode code, ax::Event* event);
-
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
     void goToMainScene(ax::Object * sender);
@@ -42,11 +39,8 @@ public:
 private:
     GameState _gameState = GameState::init;
 
-    ax::Sprite* character;
-    ax::Vec2 movement = ax::Vec2::ZERO;
-
-    std::set<ax::EventKeyboard::KeyCode> pressedKeys;
     ax::Layer* UILayer;
+    Character* character;
 };
 
 #endif  // __GAME_SCENE_H__
