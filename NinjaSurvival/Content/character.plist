@@ -4,7 +4,7 @@
  <dict>
   <key>frames</key>
   <dict>
-   <key>./character_down</key>
+   <key>./character_down0</key>
    <dict>
     <key>aliases</key>
     <array/>
@@ -67,7 +67,7 @@
     <key>verticesUV</key>
     <string>100 14 116 0 116 14 100 0</string>
    </dict>
-   <key>./character_left</key>
+   <key>./character_left0</key>
    <dict>
     <key>aliases</key>
     <array/>
@@ -130,7 +130,7 @@
     <key>verticesUV</key>
     <string>180 14 194 0 194 14 180 0</string>
    </dict>
-   <key>./character_right</key>
+   <key>./character_right0</key>
    <dict>
     <key>aliases</key>
     <array/>
@@ -193,7 +193,7 @@
     <key>verticesUV</key>
     <string>220 14 234 0 234 14 220 0</string>
    </dict>
-   <key>./character_up</key>
+   <key>./character_up0</key>
    <dict>
     <key>aliases</key>
     <array/>

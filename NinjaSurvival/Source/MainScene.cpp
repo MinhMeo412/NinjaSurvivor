@@ -1,5 +1,5 @@
 #include "MainScene.h"
-#include "TestScene.h"
+#include "GameScene.h"
 
 using namespace ax;
 
@@ -77,19 +77,6 @@ bool MainScene::init()
     touchListener->onTouchesEnded = AX_CALLBACK_2(MainScene::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 
-    //auto mouseListener           = EventListenerMouse::create();
-    //mouseListener->onMouseMove   = AX_CALLBACK_1(MainScene::onMouseMove, this);
-    //mouseListener->onMouseUp     = AX_CALLBACK_1(MainScene::onMouseUp, this);
-    //mouseListener->onMouseDown   = AX_CALLBACK_1(MainScene::onMouseDown, this);
-    //mouseListener->onMouseScroll = AX_CALLBACK_1(MainScene::onMouseScroll, this);
-    //_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
-
-    //auto keyboardListener           = EventListenerKeyboard::create();
-    //keyboardListener->onKeyPressed  = AX_CALLBACK_2(MainScene::onKeyPressed, this);
-    //keyboardListener->onKeyReleased = AX_CALLBACK_2(MainScene::onKeyReleased, this);
-    //_eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 11);
-
-
 
     // add a label shows "Hello World"
     // create and initialize a label
@@ -128,29 +115,33 @@ bool MainScene::init()
         drawNode->drawRect(safeOrigin + Vec2(1, 1), safeOrigin + safeArea.size, Color4B::BLUE);
     }
 
+    // Character
+    //auto spriteFrameCache = SpriteFrameCache::getInstance();
+    //spriteFrameCache->addSpriteFramesWithFile("character.plist");
 
-    auto spriteFrameCache = SpriteFrameCache::getInstance();
-    spriteFrameCache->addSpriteFramesWithFile("character.plist");
-    Vector<SpriteFrame*> frames;
-    for (int i = 0; i <= 2; i++)
-    {  
-        std::string frameName = StringUtils::format("./character_down%d", i);
-        auto frame            = spriteFrameCache->getSpriteFrameByName(frameName);
-        if (frame)
-        {
-            frames.pushBack(frame);
-        }
-    }
+    //auto character = Sprite::createWithSpriteFrameName("./character_down0");  // Frame đầu tiên
+    //character->setPosition(Vec2(200, 200));
+    //character->setScale(3.0f);
+    //this->addChild(character, 3);
 
-    auto character = Sprite::createWithSpriteFrame(frames.front());  // Frame đầu tiên
-    character->setPosition(Vec2(200, 200));
-    character->setScale(5);
-    auto animation = Animation::createWithSpriteFrames(frames, 0.2f);
-    auto animate   = Animate::create(animation);
-    this->addChild(character);
+    //Vector<SpriteFrame*> animFrames;
+    //for (int i = 0; i <= 2; i++)
+    //{
+    //    std::string frameName = "./character_down" + std::to_string(i);
+    //    auto frame            = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+    //    if (frame != nullptr)
+    //    {
+    //        animFrames.pushBack(frame);
+    //    }
+    //}
 
-    // Chạy animation
-    character->runAction(RepeatForever::create(animate));
+    //auto animation = Animation::createWithSpriteFrames(animFrames, 0.2f);
+    //auto animate   = Animate::create(animation);
+    //auto moveBy = MoveBy::create(4,Vec2(500,0));
+    //auto move = Spawn::createWithTwoActions(moveBy, Repeat::create(animate, ceil(4 / (0.2f * 3))));
+    //character->runAction(move);
+
+    
 
     return true;
 }
@@ -180,39 +171,6 @@ void MainScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event
     }
 }
 
-void MainScene::onMouseDown(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseDown detected, Key: %d", static_cast<int>(e->getMouseButton()));
-}
-
-void MainScene::onMouseUp(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseUp detected, Key: %d", static_cast<int>(e->getMouseButton()));
-}
-
-void MainScene::onMouseMove(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseMove detected, X:%f  Y:%f", e->getCursorX(), e->getCursorY());
-}
-
-void MainScene::onMouseScroll(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseScroll detected, X:%f  Y:%f", e->getScrollX(), e->getScrollY());
-}
-
-void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
-{
-    AXLOG("onKeyPressed, keycode: %d", static_cast<int>(code));
-}
-
-void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
-{
-    AXLOG("onKeyReleased, keycode: %d", static_cast<int>(code));
-}
 
 
 void MainScene::menuCloseCallback(ax::Object* sender)
@@ -230,7 +188,7 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
-    auto scene = utils::createInstance<TestScene>();
+    auto scene = utils::createInstance<GameScene>();
 
-    _director->pushScene(TransitionFade::create(2.0f, scene));
+    _director->replaceScene(TransitionFade::create(0.5f, scene));
 }

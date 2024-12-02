@@ -34,7 +34,7 @@ bool SplashScene::init()
     this->addChild(label);
 
     
-    this->scheduleOnce(AX_SCHEDULE_SELECTOR(SplashScene::goToMainScene), 2.0f);
+    this->scheduleOnce(AX_SCHEDULE_SELECTOR(SplashScene::goToMainScene), 1.0f);
 
     return true;
 }
@@ -43,5 +43,5 @@ void SplashScene::goToMainScene(float dt)
 {
     auto scene = utils::createInstance<MainScene>();
 
-    Director::getInstance()->replaceScene(TransitionFade::create(2.0f,scene));
+    Director::getInstance()->replaceScene(TransitionFade::create(0.5f,scene));
 }
