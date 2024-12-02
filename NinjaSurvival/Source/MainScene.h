@@ -14,16 +14,6 @@ public:
     void onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event);
 
-    // mouse
-    void onMouseDown(ax::Event* event);
-    void onMouseUp(ax::Event* event);
-    void onMouseMove(ax::Event* event);
-    void onMouseScroll(ax::Event* event);
-
-    // Keyboard
-    void onKeyPressed(ax::EventKeyboard::KeyCode code, ax::Event* event);
-    void onKeyReleased(ax::EventKeyboard::KeyCode code, ax::Event* event);
-
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
     void menuPlayCallback(ax::Object* sender);

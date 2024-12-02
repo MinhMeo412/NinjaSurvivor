@@ -77,19 +77,6 @@ bool MainScene::init()
     touchListener->onTouchesEnded = AX_CALLBACK_2(MainScene::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 
-    //auto mouseListener           = EventListenerMouse::create();
-    //mouseListener->onMouseMove   = AX_CALLBACK_1(MainScene::onMouseMove, this);
-    //mouseListener->onMouseUp     = AX_CALLBACK_1(MainScene::onMouseUp, this);
-    //mouseListener->onMouseDown   = AX_CALLBACK_1(MainScene::onMouseDown, this);
-    //mouseListener->onMouseScroll = AX_CALLBACK_1(MainScene::onMouseScroll, this);
-    //_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
-
-    //auto keyboardListener           = EventListenerKeyboard::create();
-    //keyboardListener->onKeyPressed  = AX_CALLBACK_2(MainScene::onKeyPressed, this);
-    //keyboardListener->onKeyReleased = AX_CALLBACK_2(MainScene::onKeyReleased, this);
-    //_eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 11);
-
-
 
     // add a label shows "Hello World"
     // create and initialize a label
@@ -184,39 +171,6 @@ void MainScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event
     }
 }
 
-void MainScene::onMouseDown(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseDown detected, Key: %d", static_cast<int>(e->getMouseButton()));
-}
-
-void MainScene::onMouseUp(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseUp detected, Key: %d", static_cast<int>(e->getMouseButton()));
-}
-
-void MainScene::onMouseMove(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseMove detected, X:%f  Y:%f", e->getCursorX(), e->getCursorY());
-}
-
-void MainScene::onMouseScroll(Event* event)
-{
-    EventMouse* e = static_cast<EventMouse*>(event);
-    AXLOG("onMouseScroll detected, X:%f  Y:%f", e->getScrollX(), e->getScrollY());
-}
-
-void MainScene::onKeyPressed(EventKeyboard::KeyCode code, Event* event)
-{
-    AXLOG("onKeyPressed, keycode: %d", static_cast<int>(code));
-}
-
-void MainScene::onKeyReleased(EventKeyboard::KeyCode code, Event* event)
-{
-    AXLOG("onKeyReleased, keycode: %d", static_cast<int>(code));
-}
 
 
 void MainScene::menuCloseCallback(ax::Object* sender)
