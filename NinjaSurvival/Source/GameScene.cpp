@@ -70,18 +70,23 @@ bool GameScene::init()
 
 
     //Tiled map
-    auto map = TMXTiledMap::create("Map.tmx");
+    /*auto map = TMXTiledMap::create("Map.tmx");
     map->setAnchorPoint(Vec2(0, 0));
     map->setPosition(Vec2(100, 100));
-    this->addChild(map, 2);
+    this->addChild(map, 2);*/
+
+    //Test tile map
+    auto tileMap = new TMXTiledMap();
+    tileMap->initWithTMXFile("Test.tmx");
+    this->addChild(tileMap, 0);
 
 
     //Character
     character = Character::create("character.plist", "./character_down0");
     character->setPosition(200, 200);
+    character->setScale(3.0f);
     this->addChild(character, 3);
     
-
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();
