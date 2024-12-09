@@ -18,6 +18,7 @@ public:
 
 private:
     void createAnimations();
+    void runAnimation(int tag, const std::string& animationName);
     void moveCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
     void stopCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
 
@@ -26,16 +27,19 @@ private:
     float _speed = 150.0f;
     ax::Vec2 _velocity;
     ax::Action* _currentAction = nullptr;
+    static const int ACTION_TAG_LEFT  = 1;
+    static const int ACTION_TAG_RIGHT = 2;
+    static const int ACTION_TAG_UP    = 3;
+    static const int ACTION_TAG_DOWN  = 4;
+
     ax::EventListenerKeyboard* _keyboardListener = nullptr;
 
-    std::string _currentDirection;
-    std::string _lastDirection;
     ax::Animation* _downAnimation       = nullptr;
     ax::Animation* _upAnimation         = nullptr;
     ax::Animation* _leftAnimation       = nullptr;
     ax::Animation* _rightAnimation      = nullptr;
 
-    std::unordered_set<ax::EventKeyboard::KeyCode> pressedKeys;
+    std::unordered_map<ax::EventKeyboard::KeyCode, bool> keyStates;
 
 };
 

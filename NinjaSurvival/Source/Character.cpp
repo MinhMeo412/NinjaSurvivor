@@ -23,7 +23,6 @@ bool Character::init(const std::string& spriteSheetPlist, const std::string& spr
         return false;
     }
 
-    //SpriteFrameCache::getInstance()->addSpriteFramesWithFile(spriteSheetPlist);
     createAnimations();
 
     _keyboardListener                = EventListenerKeyboard::create();
@@ -33,89 +32,94 @@ bool Character::init(const std::string& spriteSheetPlist, const std::string& spr
 
     return true;
 }
-/*
+
+void Character::runAnimation(int tag, const std::string& animationName)
+{
+    if (_currentAction == nullptr || _currentAction->getTag() != tag)
+    {
+        if (_currentAction != nullptr)
+        {
+            stopAction(_currentAction);  // Dừng hành động trước đó nếu có
+        }
+        // Tạo và chạy animation di chuyển
+        _currentAction = RepeatForever::create(Animate::create(AnimationCache::getInstance()->getAnimation(animationName)));
+        _currentAction->setTag(tag); 
+        runAction(_currentAction);
+    }
+} 
+
 void Character::update(float delta)
 {
-    //Vec2 movement(0, 0);  // Mặc định không di chuyển
+    bool isMoving = false;
+    Vec2 movement(0, 0);  // Mặc định không di chuyển
+    float adjustedSpeed = _speed / sqrt(2.0f);
 
-    //// Kiểm tra các phím đang được nhấn và cập nhật hướng di chuyển
-    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
-    //{
-    //    movement.x = -_speed * delta;
-    //    _currentAction = runAction(Animate::create(_leftAnimation));
-    //}
-    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
-    //{
-    //    movement.x = _speed * delta;
-    //    _currentAction = runAction(Animate::create(_rightAnimation));
-    //}
-    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-    //{
-    //    movement.y = _speed * delta;
-    //    _currentAction = runAction(Animate::create(_upAnimation));
-    //}
-    //if (pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-    //{
-    //    movement.y = -_speed * delta;
-    //    _currentAction = runAction(Animate::create(_downAnimation));
-    //}
+    if (keyStates[ax::EventKeyboard::KeyCode::KEY_LEFT_ARROW] &&
+        keyStates[ax::EventKeyboard::KeyCode::KEY_DOWN_ARROW])
+    {
+        movement.x = -adjustedSpeed * delta;
+        movement.y = -adjustedSpeed * delta;
+        runAnimation(ACTION_TAG_LEFT, "left");
+        isMoving       = true;
+        //AXLOG("Move left down");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_LEFT_ARROW] &&
+             keyStates[ax::EventKeyboard::KeyCode::KEY_UP_ARROW])
+    {
+        movement.x = -adjustedSpeed * delta;
+        movement.y = adjustedSpeed * delta;
+        runAnimation(ACTION_TAG_LEFT, "left");
+        isMoving       = true;
+        //AXLOG("Move left up");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_RIGHT_ARROW] &&
+             keyStates[ax::EventKeyboard::KeyCode::KEY_DOWN_ARROW])
+    {
+        movement.x = adjustedSpeed * delta;
+        movement.y = -adjustedSpeed * delta;
+        runAnimation(ACTION_TAG_RIGHT, "right");
+        isMoving   = true;
+        //AXLOG("Move right down");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_RIGHT_ARROW] &&
+             keyStates[ax::EventKeyboard::KeyCode::KEY_UP_ARROW])
+    {
+        movement.x = adjustedSpeed * delta;
+        movement.y = adjustedSpeed * delta;
+        runAnimation(ACTION_TAG_RIGHT, "right");
+        isMoving   = true;
+        //AXLOG("Move right up");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_LEFT_ARROW])
+    {
+        movement.x = -_speed * delta;
+        runAnimation(ACTION_TAG_LEFT, "left");
+        isMoving   = true;
+        //AXLOG("Move left");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_RIGHT_ARROW])
+    {
+        movement.x = _speed * delta;
+        runAnimation(ACTION_TAG_RIGHT, "right");
+        isMoving   = true;
+        //AXLOG("Move right");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_UP_ARROW])
+    {
+        movement.y = _speed * delta;
+        runAnimation(ACTION_TAG_UP, "up");
+        isMoving   = true;
+        //AXLOG("Move up");
+    }
+    else if (keyStates[ax::EventKeyboard::KeyCode::KEY_DOWN_ARROW])
+    {
+        movement.y = -_speed * delta;
+        runAnimation(ACTION_TAG_DOWN, "down");
+        isMoving   = true;
+        //AXLOG("Move down");
+    }
 
     //// Cập nhật vị trí nhân vật
-    //if (movement != Vec2::ZERO)
-    //{
-    //    setPosition(getPosition() + movement);
-    //}
-
-    Vec2 movement(0, 0);  // Mặc định không di chuyển
-    bool isMoving = false;
-
-    // Kiểm tra các phím đang được nhấn và cập nhật hướng di chuyển
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
-    {
-        movement.x = -_speed * delta;
-        if (_currentDirection != "left")
-        {
-            _currentDirection = "left";
-            stopAllActions();  // Dừng tất cả các hành động cũ
-            runAction(RepeatForever::create(Animate::create(_leftAnimation)));  // Chạy animation liên tục
-        }
-        isMoving = true;
-    }
-    else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
-    {
-        movement.x = _speed * delta;
-        if (_currentDirection != "right")
-        {
-            _currentDirection = "right";
-            stopAllActions();  // Dừng tất cả các hành động cũ
-            runAction(RepeatForever::create(Animate::create(_rightAnimation)));  // Chạy animation liên tục
-        }
-        isMoving = true;
-    }
-    else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-    {
-        movement.y = _speed * delta;
-        if (_currentDirection != "up")
-        {
-            _currentDirection = "up";
-            stopAllActions();  // Dừng tất cả các hành động cũ
-            runAction(RepeatForever::create(Animate::create(_upAnimation)));  // Chạy animation liên tục
-        }
-        isMoving = true;
-    }
-    else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-    {
-        movement.y = -_speed * delta;
-        if (_currentDirection != "down")
-        {
-            _currentDirection = "down";
-            stopAllActions();  // Dừng tất cả các hành động cũ
-            runAction(RepeatForever::create(Animate::create(_downAnimation)));  // Chạy animation liên tục
-        }
-        isMoving = true;
-    }
-
-    // Cập nhật vị trí nhân vật nếu có chuyển động
     if (movement != Vec2::ZERO)
     {
         setPosition(getPosition() + movement);
@@ -126,130 +130,8 @@ void Character::update(float delta)
         // Nếu bạn muốn có animation idle, bạn có thể chạy một animation idle ở đây.
     }
 }
-*/
 
-void Character::update(float delta)
-{
-    Vec2 movement(0, 0);  // Mặc định không di chuyển
-    bool isMoving            = false;
-    bool hasDirectionChanged = false;
 
-    // Kiểm tra phím trái
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
-    {
-        movement.x = -_speed * delta;
-        if (_currentDirection != "left")  // Nếu hướng chưa phải là left
-        {
-            if (_lastDirection == "")  // Nếu chưa có phím nào được nhấn trước
-            {
-                stopAllActions();  // Dừng tất cả các hành động cũ
-                runAction(RepeatForever::create(Animate::create(_leftAnimation)));  // Chạy animation left
-                _currentDirection = "left";                                         // Cập nhật hướng
-                _lastDirection    = "left";                                         // Lưu lại phím được nhấn
-            }
-            hasDirectionChanged = true;  // Đánh dấu hướng đã thay đổi
-        }
-        isMoving = true;
-    }
-
-    // Kiểm tra phím phải
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
-    {
-        movement.x = _speed * delta;
-        if (_currentDirection != "right")  // Nếu hướng chưa phải là right
-        {
-            if (_lastDirection == "")  // Nếu chưa có phím nào được nhấn trước
-            {
-                stopAllActions();  // Dừng tất cả các hành động cũ
-                runAction(RepeatForever::create(Animate::create(_rightAnimation)));  // Chạy animation right
-                _currentDirection = "right";                                         // Cập nhật hướng
-                _lastDirection    = "right";                                         // Lưu lại phím được nhấn
-            }
-            hasDirectionChanged = true;  // Đánh dấu hướng đã thay đổi
-        }
-        isMoving = true;
-    }
-
-    // Kiểm tra phím lên
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-    {
-        movement.y = _speed * delta;
-        if (_currentDirection != "up")  // Nếu hướng chưa phải là up
-        {
-            if (_lastDirection == "")  // Nếu chưa có phím nào được nhấn trước
-            {
-                stopAllActions();  // Dừng tất cả các hành động cũ
-                runAction(RepeatForever::create(Animate::create(_upAnimation)));  // Chạy animation up
-                _currentDirection = "up";                                         // Cập nhật hướng
-                _lastDirection    = "up";                                         // Lưu lại phím được nhấn
-            }
-            hasDirectionChanged = true;  // Đánh dấu hướng đã thay đổi
-        }
-        isMoving = true;
-    }
-
-    // Kiểm tra phím xuống
-    if (pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-    {
-        movement.y = -_speed * delta;
-        if (_currentDirection != "down")  // Nếu hướng chưa phải là down
-        {
-            if (_lastDirection == "")  // Nếu chưa có phím nào được nhấn trước
-            {
-                stopAllActions();  // Dừng tất cả các hành động cũ
-                runAction(RepeatForever::create(Animate::create(_downAnimation)));  // Chạy animation down
-                _currentDirection = "down";                                         // Cập nhật hướng
-                _lastDirection    = "down";                                         // Lưu lại phím được nhấn
-            }
-            hasDirectionChanged = true;  // Đánh dấu hướng đã thay đổi
-        }
-        isMoving = true;
-    }
-
-    // Xử lý di chuyển chéo: nếu có 2 phím nhấn đồng thời, thì tính toán hướng di chuyển
-    if (movement != Vec2::ZERO && !hasDirectionChanged)
-    {
-        if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW) &&
-            pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-        {
-            movement.x        = -_speed * delta;
-            movement.y        = _speed * delta;
-            _currentDirection = "left_up";  // Di chuyển chéo lên trái
-        }
-        else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW) &&
-                 pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-        {
-            movement.x        = -_speed * delta;
-            movement.y        = -_speed * delta;
-            _currentDirection = "left_down";  // Di chuyển chéo xuống trái
-        }
-        else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW) &&
-                 pressedKeys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
-        {
-            movement.x        = _speed * delta;
-            movement.y        = _speed * delta;
-            _currentDirection = "right_up";  // Di chuyển chéo lên phải
-        }
-        else if (pressedKeys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW) &&
-                 pressedKeys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
-        {
-            movement.x        = _speed * delta;
-            movement.y        = -_speed * delta;
-            _currentDirection = "right_down";  // Di chuyển chéo xuống phải
-        }
-    }
-
-    // Cập nhật vị trí nhân vật nếu có chuyển động
-    if (movement != Vec2::ZERO)
-    {
-        setPosition(getPosition() + movement);
-    }
-    else if (!isMoving)  // Nếu không di chuyển và không có animation đang chạy
-    {
-        stopAllActions();  // Dừng tất cả các hành động khi không di chuyển
-        // Nếu bạn muốn có animation idle, bạn có thể chạy một animation idle ở đây.
-    }
-}
 
 
 
@@ -305,10 +187,10 @@ Animation* Character::createAnimation(const std::string& format, int frameCount,
 
 void Character::moveCharacter(EventKeyboard::KeyCode keyCode, Event* event)
 {
-    pressedKeys.insert(keyCode);
+    keyStates[keyCode] = true;
 }
 
 void Character::stopCharacter(EventKeyboard::KeyCode keyCode, Event* event)
 {
-    pressedKeys.erase(keyCode);
+    keyStates[keyCode] = false;
 }
