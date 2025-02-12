@@ -1,5 +1,5 @@
 # 🔥NinjaSurvival - Survival Roguelike Game
-A time survival game with minimalistic gameplay and roguelike elements.
+A time survival game with minimalistic gameplay and roguelike elements.  
 Game description for develop:
 https://docs.google.com/document/d/1zi7IPeujoJUnqcoh-1AVmnb1oxErmFOeqnoges_ll_k/edit?tab=t.0
 
