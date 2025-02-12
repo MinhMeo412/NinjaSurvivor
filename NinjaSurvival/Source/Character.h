@@ -11,16 +11,18 @@ public:
     static Character* create(const std::string& spriteSheetPlist, const std::string& spriteFrameName);
 
     virtual bool init(const std::string& spriteSheetPlist, const std::string& spriteFrameName);
-    virtual void update(float delta);
-
+    virtual void update(ax::Vec2 direction, float dt);
+        
     void setSpeed(float speed);
     float getSpeed() const;
 
 private:
     void createAnimations();
     void runAnimation(int tag, const std::string& animationName);
-    void moveCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
-    void stopCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
+
+    //To move using the keyboard
+    //void moveCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
+    //void stopCharacter(ax::EventKeyboard::KeyCode keyCode, ax::Event* event);
 
     ax::Animation* createAnimation(const std::string& format, int frameCount, float delay);
 

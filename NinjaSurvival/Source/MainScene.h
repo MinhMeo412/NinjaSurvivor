@@ -2,9 +2,9 @@
 #define __MAIN_SCENE_H__
 
 #include "axmol.h"
+#include "SceneBase.h"
 
-
-class MainScene : public ax::Scene
+class MainScene : public SceneBase
 {
 public:
     bool init() override;

@@ -2,18 +2,13 @@
 #define __SPLASH_SCENE_H__
 
 #include "axmol.h"
+#include "SceneBase.h"
 
-
-class SplashScene : public ax::Scene
+class SplashScene : public SceneBase
 {
-
 public:
     bool init() override;
-
     void goToMainScene(float dt);
-
-private:
-
 };
 
 #endif  // __SPLASH_SCENE_H__
