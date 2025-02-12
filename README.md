@@ -18,7 +18,7 @@ This game project is developed using the following technologies:
 2. **Clone the repository**  
    Clone the repository to your local machine:
    ```sh
-   git clone https://github.com/<your-username>/NinjaSurvival.git
+   git clone https://github.com/MinhMeo412/NinjaSurvival.git
    cd NinjaSurvival
 3. **Create a new branch**
    Before making any changes, create a new branch:
