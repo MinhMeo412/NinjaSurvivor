@@ -41,9 +41,9 @@ This game project is developed using the following technologies:
 5. **Push to GitHub**
    ```
    git push origin feature/your-feature-name
-6. **Create a Pull Request (PR)**
-   -Go to the original repository on GitHub.
-   -Click on the Pull Requests tab.
-   -Click New Pull Request.
-   -Select your branch, provide a detailed description, and submit the PR.
-   -🚀Note: Test your changes before submitting a PR.
+6. **Create a Pull Request (PR)**  
+   - Go to the original repository on GitHub.  
+   - Click on the **Pull Requests** tab.  
+   - Click **New Pull Request**.  
+   - Select your branch, provide a detailed description, and submit the PR.  
+   - 🚀 **Note:** Test your changes before submitting a PR.
