@@ -52,7 +52,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     // Set the design resolution
     glView->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height,
-                                    ResolutionPolicy::SHOW_ALL);
+                                    ResolutionPolicy::NO_BORDER);
 
     // create a scene. it's an autorelease object
     auto scene = utils::createInstance<SplashScene>();
