@@ -1,6 +1,6 @@
 #include "Utils.h"
 #include "MainScene.h"
-#include "GameScene.h"
+//#include "GameScene.h"
 
 using namespace ax;
 
@@ -49,7 +49,7 @@ bool MainScene::init()
         label2->setPosition(closeItem->getPosition() + Vec2(100,0));
         this->addChild(label2, 1);
     }
-    
+
     auto menu = Menu::create(playItem, closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -110,8 +110,9 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
-    auto scene = utils::createInstance<GameScene>();
-
-    _director->replaceScene(TransitionFade::create(0.5f, scene));
+    _director->end();
+//    auto scene = utils::createInstance<GameScene>();
+//
+//    _director->replaceScene(TransitionFade::create(0.5f, scene));
 }
 

@@ -2,9 +2,9 @@
 #define __SPLASH_SCENE_H__
 
 #include "axmol.h"
-#include "SceneBase.h"
+//#include "SceneBase.h"
 
-class SplashScene : public SceneBase
+class SplashScene : public ax::Scene
 {
 public:
     bool init() override;
