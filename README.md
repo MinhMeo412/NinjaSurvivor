@@ -7,7 +7,7 @@ https://docs.google.com/document/d/1zi7IPeujoJUnqcoh-1AVmnb1oxErmFOeqnoges_ll_k/
 
 This game project is developed using the following technologies:
 
-- 🎮 **[Axmol Engine](https://github.com/axmolengine/axmol)** v2.4.0 - An open-source game engine based on Cocos2d-x, optimized for performance and cross-platform support.
+- 🎮 **[Axmol Engine](https://github.com/axmolengine/axmol](https://github.com/axmolengine/axmol/releases))** v2.4.0 - An open-source game engine based on Cocos2d-x, optimized for performance and cross-platform support.
 - 💻 **C++** - The main programming language, providing high performance and memory control.
 - 🎨 **[Graphics from Itch.io](https://itch.io/)** - Free and premium assets used for in-game visuals.
 
