@@ -1,0 +1,4 @@
+#ifndef __DURATION_COMPONENT_H__
+#define __DURATION_COMPONENT_H__
+
+#endif  // __DURATION_COMPONENT_H__

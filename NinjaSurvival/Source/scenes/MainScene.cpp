@@ -1,0 +1,74 @@
+#include "Utils.h"
+#include "MainScene.h"
+#include "MapChooseScene.h"
+
+using namespace ax;
+
+MainScene::MainScene() : SceneBase("MainScene") {}
+
+bool MainScene::init()
+{
+    if (!SceneBase::init())
+    {
+        return false;
+    }
+
+    float itemSpacing = 50.0;
+    int itemOrderNum  = 0;
+    float centerX     = safeOrigin.x + visibleSize.width / 2;
+    float centerY     = safeOrigin.y + visibleSize.height / 2;
+
+    // Background image (need update)
+
+    // Play button
+    playItem =
+        Utils::createMenuItem("CloseNormal.png", "CloseSelected.png", AX_CALLBACK_1(MainScene::menuPlayCallback, this),
+                              Vec2(centerX, centerY - itemOrderNum++ * itemSpacing));
+
+    auto label1 = Label::createWithTTF("Play button", "fonts/Marker Felt.ttf", 24);
+    label1->setPosition(playItem->getPosition() + Vec2(100, 0));
+    this->addChild(label1, 1);
+
+    // Close button
+    closeItem =
+        Utils::createMenuItem("CloseNormal.png", "CloseSelected.png", AX_CALLBACK_1(MainScene::menuCloseCallback, this),
+                              Vec2(centerX, centerY - itemOrderNum++ * itemSpacing));
+
+    auto label2 = Label::createWithTTF("Exit button", "fonts/Marker Felt.ttf", 24);
+    label2->setPosition(closeItem->getPosition() + Vec2(100, 0));
+    this->addChild(label2, 1);
+
+    // Create menu
+    auto menu = Menu::create(playItem, closeItem, NULL);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu, 1);
+
+    // Title (replace with image)
+    auto label = Label::createWithTTF("Ninja Survival Title", "fonts/Marker Felt.ttf", 24);
+    label->setPosition(
+        Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - label->getContentSize().height));
+    this->addChild(label, 1);
+
+    // Border
+    auto drawNode = DrawNode::create();
+    drawNode->setPosition(Vec2(0, 0));
+    addChild(drawNode);
+    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
+
+    return true;
+}
+
+void MainScene::update(float dt) {}
+
+// Remove this button when release
+void MainScene::menuCloseCallback(ax::Object* sender)
+{
+    _director->end();
+}
+
+void MainScene::menuPlayCallback(ax::Object* sender)
+{
+    auto scene = utils::createInstance<MapChooseScene>();
+
+    _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
+}

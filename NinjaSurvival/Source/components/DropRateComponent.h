@@ -1,0 +1,4 @@
+#ifndef __DROP_RATE_COMPONENT_H__
+#define __DROP_RATE_COMPONENT_H__
+
+#endif  // __DROP_RATE_COMPONENT_H__

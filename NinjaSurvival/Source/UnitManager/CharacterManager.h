@@ -1,4 +1,0 @@
-#ifndef __CHARACTER_MANAGER_H__
-#define __CHARACTER_MANAGER_H__
-
-#endif // __CHARACTER_MANAGER_H__
