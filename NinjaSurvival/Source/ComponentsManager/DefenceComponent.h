@@ -1,4 +1,0 @@
-#ifndef __RECOVERY_COMPONENT_H__
-#define __RECOVERY_COMPONENT_H__
-
-#endif // __RECOVERY_COMPONENT_H__

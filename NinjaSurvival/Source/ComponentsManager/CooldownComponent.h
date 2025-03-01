@@ -1,4 +1,0 @@
-#ifndef __COOLDOWN_COMPONENT_H__
-#define __COOLDOWN_COMPONENT_H__
-
-#endif // __COOLDOWN_COMPONENT_H__

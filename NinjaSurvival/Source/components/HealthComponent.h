@@ -1,0 +1,4 @@
+#ifndef __HEALTH_COMPONENT_H__
+#define __HEALTH_COMPONENT_H__
+
+#endif  // __HEALTH_COMPONENT_H__

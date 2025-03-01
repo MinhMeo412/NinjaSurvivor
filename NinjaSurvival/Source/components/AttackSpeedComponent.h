@@ -1,0 +1,4 @@
+#ifndef __ATTACK_SPEED_COMPONENT_H__
+#define __ATTACK_SPEED_COMPONENT_H__
+
+#endif  // __ATTACK_SPEED_COMPONENT_H__

@@ -1,0 +1,4 @@
+#ifndef __TRANSFORM_COMPONENT_H__
+#define __TRANSFORM_COMPONENT_H__
+
+#endif  // __TRANSFORM_COMPONENT_H__
