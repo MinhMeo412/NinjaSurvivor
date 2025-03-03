@@ -1,0 +1,16 @@
+{
+    "maps": [
+        {
+            "tmxFile": "Map.tmx",
+            "name": "Map",
+            "sprite": "HelloWorld.png",
+            "available": true
+        },
+        {
+            "tmxFile": "LargeMap.tmx",
+            "name": "Large Map",
+            "sprite": "HelloWorld.png",
+            "available": false
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "entities": [
+        {
+            "type": "player",
+            "id": 1,
+            "components": {
+                "position": {
+                    "x": 320,
+                    "y": 240
+                },
+                "velocity": {
+                    "vx": 0,
+                    "vy": 0
+                },
+                "animation": {
+                    "plist": "character.plist",
+                    "frames": [
+                        "./character_down0",
+                        "./character_down1",
+                        "./character_down2",
+                        "./character_left0",
+                        "./character_left1",
+                        "./character_left2",
+                        "./character_right0",
+                        "./character_right1",
+                        "./character_right2",
+                        "./character_up0",
+                        "./character_up1",
+                        "./character_up2"
+                    ],
+                    "frameCount": 3,
+                    "frameDuration": 0.1
+                }
+            }
+        }
+    ]
+}
