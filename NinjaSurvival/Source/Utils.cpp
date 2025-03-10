@@ -70,7 +70,62 @@ ax::MenuItemImage* createMenuItem(std::string normalImage,
     return menuItem;
 }
 
-//Map button in MapChooseScene
+// Character button in CharacterChooseScene
+ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
+                                    const std::string& buttonName,
+                                    bool available,
+                                    std::string& selectedCharacterName,
+                                    ax::MenuItemSprite*& selectedCharacterItem,
+                                    ax::MenuItemSprite* playButton)
+{
+    auto normalSprite   = ax::Sprite::create(spritePath);
+    auto selectedSprite = ax::Sprite::create(spritePath);
+
+    auto characterItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
+
+    std::string displayName = available ? buttonName : "Locked";
+    auto characterLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 24);
+    characterLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height / 2);
+    characterLabel->setVisible(false);
+    characterItem->addChild(characterLabel, 3, "label");
+
+    auto drawNode = ax::DrawNode::create();
+    drawNode->drawRect(ax::Vec2(0, 0),
+                       ax::Vec2(characterItem->getContentSize().width, characterItem->getContentSize().height),
+                       ax::Color4F::RED);
+    drawNode->setVisible(false);
+    characterItem->addChild(drawNode, 3, "border");
+
+    characterItem->setCallback([characterItem, &selectedCharacterItem, buttonName, available, &selectedCharacterName,
+                                playButton](ax::Object* sender) {
+        if (selectedCharacterItem && selectedCharacterItem != characterItem)
+        {
+            setVisibleSafe(selectedCharacterItem->getChildByName("border"), false);
+            setVisibleSafe(selectedCharacterItem->getChildByName("label"), false);
+        }
+
+        selectedCharacterItem = characterItem;
+
+        setVisibleSafe(characterItem->getChildByName("border"), true);
+        setVisibleSafe(characterItem->getChildByName("label"), true);
+
+        selectedCharacterName = buttonName;
+
+        if (playButton)
+        {
+            playButton->setVisible(available);
+        }
+    });
+
+    if (!available)
+    {
+        characterItem->setOpacity(128);
+    }
+
+    return characterItem;
+}
+
+// Map button in MapChooseScene
 ax::MenuItemSprite* createMapButton(const std::string& spritePath,
                                     const std::string& buttonName,
                                     bool available,

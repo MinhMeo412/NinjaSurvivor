@@ -17,8 +17,7 @@ bool MapChooseScene::init()
     }
 
     systemManager = SystemManager::getInstance();
-    //systemManager->resetSystems();
-    systemManager->addSystem(std::make_unique<MapSystem>());
+    systemManager->resetSystems();
         
     menuUISetup();
 
@@ -30,7 +29,6 @@ void MapChooseScene::update(float dt) {}
 void MapChooseScene::menuCloseCallback(ax::Object* sender)
 {
     auto scene = utils::createInstance<MainScene>();
-
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }
 
@@ -42,32 +40,8 @@ void MapChooseScene::menuPlayCallback(ax::Object* sender)
         return;
     }
 
-    // Lấy tmxFile từ GameData dựa trên selectedMapName
-    auto gameData    = GameData::getInstance();
-    const auto& maps = gameData->getMaps();
-    std::string tmxFile;
-
-    for (const auto& pair : maps)
-    {
-        const auto& map = pair.second;
-        if (map.name == selectedMapName)
-        {
-            tmxFile = map.tmxFile;
-            break;
-        }
-    }
-
-    if (tmxFile.empty())
-    {
-        AXLOG("Error: Could not find tmxFile for map: %s", selectedMapName.c_str());
-        return;
-    }
-
-    // Truyền tmxFile cho MapSystem qua SystemManager
-    if (auto mapSystem = systemManager->getSystem<MapSystem>())
-    {
-        mapSystem->setMapFile(tmxFile);
-    }
+    //Truyền dữ liệu tên map được chọn cho GameData lưu
+    GameData::getInstance()->setSelectedMap(selectedMapName);
 
     // GameScene
     auto scene = utils::createInstance<GameScene>();
@@ -96,11 +70,11 @@ void MapChooseScene::menuUISetup()
     // Play button
     auto playSprite = Sprite::create("CloseNormal.png");
     auto playSelectedSprite = Sprite::create("CloseSelected.png");
-    playButton              = MenuItemSprite::create(playSprite, playSelectedSprite, nullptr,
+    playItem                = MenuItemSprite::create(playSprite, playSelectedSprite, nullptr,
                                                      AX_CALLBACK_1(MapChooseScene::menuPlayCallback, this));
-    playButton->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2, 100));
-    playButton->setVisible(false);
-    menuItems.pushBack(playButton);
+    playItem->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2, 100));
+    playItem->setVisible(false);
+    menuItems.pushBack(playItem);
 
     
 
@@ -113,13 +87,13 @@ void MapChooseScene::menuUISetup()
     {
         const auto& map = pair.second;
         auto button =
-            Utils::createMapButton(map.sprite, map.name, map.available, selectedMapName, selectedMapItem, playButton);
+            Utils::createMapButton(map.sprite, map.name, map.available, selectedMapName, selectedMapItem, playItem);
         button->setPosition(Vec2(xPos, 400));
 
         menuItems.pushBack(button);
         xPos += 200;
     }
-
+    
     // Tạo Menu chứa tất cả button
     auto menu = Menu::createWithArray(menuItems);
     menu->setPosition(Vec2::ZERO);

@@ -11,7 +11,4 @@ public:
     virtual ~System()             = default;
 };
 
-
-
-
 #endif  // __SYSTEM_H__

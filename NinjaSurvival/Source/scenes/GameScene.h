@@ -5,16 +5,10 @@
 #include "SceneBase.h"
 
 #include "systems/SystemManager.h"
-#include "systems/MapSystem.h"
-#include "systems/JoystickSystem.h"
-
-#include "components/Components.h"
-#include "entities/EntityManager.h"
-#include "systems/EntityFactory.h"
+#include "systems/GameWorld.h"
 
 class GameScene : public SceneBase
 {
-
 public:
     GameScene();
 
@@ -28,7 +22,7 @@ private:
 
 
     SystemManager* systemManager = nullptr;
-
+    std::unique_ptr<GameWorld> gameWorld;
 };
 
 #endif  // __GAME_SCENE_H__

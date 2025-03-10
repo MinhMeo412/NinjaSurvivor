@@ -18,10 +18,12 @@ void JoystickSystem::init()
 
     joystickBase = Sprite::create("Joystick.png");
     joystickBase->setPosition(Vec2(640, 300));
+    joystickBase->setOpacity(128);
     parentScene->addChild(joystickBase,10);
 
     joystickHandle = Sprite::create("Handle.png");
     joystickHandle->setPosition(joystickBase->getPosition());
+    joystickHandle->setOpacity(128);
     parentScene->addChild(joystickHandle,10);
 
     auto listener          = EventListenerTouchOneByOne::create();
@@ -54,25 +56,24 @@ void JoystickSystem::init()
             joystickHandle->setPosition(baseLocation + delta);
 
             //Quy đổi ra hệ Vec2 của hướng đi ??
-            velocity.x = delta.x / maxDistance;
-            velocity.y = delta.y / maxDistance;
+            velocity.vx = delta.x / maxDistance;
+            velocity.vy = delta.y / maxDistance;
 
-            AXLOG(" Joystick Velocity : x = % f, y = % f ", velocity.x, velocity.y);
+            AXLOG(" Joystick Velocity : x = % f, y = % f ", velocity.vx, velocity.vy);
         }
     };
 
     listener->onTouchEnded = [this](Touch* touch, Event* event) {
         isDragging = false;
         joystickHandle->setPosition(joystickBase->getPosition());
-        velocity.x = 0.0f;
-        velocity.y = 0.0f;
+        velocity.vx = 0.0f;
+        velocity.vy = 0.0f;
     };
 
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, joystickHandle);
 }
 
-void JoystickSystem::update(float dt)
-{}
+void JoystickSystem::update(float dt) {}
 
 VelocityComponent JoystickSystem::getVelocity() const
 {

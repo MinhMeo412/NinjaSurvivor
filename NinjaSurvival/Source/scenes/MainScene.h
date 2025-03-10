@@ -18,7 +18,6 @@ public:
 
 private:
     ax::MenuItemImage* playItem;
-    // ax::MenuItemImage* scoreItem;
     ax::MenuItemImage* closeItem;
 };
 

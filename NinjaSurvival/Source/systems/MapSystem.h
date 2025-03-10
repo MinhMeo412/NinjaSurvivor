@@ -7,16 +7,13 @@
 class MapSystem : public System
 {
 public:
-    MapSystem();
-    void setMapFile(const std::string& tmxFile);
-    void setScene(ax::Scene* scene);            
+    MapSystem();      
     void init() override;                   
     void update(float dt) override;          
-    ax::TMXTiledMap* getTiledMap() const;      
+    //ax::TMXTiledMap* getTiledMap() const;      
 
 private:
-    ax::Scene* parentScene = nullptr;   
-    std::string mapFile;            
+    ax::Scene* parentScene = nullptr;          
     ax::TMXTiledMap* tiledMap = nullptr;  
 };
 

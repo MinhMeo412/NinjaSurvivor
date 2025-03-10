@@ -24,6 +24,12 @@ void ComponentManager<T>::removeComponent(Entity entity)
 }
 
 // Khai báo template cho tất cả kiểu Component
+ template class ComponentManager<SpriteComponent>;
+ template class ComponentManager<AnimationComponent>;
+ template class ComponentManager<TransformComponent>;
+ template class ComponentManager<VelocityComponent>;
+
+// 
 //template class ComponentManager<AttackAreaComponent>;
 //template class ComponentManager<AttackComponent>;
 //template class ComponentManager<AttackSpeedComponent>;
@@ -38,9 +44,6 @@ void ComponentManager<T>::removeComponent(Entity entity)
 //template class ComponentManager<ProjectileNumberComponent>;
 //template class ComponentManager<RecoveryComponent>;
 //template class ComponentManager<SpeedComponent>;
-//template class ComponentManager<SpriteComponent>;
-//template class ComponentManager<TransformComponent>;
-//template class ComponentManager<VelocityComponent>;
 //template class ComponentManager<WeaponComponent>;
 //template class ComponentManager<WeaponInventoryComponent>;
 //template class ComponentManager<XPComponent>;

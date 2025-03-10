@@ -24,6 +24,12 @@ bool LoadingScene::init()
         return false;
     }
 
+    if (!gameData->loadEntityDataFromFile("entities.json"))
+    {
+        AXLOG("Failed to load entity data");
+        return false;
+    }
+
     // Border
     auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
@@ -55,7 +61,6 @@ void LoadingScene::onLoadComplete(float dt)
     loadingLabel->stopAllActions();
     loadingLabel->setOpacity(255);
 
-    // Touch to next scene
     auto listener          = ax::EventListenerTouchOneByOne::create();
     listener->onTouchBegan = [this](ax::Touch*, ax::Event*)
     {
