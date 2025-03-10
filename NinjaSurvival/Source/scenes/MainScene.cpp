@@ -1,6 +1,8 @@
 #include "Utils.h"
 #include "MainScene.h"
-#include "MapChooseScene.h"
+#include "CharacterChooseScene.h"
+
+#include "systems/GameData.h"
 
 using namespace ax;
 
@@ -55,6 +57,50 @@ bool MainScene::init()
     addChild(drawNode);
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
 
+
+
+
+    //Kiểm tra đọc file entities.json (xóa khi release)
+    auto gameData    = GameData::getInstance();
+    const auto& entityTemplates = gameData->getEntityTemplates();
+
+    if (!entityTemplates.empty())
+    {
+        AXLOG("Entity Templates:");
+        for (const auto& [category, entities] : entityTemplates)
+        {
+            AXLOG("  Category: %s", category.c_str());
+            for (const auto& [key, entity] : entities)
+            {
+                AXLOG("    Entity Key: %s", key.c_str());
+                AXLOG("      Type: %s", entity.type.c_str());
+                AXLOG("      Name: %s", entity.name.c_str());
+                AXLOG("      Available: %s", entity.available ? "true" : "false");
+
+                if (entity.transform)
+                {
+                    AXLOG("      Transform Component: Exists");
+                }
+                if (entity.sprite)
+                {
+                    AXLOG("      Sprite Component: Exists");
+                }
+                if (entity.animation)
+                {
+                    AXLOG("      Animation Component: Exists");
+                }
+                if (entity.velocity)
+                {
+                    AXLOG("      Velocity Component: Exists");
+                }
+            }
+        }
+    }
+    else
+    {
+        AXLOG("Entity Templates is empty.");
+    }
+
     return true;
 }
 
@@ -68,7 +114,7 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
-    auto scene = utils::createInstance<MapChooseScene>();
+    auto scene = utils::createInstance<CharacterChooseScene>();
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }

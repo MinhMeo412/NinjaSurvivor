@@ -13,10 +13,9 @@ public:
     bool init() override;
     void update(float dt) override;
 
-
 private:
     ax::MenuItemImage* closeItem = nullptr;
-    ax::MenuItemSprite* playButton = nullptr;
+    ax::MenuItemSprite* playItem = nullptr;
     ax::MenuItemSprite* selectedMapItem = nullptr;
     std::string selectedMapName;
 

@@ -33,6 +33,13 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
                                     ax::MenuItemSprite*& selectedMapItem,
                                     ax::MenuItemSprite* playButton);
 
+ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
+                                          const std::string& buttonName,
+                                          bool available,
+                                          std::string& selectedCharacterName,
+                                          ax::MenuItemSprite*& selectedCharacterItem,
+                                          ax::MenuItemSprite* playButton);
+
 //Check null ptr before set visible
 void setVisibleSafe(ax::Node* node, bool visible);
 }  // namespace Utils

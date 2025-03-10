@@ -1,23 +1,24 @@
-#ifndef __ENTITY_FACTORY_H__
-#define __ENTITY_FACTORY_H__
+#ifndef __SPAWN_SYSTEM_H__
+#define __SPAWN_SYSTEM_H__
 
-#include "entities/Entity.h"
+#include "System.h"
 #include "components/ComponentManager.h"
 #include "entities/EntityManager.h"
 #include "axmol.h"
-#include <cstdio>
 
-class EntityFactory
+class SpawnSystem : public System
 {
 public:
-    EntityFactory(EntityManager& em,
+    SpawnSystem(EntityManager& em,
                  ComponentManager<TransformComponent>& tm,
                  ComponentManager<SpriteComponent>& sm,
                  ComponentManager<AnimationComponent>& am,
-                 ComponentManager<VelocityComponent>& vm)
-        : entityManager(em), transformMgr(tm), spriteMgr(sm), animationMgr(am), velocityMgr(vm)
-    {}
-    Entity createEntity(const std::string& type, const std::string& name);
+                 ComponentManager<VelocityComponent>& vm); 
+
+    void init() override;
+    void update(float dt) override;
+
+    Entity getPlayerEntity() const;
 
 private:
     EntityManager& entityManager;
@@ -25,6 +26,12 @@ private:
     ComponentManager<SpriteComponent>& spriteMgr;
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
+
+    Entity playerEntity = 0;
+    float spawnTimer    = 0.0f;
 };
 
-#endif  // __ENTITY_FACTORY_H__
+
+
+
+#endif  // __SPAWN_SYSTEM_H__

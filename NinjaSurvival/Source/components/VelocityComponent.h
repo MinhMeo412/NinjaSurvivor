@@ -3,11 +3,11 @@
 
 struct VelocityComponent
 {
-    float x = 0.0f;
-    float y = 0.0f;
+    float vx = 0.0f;
+    float vy = 0.0f;
 
     VelocityComponent() = default;
-    VelocityComponent(float xVal, float yVal) : x(xVal), y(yVal) {}
+    VelocityComponent(float vxVal, float vyVal) : vx(vxVal), vy(vyVal) {}
 };
 
 #endif  // __VELOCITY_COMPONENT_H__

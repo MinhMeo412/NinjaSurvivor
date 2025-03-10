@@ -2,17 +2,19 @@
 #define __SYSTEM_MANAGER_H__
 
 #include "System.h"
+#include "GameWorld.h"
 #include "axmol.h"
+
 
 class SystemManager
 {
 public:
     static SystemManager* getInstance();
-    void initSystems(ax::Scene* scene);             
-    void update(float dt);                            
-    void resetSystems();                     
-    void addSystem(std::unique_ptr<System> system); 
 
+    void initSystems(ax::Scene* scene, GameWorld* world);
+    void update(float dt);
+
+    void resetSystems();                     
 
     template <typename T>
     T* getSystem() const
@@ -31,9 +33,14 @@ public:
 
 private:
     SystemManager() = default;
-    static SystemManager* instance;             
+    static SystemManager* instance;
+
     std::vector<std::unique_ptr<System>> systems;
-    ax::Scene* currentScene = nullptr;            
+    ax::Scene* currentScene = nullptr;
+    GameWorld* gameWorld = nullptr;
+
+    void addSystem(std::unique_ptr<System> system);
+    void registerSystem(const std::string& systemType);
 };
 
 #endif  // __SYSTEM_MANAGER_H__

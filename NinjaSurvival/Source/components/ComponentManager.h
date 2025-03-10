@@ -5,7 +5,7 @@
 #include <memory>
 #include <typeindex>
 #include "entities/Entity.h"
-#include "Components.h"
+#include "Components.h" //Include all component type
 
 template <typename T>
 class ComponentManager
