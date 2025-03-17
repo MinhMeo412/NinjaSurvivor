@@ -24,6 +24,7 @@ void MovementSystem::update(float dt)
     }
 
     Entity playerEntity = spawnSystem->getPlayerEntity();
+    //Entity enemyEntity = spawnSystem->getEnemyEntity();
     auto entities       = entityManager.getActiveEntities();
 
     for (Entity entity : entities)
@@ -54,14 +55,38 @@ void MovementSystem::update(float dt)
                 }
                 else
                 {
-                    //Chưa dùng
-                    // Viết thuật toán trả về velocity cho enemy (tìm đường)
-                    // Ví dụ: velocity->vx = ...; velocity->vy = ...;
-                    //if (auto animation = animationMgr.getComponent(entity))
-                    //{
-                    //    // Cập nhật trạng thái dựa trên velocity của enemy
-                    //}
-                    AXLOG("Not found any else entity");
+                    auto playerPos = transformMgr.getComponent(playerEntity);
+                    auto enemyPos  = transform;
+
+                    ax::Vec2 direction = ax::Vec2 ( (playerPos->x - enemyPos->x) , (playerPos->y - enemyPos->y) );
+
+                    if (!direction.isZero())
+                    {
+                        direction.normalize();
+                    }
+
+                    // Calculate the new position by moving in that direction
+                    ax::Vec2 newPos = direction * 50.0f;
+
+                    velocity->vx                       = newPos.x;  
+                    velocity->vy                       = newPos.y;
+
+
+                    if (auto animation = animationMgr.getComponent(entity))
+                    {
+                        if (velocity->vx > 0)
+                            animation->currentState = "moveRight";  //"moveRight";
+                        else if (velocity->vx < 0)
+                            animation->currentState = "moveLeft";  //"moveLeft";
+                        else if (velocity->vy > 0)
+                            animation->currentState = "moveDown";  // Move up changes
+                        else if (velocity->vy < 0)
+                            animation->currentState = "moveDown";  //"moveDown";
+                        else
+                            animation->currentState = "idle";
+                    }
+
+                    //AXLOG("Not found any else entity");
                 }
 
                 //Di chuyển

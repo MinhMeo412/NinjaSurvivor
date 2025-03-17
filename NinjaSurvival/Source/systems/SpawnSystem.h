@@ -20,6 +20,8 @@ public:
 
     Entity getPlayerEntity() const;
 
+    Entity getEnemyEntity() const;
+
 private:
     EntityManager& entityManager;
     ComponentManager<TransformComponent>& transformMgr;
@@ -28,6 +30,7 @@ private:
     ComponentManager<VelocityComponent>& velocityMgr;
 
     Entity playerEntity = 0;
+    Entity enemyEntity  = 0;
     float spawnTimer    = 0.0f;
 };
 
