@@ -10,27 +10,28 @@ class SpawnSystem : public System
 {
 public:
     SpawnSystem(EntityManager& em,
+                 ComponentManager<IdentityComponent>& im,
                  ComponentManager<TransformComponent>& tm,
                  ComponentManager<SpriteComponent>& sm,
                  ComponentManager<AnimationComponent>& am,
-                 ComponentManager<VelocityComponent>& vm); 
+                 ComponentManager<VelocityComponent>& vm,
+                 ComponentManager<HitboxComponent>& hm); 
 
     void init() override;
     void update(float dt) override;
 
     Entity getPlayerEntity() const;
 
-    Entity getEnemyEntity() const;
-
 private:
     EntityManager& entityManager;
+    ComponentManager<IdentityComponent>& identityMgr;
     ComponentManager<TransformComponent>& transformMgr;
     ComponentManager<SpriteComponent>& spriteMgr;
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
+    ComponentManager<HitboxComponent>& hitboxMgr;
 
     Entity playerEntity = 0;
-    Entity enemyEntity  = 0;
     float spawnTimer    = 0.0f;
 };
 

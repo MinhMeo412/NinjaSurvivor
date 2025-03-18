@@ -9,10 +9,21 @@
 
 struct MapData
 {
-    std::string tmxFile;
     std::string name;
     std::string sprite;
     bool available;
+    int mapWidth;
+    int mapHeight;
+
+    std::vector<std::string> upRightCornerTMXFile;
+    std::vector<std::string> downRightCornerTMXFile;
+    std::vector<std::string> upLeftCornerTMXFile;
+    std::vector<std::string> downLeftCornerTMXFile;
+    std::vector<std::string> upRearTMXFile;
+    std::vector<std::string> downRearTMXFile;
+    std::vector<std::string> leftRearTMXFile;
+    std::vector<std::string> rightRearTMXFile;
+    std::vector<std::string> middleTMXFile;
 
     MapData() : available(false) {};
 };
@@ -27,6 +38,7 @@ struct EntityTemplate
     std::optional<SpriteComponent> sprite;
     std::optional<AnimationComponent> animation;
     std::optional<VelocityComponent> velocity;
+    std::optional<HitboxComponent> hitbox;
 
     EntityTemplate() : available(false) {};
 };
@@ -38,7 +50,7 @@ private:
     GameData();
     static GameData* createInstance();
 
-    //Lưu dữ liệu map và entities load từ json
+    //Danh sách lưu dữ liệu map và entities load từ json
     std::unordered_map<std::string, MapData> maps;
     std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>> entityTemplates;
 
@@ -57,12 +69,10 @@ public:
     bool loadMapDataFromFile(const std::string& filename);
     bool loadEntityDataFromFile(const std::string& filename);
 
-    // Truy cập dữ liệu
+    // Lấy danh sách toàn bộ map
     const std::unordered_map<std::string, MapData>& getMaps() const;
+    //Lấy danh sách toàn bộ entities (có thể dùng .at(type).at(name) để truy cập cụ thể)
     const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& getEntityTemplates() const;
-
-    // Lấy MapData bằng name
-    const MapData* getMap(const std::string& name) const;
 
     // Sửa dữ liệu (chưa dùng)
     void setMapAvailable(const std::string& name, bool available);

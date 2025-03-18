@@ -5,6 +5,7 @@
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
+#include "CameraSystem.h"
 
 
 using namespace ax;
@@ -20,10 +21,11 @@ SystemManager* SystemManager::getInstance()
     return instance;
 }
 
-void SystemManager::initSystems(ax::Scene* scene, GameWorld* world)
+void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* uiLayer)
 {
     currentScene = scene;
     gameWorld    = world;
+    sceneLayer   = uiLayer;
 
     if (!gameWorld)
     {
@@ -41,6 +43,7 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world)
     registerSystem("JoystickSystem");
     
     registerSystem("SpawnSystem");
+    registerSystem("CameraSystem");
 
     registerSystem("MovementSystem");
     registerSystem("RenderSystem");
@@ -73,18 +76,35 @@ void SystemManager::registerSystem(const std::string& systemType)
     if (!gameWorld)
         return;
 
+    //Thêm JoystickSystem
     if (systemType == "JoystickSystem")
         addSystem(std::make_unique<JoystickSystem>());
+
+    //Thêm MapSystem
     else if (systemType == "MapSystem")
         addSystem(std::make_unique<MapSystem>());
+
+    //Thêm SpawnSystem
     else if (systemType == "SpawnSystem")
-        addSystem(std::make_unique<SpawnSystem>(gameWorld->getEntityManager(), gameWorld->getTransformManager(),
+        addSystem(std::make_unique<SpawnSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
+                                                gameWorld->getTransformManager(),
                                                 gameWorld->getSpriteManager(), gameWorld->getAnimationManager(),
-                                                gameWorld->getVelocityManager()));
+                                                gameWorld->getVelocityManager(), gameWorld->getHitboxManager()));
+
+    //Thêm RenderSystem
     else if (systemType == "RenderSystem")
-        addSystem(std::make_unique<RenderSystem>(gameWorld->getEntityManager(), gameWorld->getSpriteManager(),
-                                                 gameWorld->getTransformManager(), gameWorld->getAnimationManager()));
+        addSystem(std::make_unique<RenderSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
+                                                 gameWorld->getSpriteManager(),
+                                                 gameWorld->getTransformManager(), gameWorld->getAnimationManager(),
+                                                 gameWorld->getHitboxManager()));
+
+    //Thêm MovementSystem
     else if (systemType == "MovementSystem")
         addSystem(std::make_unique<MovementSystem>(gameWorld->getEntityManager(), gameWorld->getTransformManager(),
-                                                   gameWorld->getVelocityManager(), gameWorld->getAnimationManager()));
+                                                   gameWorld->getVelocityManager(), gameWorld->getAnimationManager(),
+                                                   gameWorld->getHitboxManager()));
+
+    //Thêm CameraSystem
+    else if (systemType == "CameraSystem")
+        addSystem(std::make_unique<CameraSystem>(gameWorld->getEntityManager(), gameWorld->getTransformManager()));
 }

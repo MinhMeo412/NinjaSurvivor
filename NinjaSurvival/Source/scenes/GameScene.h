@@ -3,6 +3,7 @@
 
 #include "axmol.h"
 #include "SceneBase.h"
+#include "gameUI/GameSceneUILayer.h"
 
 #include "systems/SystemManager.h"
 #include "systems/GameWorld.h"
@@ -15,14 +16,15 @@ public:
     bool init() override;
     void update(float dt) override;
 
-    void menuCloseCallback(ax::Object* sender);
+    void startUpdate(float dt);
 
 private:
-    ax::MenuItemImage* closeItem;
-
+    ax::Layer* uiLayer = nullptr;
 
     SystemManager* systemManager = nullptr;
     std::unique_ptr<GameWorld> gameWorld;
+
+    bool isUpdateStarted = false;
 };
 
 #endif  // __GAME_SCENE_H__

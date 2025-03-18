@@ -60,6 +60,8 @@ bool MainScene::init()
 
 
 
+
+
     //Kiểm tra đọc file entities.json (xóa khi release)
     auto gameData    = GameData::getInstance();
     const auto& entityTemplates = gameData->getEntityTemplates();

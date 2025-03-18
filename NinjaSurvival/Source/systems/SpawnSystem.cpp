@@ -5,11 +5,20 @@
 #include "EntityFactory.h"
 
 SpawnSystem::SpawnSystem(EntityManager& em,
+                           ComponentManager<IdentityComponent>& im,
                            ComponentManager<TransformComponent>& tm,
                            ComponentManager<SpriteComponent>& sm,
                            ComponentManager<AnimationComponent>& am,
-                           ComponentManager<VelocityComponent>& vm)
-    : entityManager(em), transformMgr(tm), spriteMgr(sm), animationMgr(am), velocityMgr(vm) {}
+                           ComponentManager<VelocityComponent>& vm,
+                           ComponentManager<HitboxComponent>& hm)
+    : entityManager(em)
+    , identityMgr(im)
+    , transformMgr(tm)
+    , spriteMgr(sm)
+    , animationMgr(am)
+    , velocityMgr(vm)
+    , hitboxMgr(hm)
+{}
 
 void SpawnSystem::init()
 {
@@ -27,7 +36,7 @@ void SpawnSystem::init()
         return;
     }
 
-    EntityFactory factory(entityManager, transformMgr, spriteMgr, animationMgr, velocityMgr);
+    EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr);
     playerEntity = factory.createEntity("player", characterName);
 
     AXLOG("SpawnSystem: Created player %s with ID %u", characterName.c_str(), playerEntity);
@@ -78,38 +87,18 @@ void SpawnSystem::init()
 void SpawnSystem::update(float dt)
 {
     spawnTimer += dt;
-    if (spawnTimer >= 3.0f)  // Sinh enemy mỗi 2 giây
+    if (spawnTimer >= 2.0f)  // Sinh enemy mỗi 2 giây
     {
-        for (int i = 0; i < 10; i++)
+        EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr);
+        Entity enemy = factory.createEntity("enemy", "Slime");
+        if (enemy != 0)
         {
-
-            auto scene = SystemManager::getInstance()->getCurrentScene();
-            if (!scene)
+            if (auto transform = transformMgr.getComponent(enemy))
             {
-                AXLOG("Error: No scene available for PlayerSystem");
-                return;
+                transform->x = 200.0f;
+                transform->y = 200.0f;
             }
-
-            std::string characterName = GameData::getInstance()->getSelectedCharacter();
-            if (characterName.empty())
-            {
-                AXLOG("Error: No character selected in GameData");
-                return;
-            }
-
-            EntityFactory factory(entityManager, transformMgr, spriteMgr, animationMgr, velocityMgr);
-            enemyEntity = factory.createEntity("player", characterName);
-
-            float x = rand() % 1000;
-            float y = rand() % 1000;
-
-            auto position = transformMgr.getComponent(enemyEntity);
-            position->x   = x;
-            position->y   = y;
-
-            AXLOG("SpawnSystem: Created Enemy %s with ID %u", characterName.c_str(), enemyEntity);
-
-            if (auto animationComp = animationMgr.getComponent(enemyEntity))
+            if (auto animationComp = animationMgr.getComponent(enemy))
             {
                 animationComp->initializeAnimations();
                 animationComp->currentState = "idle";
@@ -132,7 +121,7 @@ void SpawnSystem::update(float dt)
                     AXLOG("  %s: [%s]", state.c_str(), frameNames.c_str());
                 }
             }
-            if (auto spriteComp = spriteMgr.getComponent(enemyEntity))
+            if (auto spriteComp = spriteMgr.getComponent(enemy))
             {
                 spriteComp->initializeSprite();
                 AXLOG("Create sprite");
@@ -150,10 +139,8 @@ void SpawnSystem::update(float dt)
                     AXLOG("Sprite texture ID: %p", spriteComp->frame->getTexture());
                 }
             }
-
-        
+            spawnTimer = 0.0f;
         }
-        spawnTimer = 0.0f;
     }
     
 }
@@ -161,9 +148,4 @@ void SpawnSystem::update(float dt)
 Entity SpawnSystem::getPlayerEntity() const
 {
     return playerEntity;
-}
-
-Entity SpawnSystem::getEnemyEntity() const
-{
-    return enemyEntity;
 }

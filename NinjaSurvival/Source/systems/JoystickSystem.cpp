@@ -7,39 +7,51 @@ JoystickSystem::JoystickSystem() {}
 
 void JoystickSystem::init()
 {
-    auto systemManager = SystemManager::getInstance();
-    parentScene        = systemManager->getCurrentScene();
+    parentLayer = SystemManager::getInstance()->getSceneLayer();
 
-    if (!parentScene)
+    if (!parentLayer)
     {
-        AXLOG("Error: No scene set for JoystickSystem");
+        AXLOG("Error: No layer set for JoystickSystem");
         return;
     }
 
     joystickBase = Sprite::create("Joystick.png");
-    joystickBase->setPosition(Vec2(640, 300));
+    //joystickBase->setPosition(Vec2(640, 300)); //Không còn cố định vị trí
     joystickBase->setOpacity(128);
-    parentScene->addChild(joystickBase,10);
+    joystickBase->setVisible(false);  //Ẩn joystick
+    parentLayer->addChild(joystickBase, 10);
+    joystickBase->setGlobalZOrder(9);
 
     joystickHandle = Sprite::create("Handle.png");
-    joystickHandle->setPosition(joystickBase->getPosition());
+    //joystickHandle->setPosition(joystickBase->getPosition()); //Không còn cố định vị trí
     joystickHandle->setOpacity(128);
-    parentScene->addChild(joystickHandle,10);
+    joystickHandle->setVisible(false);  // Ẩn joystick
+    parentLayer->addChild(joystickHandle, 10);
+    joystickHandle->setGlobalZOrder(9);
 
+    maxDistance = joystickBase->getContentSize().width / 2;
+
+    //Tạo listenẻ
     auto listener          = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [this](Touch* touch, Event* event) {
-        Vec2 touchLocation = touch->getLocation();
-        Vec2 baseLocation  = joystickBase->getPosition();
-        float distance     = touchLocation.distance(baseLocation);
 
-        if (distance <= maxDistance * 2)
-        {
-            isDragging = true;
-            return true;
-        }
-        return false;
+    //Khi chạm
+    listener->onTouchBegan = [this](Touch* touch, Event* event) {
+        if (isDragging) return false; // Nếu đã có chạm khác, không xử lý thêm
+
+        Vec2 touchLocation = touch->getLocation();
+
+        joystickBase->setPosition(touchLocation);
+        joystickHandle->setPosition(touchLocation);
+        joystickBase->setVisible(true);     // Hiện joystick
+        joystickHandle->setVisible(true);  // Hiện handle
+        isDragging = true;
+        isVisible  = true;
+        direction  = Vec2::ZERO;
+
+        return true;
     };
 
+    //Khi di chuyển
     listener->onTouchMoved = [this](Touch* touch, Event* event) {
         if (isDragging)
         {
@@ -55,27 +67,38 @@ void JoystickSystem::init()
 
             joystickHandle->setPosition(baseLocation + delta);
 
-            //Quy đổi ra hệ Vec2 của hướng đi ??
-            velocity.vx = delta.x / maxDistance;
-            velocity.vy = delta.y / maxDistance;
-
-            AXLOG(" Joystick Velocity : x = % f, y = % f ", velocity.vx, velocity.vy);
+            // Trả về hướng đi (chuẩn hóa vector delta)
+            if (distance > 0)  // Tránh chia cho 0
+            {
+                delta.normalize();
+                direction = delta;  // Gán hướng đã chuẩn hóa
+            }
+            else
+            {
+                direction = Vec2::ZERO;  // Tại tâm, hướng = (0, 0)
+            }
         }
     };
 
+    //Khi kết thúc chạm
     listener->onTouchEnded = [this](Touch* touch, Event* event) {
+        if (isDragging)
+        {
         isDragging = false;
-        joystickHandle->setPosition(joystickBase->getPosition());
-        velocity.vx = 0.0f;
-        velocity.vy = 0.0f;
+        isVisible  = false;
+        joystickBase->setVisible(false);    // Ẩn joystick
+        joystickHandle->setVisible(false);  // Ẩn handle
+        direction = Vec2::ZERO;
+        }
     };
 
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, joystickHandle);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, parentLayer);
 }
 
 void JoystickSystem::update(float dt) {}
 
-VelocityComponent JoystickSystem::getVelocity() const
+
+Vec2 JoystickSystem::getDirection() const
 {
-    return velocity;
+    return direction;
 }

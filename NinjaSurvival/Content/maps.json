@@ -1,16 +1,80 @@
 {
     "maps": [
         {
-            "tmxFile": "Map.tmx",
             "name": "Map",
             "sprite": "HelloWorld.png",
-            "available": true
+            "available": true,
+            "mapSize": {
+                "width": 8,
+                "height": 8
+            },
+            "upRightCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "downRightCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "upLeftCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "downLeftCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "upRearTMXFile": [
+                "Map.tmx"
+            ],
+            "downRearTMXFile": [
+                "Map.tmx"
+            ],
+            "leftRearTMXFile": [
+                "Map.tmx"
+            ],
+            "rightRearTMXFile": [
+                "Map.tmx"
+            ],
+            "middleTMXFile": [
+                "Map.tmx",
+                "Map.tmx",
+                "Map.tmx"
+            ]
         },
         {
-            "tmxFile": "LargeMap.tmx",
             "name": "Large Map",
             "sprite": "HelloWorld.png",
-            "available": false
+            "available": false,
+            "mapSize": {
+                "width": 12,
+                "height": 12
+            },
+            "upRightCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "downRightCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "upLeftCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "downLeftCornerTMXFile": [
+                "Map.tmx"
+            ],
+            "upRearTMXFile": [
+                "Map.tmx"
+            ],
+            "downRearTMXFile": [
+                "Map.tmx"
+            ],
+            "leftRearTMXFile": [
+                "Map.tmx"
+            ],
+            "rightRearTMXFile": [
+                "Map.tmx"
+            ],
+            "middleTMXFile": [
+                "Map.tmx",
+                "Map.tmx",
+                "Map.tmx"
+            ]
         }
     ]
 }

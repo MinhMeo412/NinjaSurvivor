@@ -6,12 +6,16 @@
             "available": true,
             "components": {
                 "transform": {
-                    "x": 320.0,
-                    "y": 240.0
+                    "x": 300.0,
+                    "y": 300.0
                 },
                 "velocity": {
                     "vx": 0.0,
                     "vy": 0.0
+                },
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
                 },
                 "animation": {
                     "plist": "character.plist",
@@ -83,6 +87,56 @@
                 "sprite": {
                     "frame": "HelloWorld.png",
                     "gameSceneFrame": "character1.png"
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Slime",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "animation": {
+                    "plist": "slime.plist",
+                    "frames": {
+                        "moveDown": [
+                            "./slime_down0",
+                            "./slime_down1",
+                            "./slime_down2",
+                            "./slime_down3"
+                        ],
+                        "moveRight": [
+                            "./slime_right0",
+                            "./slime_right1",
+                            "./slime_right2",
+                            "./slime_right3"
+                        ],
+                        "moveLeft": [
+                            "./slime_left0",
+                            "./slime_left1",
+                            "./slime_left2",
+                            "./slime_left3"
+                        ],
+                        "idle": [
+                            "./slime_down0"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                },
+                "sprite": {
+                    "frame": "slime1.png",
+                    "gameSceneFrame": "slime1.png"
                 }
             }
         }

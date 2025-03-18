@@ -7,6 +7,8 @@ struct SpriteComponent
 {
     ax::RefPtr<ax::Sprite> frame = nullptr;
     ax::RefPtr<ax::Sprite> gameSceneFrame = nullptr;
+
+    ax::DrawNode* debugDrawNode = nullptr;//Debug
     std::string filename;
     std::string gameSceneFilename;
 
@@ -24,6 +26,8 @@ struct SpriteComponent
         {
             gameSceneFrame = ax::Sprite::create(gameSceneFilename);
         }
+
+
     }
 };
 

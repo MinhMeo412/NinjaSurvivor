@@ -2,6 +2,7 @@
 #include "MapChooseScene.h"
 #include "MainScene.h"
 #include "GameScene.h"
+#include "GameLoadingScene.h"
 #include "systems/GameData.h"
 
 
@@ -44,8 +45,15 @@ void MapChooseScene::menuPlayCallback(ax::Object* sender)
     GameData::getInstance()->setSelectedMap(selectedMapName);
 
     // GameScene
-    auto scene = utils::createInstance<GameScene>();
-    _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
+    auto gameScene = utils::createInstance<GameScene>();
+
+    // Tạo GameLoadingScene
+    auto loadingScene = GameLoadingScene::create();
+
+    // Gán GameScene làm nextScene
+    loadingScene->setNextScene(gameScene);
+
+    _director->replaceScene(TransitionFade::create(TRANSITION_TIME, loadingScene));
 }
 
 void MapChooseScene::menuUISetup()

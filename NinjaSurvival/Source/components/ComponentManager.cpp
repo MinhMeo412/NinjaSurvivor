@@ -28,6 +28,8 @@ void ComponentManager<T>::removeComponent(Entity entity)
  template class ComponentManager<AnimationComponent>;
  template class ComponentManager<TransformComponent>;
  template class ComponentManager<VelocityComponent>;
+ template class ComponentManager<HitboxComponent>;
+ template class ComponentManager<IdentityComponent>;
 
 // 
 //template class ComponentManager<AttackAreaComponent>;

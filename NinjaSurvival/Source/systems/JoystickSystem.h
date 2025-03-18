@@ -12,14 +12,15 @@ public:
     void init() override;
     void update(float dt) override;  
 
-    VelocityComponent getVelocity() const;
+    ax::Vec2 getDirection() const;
 private:
-    ax::Scene* parentScene     = nullptr;
+    ax::Layer* parentLayer     = nullptr;
     ax::Sprite* joystickBase   = nullptr;
     ax::Sprite* joystickHandle = nullptr;
-    VelocityComponent velocity;
-    float maxDistance = 100.0f;             // Khoảng cách tối đa handle có thể di chuyển
-    bool isDragging   = false;        
+    ax::Vec2 direction; //Hướng di chuyển trả về khi sử dụng joystick
+    float maxDistance = 0.0f;  // Khoảng cách tối đa handle có thể di chuyển
+    bool isDragging   = false;
+    bool isVisible    = false; //joystick ẩn
 };
 
 

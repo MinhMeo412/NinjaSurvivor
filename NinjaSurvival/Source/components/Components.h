@@ -1,6 +1,7 @@
 #ifndef __COMPONENTS_H__
 #define __COMPONENTS_H__
 
+#include "IdentityComponent.h"
 #include "AttackAreaComponent.h"
 #include "AttackComponent.h"
 #include "AttackSpeedComponent.h"
@@ -11,7 +12,7 @@
 #include "GrowthComponent.h"
 #include "HealthComponent.h"
 #include "MapComponent.h"
-#include "PhysicComponent.h"
+#include "HitboxComponent.h"
 #include "ProjectileNumberComponent.h"
 #include "RecoveryComponent.h"
 #include "SpeedComponent.h"

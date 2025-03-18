@@ -10,18 +10,27 @@ class RenderSystem : public System
 {
 public:
     RenderSystem(EntityManager& em,
+                 ComponentManager<IdentityComponent>& im,
                  ComponentManager<SpriteComponent>& sm,
                  ComponentManager<TransformComponent>& tm,
-                 ComponentManager<AnimationComponent>& am);
+                 ComponentManager<AnimationComponent>& am,
+                 ComponentManager<HitboxComponent>& hm);
 
     void init() override;
     void update(float dt) override;
 
+
 private:
     EntityManager& entityManager;
+    ComponentManager<IdentityComponent>& identityMgr;
     ComponentManager<SpriteComponent>& spriteMgr;
     ComponentManager<TransformComponent>& transformMgr;
     ComponentManager<AnimationComponent>& animationMgr;
+    ComponentManager<HitboxComponent>& hitboxMgr;
+
+    ax::Scene* scene = nullptr;
+
+    void initializeEntitySprite(Entity entity);
 };
 
 

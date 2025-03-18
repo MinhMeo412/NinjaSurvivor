@@ -46,10 +46,32 @@ bool GameData::loadMapData(const std::string& jsonString)
     {
         const auto& mapObj = mapsArray[i];
         MapData map;
-        map.tmxFile = mapObj["tmxFile"].GetString();
         map.name = mapObj["name"].GetString();
         map.sprite = mapObj["sprite"].GetString();
         map.available = mapObj["available"].GetBool();
+        const auto& mapS = mapObj["mapSize"];
+        map.mapWidth     = mapS["width"].GetInt();
+        map.mapHeight     = mapS["height"].GetInt();
+
+        // Phương thức load TMX file arrays chung
+        auto loadTMXArray = [&](const char* key, std::vector<std::string>& target) {
+            if (mapObj.HasMember(key) && mapObj[key].IsArray())
+            {
+                const auto& array = mapObj[key];
+                for (rapidjson::SizeType j = 0; j < array.Size(); j++)
+                    target.push_back(array[j].GetString());
+            }
+        };
+
+        loadTMXArray("upRightCornerTMXFile", map.upRightCornerTMXFile);
+        loadTMXArray("downRightCornerTMXFile", map.downRightCornerTMXFile);
+        loadTMXArray("upLeftCornerTMXFile", map.upLeftCornerTMXFile);
+        loadTMXArray("downLeftCornerTMXFile", map.downLeftCornerTMXFile);
+        loadTMXArray("upRearTMXFile", map.upRearTMXFile);
+        loadTMXArray("downRearTMXFile", map.downRearTMXFile);
+        loadTMXArray("leftRearTMXFile", map.leftRearTMXFile);
+        loadTMXArray("rightRearTMXFile", map.rightRearTMXFile);
+        loadTMXArray("middleTMXFile", map.middleTMXFile);
 
         maps[map.name] = map;  // Lưu vào map với key là name
     }
@@ -148,6 +170,8 @@ bool GameData::loadEntityData(const std::string& jsonString)
                     {
                         //Lấy state = tên entity + tên animation
                         std::string state = templ.name + it->name.GetString();
+                        AXLOG("Kiểm tra state được lưu");
+                        AXLOG("%s", state.c_str());
                         //Lấy mảng các frame
                         const auto& frameArray = it->value;
                         //Tạo vector để lưu các frame từ mảng frameArray
@@ -196,6 +220,21 @@ bool GameData::loadEntityData(const std::string& jsonString)
                 else
                 {
                     AXLOG("Warning: velocity component missing vx or vy for entity %s-%s", templ.type.c_str(),
+                          templ.name.c_str());
+                }
+            }
+
+            //Hitbox
+            if (components.HasMember("hitbox") && components["hitbox"].IsObject())
+            {
+                const auto& hitb = components["hitbox"];
+                if (hitb.HasMember("width") && hitb["width"].IsFloat() && hitb.HasMember("height") && hitb["height"].IsFloat())
+                {
+                    templ.hitbox = HitboxComponent{hitb["width"].GetFloat(), hitb["height"].GetFloat()};
+                }
+                else
+                {
+                    AXLOG("Warning: hitbox component missing width or height for entity %s-%s", templ.type.c_str(),
                           templ.name.c_str());
                 }
             }
@@ -249,18 +288,6 @@ const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemp
 {
     return entityTemplates;
 }
-
-//tìm map theo tên map
-const MapData* GameData::getMap(const std::string& name) const
-{
-    auto it = maps.find(name);
-    if (it != maps.end())
-    {
-        return &(it->second);
-    }
-    return nullptr;
-}
-
 
 //Sửa map thành available (cần thay đổi)
 void GameData::setMapAvailable(const std::string& name, bool available)

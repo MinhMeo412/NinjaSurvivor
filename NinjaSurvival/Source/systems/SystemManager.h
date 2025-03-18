@@ -11,7 +11,7 @@ class SystemManager
 public:
     static SystemManager* getInstance();
 
-    void initSystems(ax::Scene* scene, GameWorld* world);
+    void initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* uiLayer);
     void update(float dt);
 
     void resetSystems();                     
@@ -30,6 +30,7 @@ public:
     }
 
     ax::Scene* getCurrentScene() const { return currentScene; }
+    ax::Layer* getSceneLayer() const { return sceneLayer; }
 
 private:
     SystemManager() = default;
@@ -37,6 +38,7 @@ private:
 
     std::vector<std::unique_ptr<System>> systems;
     ax::Scene* currentScene = nullptr;
+    ax::Layer* sceneLayer   = nullptr;
     GameWorld* gameWorld = nullptr;
 
     void addSystem(std::unique_ptr<System> system);
