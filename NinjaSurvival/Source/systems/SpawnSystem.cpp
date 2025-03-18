@@ -3,6 +3,8 @@
 #include "SystemManager.h"
 #include "GameData.h"
 #include "EntityFactory.h"
+#include <cmath>
+#include <cstdlib>
 
 SpawnSystem::SpawnSystem(EntityManager& em,
                            ComponentManager<IdentityComponent>& im,
@@ -87,16 +89,19 @@ void SpawnSystem::init()
 void SpawnSystem::update(float dt)
 {
     spawnTimer += dt;
-    if (spawnTimer >= 2.0f)  // Sinh enemy mỗi 2 giây
+    if (spawnTimer >= 1.0f)  // Sinh enemy mỗi 2 giây
     {
         EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr);
         Entity enemy = factory.createEntity("enemy", "Slime");
+        auto playerPos = transformMgr.getComponent(playerEntity);
+
         if (enemy != 0)
         {
             if (auto transform = transformMgr.getComponent(enemy))
             {
-                transform->x = 200.0f;
-                transform->y = 200.0f;
+                auto spawnPoint = GetRandomSpawnPosition(playerPos, 100.0f, 200.0f);
+                transform->x = spawnPoint.x;
+                transform->y = spawnPoint.y;
             }
             if (auto animationComp = animationMgr.getComponent(enemy))
             {
@@ -148,4 +153,23 @@ void SpawnSystem::update(float dt)
 Entity SpawnSystem::getPlayerEntity() const
 {
     return playerEntity;
+}
+
+ax::Vec2 SpawnSystem:: GetRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius)
+{
+    // Generate a random angle between 0 and 2π.
+    float theta = static_cast<float>(rand()) / RAND_MAX * 2.0f * M_PI;
+
+    // Generate a uniform random number between 0 and 1.
+    float u = static_cast<float>(rand()) / RAND_MAX;
+
+    // Compute the radius so that spawn points are uniformly distributed in area.
+    float r = sqrt(u * (outerRadius * outerRadius - innerRadius * innerRadius) + innerRadius * innerRadius);
+
+    // Calculate spawn position
+    ax::Vec2 spawnPosition;
+    spawnPosition.x = playerPosition->x + r * cos(theta);
+    spawnPosition.y = playerPosition->y + r * sin(theta);
+
+    return spawnPosition;
 }
