@@ -19,14 +19,14 @@ void JoystickSystem::init()
     //joystickBase->setPosition(Vec2(640, 300)); //Không còn cố định vị trí
     joystickBase->setOpacity(128);
     joystickBase->setVisible(false);  //Ẩn joystick
-    parentLayer->addChild(joystickBase, 10);
+    parentLayer->addChild(joystickBase, 9);
     joystickBase->setGlobalZOrder(9);
 
     joystickHandle = Sprite::create("Handle.png");
     //joystickHandle->setPosition(joystickBase->getPosition()); //Không còn cố định vị trí
     joystickHandle->setOpacity(128);
     joystickHandle->setVisible(false);  // Ẩn joystick
-    parentLayer->addChild(joystickHandle, 10);
+    parentLayer->addChild(joystickHandle, 9);
     joystickHandle->setGlobalZOrder(9);
 
     maxDistance = joystickBase->getContentSize().width / 2;

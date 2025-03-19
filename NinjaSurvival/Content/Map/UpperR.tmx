@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="1" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAMA6A+s1X/sipkkNBLqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq6vsD6ULA8Q==
+  </data>
+ </layer>
+ <layer id="3" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+ <layer id="2" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt08EJACAMBMF87b8TrU3fpgghYGYgbAO5OSJW3tSW3XlH27b6/9T+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+tf7/1P7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f71XQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAHF+SPuS0=
+  </data>
+ </layer>
+ <layer id="4" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>

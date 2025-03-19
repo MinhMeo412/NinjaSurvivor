@@ -22,17 +22,13 @@ void MapSystem::init()
 
     //Lấy data map
     const auto& map = gameData->getMaps().at(selectedMapName);
-
     //Xác định kích thước grid qua data map
     gridSize = Vec2(map.mapWidth, map.mapHeight);
-
-    chunkSize = Vec2(256, 256); // 128 tile * 16 pixel = 2048x2048 pixel
+    chunkSize = Vec2(2048, 2048); // 128 tile * 16 pixel = 2048x2048 pixel  //Sử dụng 256x256 nếu dùng LargeMap để test
     //Cấp bộ nhớ cho grid với gridSize.y hàng và gridSize.x phần tử mỗi hàng
     grid.resize(gridSize.y, std::vector<Chunk>(gridSize.x));
 
-    //Tạo chunks
-    loadMapChunks();
-
+    //Lấy tên player
     std::string selectedCharacterName = GameData::getInstance()->getSelectedCharacter();
     //truy cập template (có chứa dữ liệu vị trí player spawn)
     const auto& playerTemplate = gameData->getEntityTemplates().at("player").at(selectedCharacterName);  // type & name
@@ -45,112 +41,130 @@ void MapSystem::init()
     float chunkYWorldPos  = (gridSize.y - currentChunk.y - 1) * chunkSize.y;
     ax::Vec2 localPos     = ax::Vec2(spawnPos.x - chunkXWorldPos, spawnPos.y - chunkYWorldPos);
 
-    bool inUpperHalf = localPos.y > chunkSize.y / 2;
-    bool inRightHalf = localPos.x > chunkSize.x / 2;
+    bool inUpperHalf = localPos.y > chunkSize.y / 2; //Kiểm tra xem có ở nửa trên không
+    bool inRightHalf = localPos.x > chunkSize.x / 2; //Kiểm tra xem có ở nửa bên phải không
 
-    std::string currentQuadrant;
-    if (inUpperHalf && inRightHalf)
-        currentQuadrant = "UR";
-    else if (inUpperHalf && !inRightHalf)
-        currentQuadrant = "UL";
-    else if (!inUpperHalf && inRightHalf)
-        currentQuadrant = "LR";
-    else
-        currentQuadrant = "LL";
+    std::string currentQuadrant = (inUpperHalf && inRightHalf) ? "UR" : (inUpperHalf ? "UL" : (inRightHalf ? "LR" : "LL"));
+
+    // Load ngay lập tức các chunk cần thiết cho visibility lần đầu
+    loadChunk(currentChunk);  // Chunk hiện tại
+
+    drawCollisionOutline(grid[currentChunk.y][currentChunk.x]);  // Vẽ viền ngay sau khi load để xem collision
+
+    std::vector<Vec2> quadrantChunks = getQuadrantChunks(currentQuadrant, currentChunk);
+    for (const Vec2& pos : quadrantChunks)
+    {
+        if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
+        {
+            loadChunk(pos);
+            drawCollisionOutline(grid[pos.y][pos.x]);  // Vẽ viền ngay sau khi load để xem collision
+        }
+    }
 
     // Cập nhật visibility lần đầu tiên
     updateChunkVisibility(spawnPos, currentChunk, currentQuadrant);
-}
+    lastPlayerChunk = currentChunk;
+    lastQuadrant    = currentQuadrant;
 
-void MapSystem::loadMapChunks()
-{
-    auto gameData               = GameData::getInstance();
-    std::string selectedMapName = gameData->getSelectedMap();
-    const auto& map = gameData->getMaps().at(selectedMapName);
-
-    //Duyệt qua từng vị trí chunk trong grid
+    // Thêm các chunk còn lại vào queue để load bất đồng bộ
     for (int y = 0; y < gridSize.y; y++)
     {
         for (int x = 0; x < gridSize.x; x++)
         {
-            //Truy cập struct chunk tại vị trí x,y
-            Chunk& chunk  = grid[y][x];
-            //Gán cho giá trị gridPos trong struct = Vec2(x, y)
-            chunk.gridPos = Vec2(x, y);
-
-            // Chọn file TMX tương ứng vị trí chunk
-            std::string tmxFile;
-            if (x == 0 && y == 0)
-                tmxFile = getRandomTMXFile(map.upLeftCornerTMXFile);  // Góc trên trái
-            else if (x == gridSize.x - 1 && y == 0)
-                tmxFile = getRandomTMXFile(map.upRightCornerTMXFile);  // Góc trên phải
-            else if (x == 0 && y == gridSize.y - 1)
-                tmxFile = getRandomTMXFile(map.downLeftCornerTMXFile);  // Góc dưới trái
-            else if (x == gridSize.x - 1 && y == gridSize.y - 1)
-                tmxFile = getRandomTMXFile(map.downRightCornerTMXFile);  // Góc dưới phải
-            else if (y == 0)
-                tmxFile = getRandomTMXFile(map.upRearTMXFile);  // Hàng trên
-            else if (y == gridSize.y - 1)
-                tmxFile = getRandomTMXFile(map.downRearTMXFile);  // Hàng dưới
-            else if (x == 0)
-                tmxFile = getRandomTMXFile(map.leftRearTMXFile);  // Cột trái
-            else if (x == gridSize.x - 1)
-                tmxFile = getRandomTMXFile(map.rightRearTMXFile);  // Cột phải
-            else
-                tmxFile = getRandomTMXFile(map.middleTMXFile);
-
-            // Kiểm tra nếu không có file hợp lệ
-            if (tmxFile.empty())
-            {
-                AXLOG("MapSystem: No valid TMX file found for chunk (%d, %d)", x, y);
-                continue;
-            }
-
-            chunk.tiledMap      = TMXTiledMap::create(tmxFile);
-            if (!chunk.tiledMap)
-            {
-                AXLOG("MapSystem: Failed to load TMX file %s", tmxFile.c_str());
-                continue;
-            }
-
-            Vec2 worldPos = Vec2(x * chunkSize.x, (gridSize.y - 1 - y) * chunkSize.y);
-            chunk.tiledMap->setPosition(worldPos);
-            chunk.tiledMap->setVisible(false);  // Ẩn mặc định
-            parentScene->addChild(chunk.tiledMap,0);
-
-            auto overlayLayer = chunk.tiledMap->getLayer("OverlayLayer");
-            overlayLayer->setGlobalZOrder(1);
-
-            // Vẽ viền đỏ cho CollisionLayer
-            auto collisionLayer = chunk.tiledMap->getLayer("CollisionLayer");
-            auto drawNode1 = DrawNode::create();
-            parentScene->addChild(drawNode1,5);
-            if (collisionLayer)
-            {
-                Size layerSize = collisionLayer->getLayerSize();
-                Size tileSize  = chunk.tiledMap->getTileSize();
-                Vec2 mapPos    = chunk.tiledMap->getPosition();
-
-                for (int x = 0; x < layerSize.width; x++)
-                {
-                    for (int y = 0; y < layerSize.height; y++)
-                    {
-                        if (collisionLayer->getTileAt(Vec2(x, y)))
-                        {
-                            // Tính toán tọa độ thế giới của ô
-                            Vec2 tilePos = Vec2(mapPos.x + x * tileSize.width,
-                                                mapPos.y + (layerSize.height - y - 1) * tileSize.height);
-                            // Vẽ hình chữ nhật viền đỏ
-                            drawNode1->drawRect(tilePos,                                          // Góc dưới trái
-                                                tilePos + Vec2(tileSize.width, tileSize.height),  // Góc trên phải
-                                                Color4F::RED                                      // Màu đỏ
-                            );
-                        }
-                    }
-                }
-            }
+            Vec2 pos(x, y);
+            if (!grid[y][x].tiledMap)  // Nếu chưa load (chưa có tiledMap)
+                chunkLoadQueue.push(pos); //Push vào hàng đợi
         }
     }
+    scheduleChunkLoading();
+}
+
+void MapSystem::scheduleChunkLoading()
+{
+    if (!isLoadingChunks && !chunkLoadQueue.empty())
+    {
+        isLoadingChunks = true;
+        Director::getInstance()->getScheduler()->schedule([this](float dt) { loadNextChunk(dt); }, this, 0.0f, false,
+                                                          "chunk_loader");
+    }
+}
+
+void MapSystem::loadNextChunk(float dt)
+{
+    if (chunkLoadQueue.empty())
+    {
+        isLoadingChunks = false;
+        Director::getInstance()->getScheduler()->unschedule("chunk_loader", this);
+        AXLOG("MapSystem: All chunks loaded asynchronously");
+        return;
+    }
+
+    // Load 2 chunk mỗi frame với i < 2
+    for (int i = 0; i < 1 && !chunkLoadQueue.empty(); i++)
+    {
+        Vec2 chunkPos = chunkLoadQueue.front();
+        chunkLoadQueue.pop();
+        if (!grid[chunkPos.y][chunkPos.x].tiledMap)  // Chỉ load nếu chưa có tiledMap
+            loadChunk(chunkPos);
+    }
+}
+
+void MapSystem::loadChunk(const Vec2& chunkPos)
+{
+    auto gameData               = GameData::getInstance();
+    std::string selectedMapName = gameData->getSelectedMap();
+    const auto& map             = gameData->getMaps().at(selectedMapName);
+
+    Chunk& chunk  = grid[chunkPos.y][chunkPos.x];
+    chunk.gridPos = chunkPos;
+
+    std::string tmxFile;
+    if (chunkPos.x == 0 && chunkPos.y == 0)
+        tmxFile = getRandomTMXFile(map.upLeftCornerTMXFile);
+    else if (chunkPos.x == gridSize.x - 1 && chunkPos.y == 0)
+        tmxFile = getRandomTMXFile(map.upRightCornerTMXFile);
+    else if (chunkPos.x == 0 && chunkPos.y == gridSize.y - 1)
+        tmxFile = getRandomTMXFile(map.downLeftCornerTMXFile);
+    else if (chunkPos.x == gridSize.x - 1 && chunkPos.y == gridSize.y - 1)
+        tmxFile = getRandomTMXFile(map.downRightCornerTMXFile);
+    else if (chunkPos.y == 0)
+        tmxFile = getRandomTMXFile(map.upRearTMXFile);
+    else if (chunkPos.y == gridSize.y - 1)
+        tmxFile = getRandomTMXFile(map.downRearTMXFile);
+    else if (chunkPos.x == 0)
+        tmxFile = getRandomTMXFile(map.leftRearTMXFile);
+    else if (chunkPos.x == gridSize.x - 1)
+        tmxFile = getRandomTMXFile(map.rightRearTMXFile);
+    else
+        tmxFile = getRandomTMXFile(map.middleTMXFile);
+
+    if (tmxFile.empty())
+    {
+        AXLOG("MapSystem: No valid TMX file for chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
+        return;
+    }
+
+    chunk.tiledMap = TMXTiledMap::create(tmxFile);
+    if (!chunk.tiledMap)
+    {
+        drawCollisionOutline(chunk);
+        AXLOG("MapSystem: Failed to load TMX file %s", tmxFile.c_str());
+        return;
+    }
+
+    Vec2 worldPos = Vec2(chunkPos.x * chunkSize.x, (gridSize.y - 1 - chunkPos.y) * chunkSize.y);
+    chunk.tiledMap->setPosition(worldPos);
+    chunk.tiledMap->setVisible(false);  // Mặc định ẩn
+    parentScene->addChild(chunk.tiledMap, 0);
+
+    auto overlayLayer = chunk.tiledMap->getLayer("OverlayLayer");
+    if (overlayLayer)
+        overlayLayer->setGlobalZOrder(1);
+
+    // Vẽ viền ngay sau khi load chunk
+    drawCollisionOutline(chunk);
+
+    AXLOG("Loaded chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
 }
 
 std::string MapSystem::getRandomTMXFile(const std::vector<std::string>& tmxFiles)
@@ -181,15 +195,8 @@ void MapSystem::onPlayerPositionChanged(const Vec2& playerPos)
     bool inUpperHalf = localPos.y > chunkSize.y / 2;
     bool inRightHalf = localPos.x > chunkSize.x / 2;
 
-    std::string currentQuadrant;
-    if (inUpperHalf && inRightHalf)
-        currentQuadrant = "UR";
-    else if (inUpperHalf && !inRightHalf)
-        currentQuadrant = "UL";
-    else if (!inUpperHalf && inRightHalf)
-        currentQuadrant = "LR";
-    else
-        currentQuadrant = "LL";
+    std::string currentQuadrant =
+        (inUpperHalf && inRightHalf) ? "UR" : (inUpperHalf ? "UL" : (inRightHalf ? "LR" : "LL"));
 
     AXLOG("Current quadrant: %s", currentQuadrant.c_str());
 
@@ -214,13 +221,23 @@ void MapSystem::updateChunkVisibility(const Vec2& playerPos,
                                       const Vec2& currentChunk,
                                       const std::string& currentQuadrant)
 {
+    // Đảm bảo chunk hiện tại đã load
+    if (!grid[currentChunk.y][currentChunk.x].tiledMap)
+        loadChunk(currentChunk);
+
     // Luôn giữ chunk hiện tại visible
-    if (currentChunk.x >= 0 && currentChunk.x < gridSize.x && currentChunk.y >= 0 && currentChunk.y < gridSize.y)
-    {
-        Chunk& chunk    = grid[currentChunk.y][currentChunk.x];
-        chunk.isVisible = true;
-        chunk.tiledMap->setVisible(true);
-    }
+    //if (currentChunk.x >= 0 && currentChunk.x < gridSize.x && currentChunk.y >= 0 && currentChunk.y < gridSize.y)
+    //{
+    //    Chunk& current    = grid[currentChunk.y][currentChunk.x];
+    //    current.isVisible = true;
+    //    current.tiledMap->setVisible(true);
+    //}
+
+    Chunk& current    = grid[currentChunk.y][currentChunk.x];
+    current.isVisible = true;
+    current.tiledMap->setVisible(true);
+    if (!current.tiledMap->getChildByTag(999))  // Kiểm tra và vẽ lại viền nếu cần
+        drawCollisionOutline(current);
 
     // Chỉ cập nhật khi chunk hoặc góc phần tư thay đổi
     if (currentChunk != lastPlayerChunk || currentQuadrant != lastQuadrant)
@@ -238,7 +255,8 @@ void MapSystem::updateChunkVisibility(const Vec2& playerPos,
                     {
                         Chunk& chunk    = grid[pos.y][pos.x];
                         chunk.isVisible = false;
-                        chunk.tiledMap->setVisible(false);
+                        if (chunk.tiledMap)
+                            chunk.tiledMap->setVisible(false);
                     }
                 }
             }
@@ -251,15 +269,39 @@ void MapSystem::updateChunkVisibility(const Vec2& playerPos,
     {
         if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
         {
+            if (!grid[pos.y][pos.x].tiledMap)
+            {
+                loadChunk(pos);  // Load ngay nếu chưa có
+            }
+
             Chunk& chunk = grid[pos.y][pos.x];
             // Chỉ set true nếu chưa visible (tránh lặp)
             if (!chunk.isVisible)
             {
                 chunk.isVisible = true;
                 chunk.tiledMap->setVisible(true);
+
+                // Kiểm tra và vẽ lại viền nếu chưa có DrawNode
+                if (!chunk.tiledMap->getChildByTag(999))
+                    drawCollisionOutline(chunk);
             }
         }
     }
+
+    // Thêm các chunk mới vào queue nếu chưa load
+    for (int y = 0; y < gridSize.y; y++)
+    {
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            Vec2 pos(x, y);
+            if (!grid[y][x].tiledMap && std::find(newChunks.begin(), newChunks.end(), pos) == newChunks.end() &&
+                pos != currentChunk)
+            {
+                chunkLoadQueue.push(pos);
+            }
+        }
+    }
+    scheduleChunkLoading();
 
     lastQuadrant    = currentQuadrant;
     lastPlayerChunk = currentChunk;
@@ -293,4 +335,38 @@ std::vector<Vec2> MapSystem::getQuadrantChunks(const std::string& quadrant, cons
         chunks.push_back(Vec2(chunkPos.x - 1, chunkPos.y + 1));  // Chéo dưới-trái
     }
     return chunks;
+}
+
+void MapSystem::drawCollisionOutline(Chunk& chunk)
+{
+    if (!chunk.tiledMap)
+        return;  // Không có tiledMap thì bỏ qua
+
+    // Nếu đã có DrawNode với tag 999 thì không vẽ lại
+    if (chunk.tiledMap->getChildByTag(999))
+        return;
+
+    auto collisionLayer = chunk.tiledMap->getLayer("CollisionLayer");
+    if (collisionLayer)
+    {
+        auto drawNode  = DrawNode::create();
+        Size layerSize = collisionLayer->getLayerSize();
+        Size tileSize  = chunk.tiledMap->getTileSize();
+
+        for (int x = 0; x < layerSize.width; x++)
+        {
+            for (int y = 0; y < layerSize.height; y++)
+            {
+                if (collisionLayer->getTileAt(Vec2(x, y)))
+                {
+                    Vec2 tilePos =
+                        Vec2(x * tileSize.width, (layerSize.height - y - 1) * tileSize.height);
+                    drawNode->drawRect(tilePos, tilePos + Vec2(tileSize.width, tileSize.height), Color4F::RED);
+                }
+            }
+        }
+        drawNode->setTag(999);
+        chunk.tiledMap->addChild(drawNode, 10);
+        AXLOG("Drew collision outline for chunk (%d, %d)", (int)chunk.gridPos.x, (int)chunk.gridPos.y);
+    }
 }

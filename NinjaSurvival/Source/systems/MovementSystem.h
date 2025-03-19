@@ -9,6 +9,7 @@ class MovementSystem : public System
 {
 public:
     MovementSystem(EntityManager& em,
+                   ComponentManager<IdentityComponent>& im,
                    ComponentManager<TransformComponent>& tm,
                    ComponentManager<VelocityComponent>& vm,
                    ComponentManager<AnimationComponent>& am,
@@ -19,16 +20,31 @@ public:
 
 private:
     EntityManager& entityManager;
+    ComponentManager<IdentityComponent>& identityMgr;
     ComponentManager<TransformComponent>& transformMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
 
-    ax::TMXTiledMap* getChunkTileMap(const ax::Vec2& position);  // Lấy chunk từ MapSystem
+    // Định nghĩa một kiểu hàm MoveFunc nhận Entity và float, trả về void
+    // std::function khai báo kiểu hàm với tên bất kỳ có 2 tham số và kiểu trả về là void
+    using MoveFunc = std::function<void(Entity, float)>;
+    // Một map lưu cặp key(kiểu string entity type) và value(kiểu MoveFunc)
+    std::unordered_map<std::string, MoveFunc> movementStrategies;
 
-    ax::Vec2 resolveCollision(Entity entity, const ax::Vec2& currentPos, const ax::Vec2& moveStep);
-    bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
-    ax::Vec2 convertToTileCoord(const ax::Vec2& position, ax::TMXTiledMap* tiledMap);
+    void updateEntityMovement(Entity entity, float dt);  // Hàm chung bao gồm xử lý sub-stepping
+    // Các hàm di chuyển trả về velocity cho entity
+    void movePlayer(Entity entity, float dt);      // Di chuyển player
+    void moveEnemySlime(Entity entity, float dt);  // Di chuyển cho Slime
+    void moveItem(Entity entity, float dt); //Khi item được "nhặt"
+    // Thêm cjo các entity khác: moveBossX, moveProjectileY...
+
+    // Unordered_map lưu thời gian giãn cách để cập nhật hướng di chuyển cho từng Slime
+    // Có thể xem xét bỏ nếu không cần thiết (nếu bỏ thì phải kiểm tra quá nhiều entity mỗi frame, nếu giữ thì entity nào cũng cần có)
+    std::unordered_map<Entity, float> slimeDirectionTimers;
+
+
+
 };
 
 #endif  // __MOVEMENT_SYSTEM_H__

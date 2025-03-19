@@ -22,8 +22,6 @@ public:
 
     Entity getPlayerEntity() const;
 
-    ax::Vec2 GetRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius);
-
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;

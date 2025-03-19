@@ -3,8 +3,6 @@
 #include "SystemManager.h"
 #include "GameData.h"
 #include "EntityFactory.h"
-#include <cmath>
-#include <cstdlib>
 
 SpawnSystem::SpawnSystem(EntityManager& em,
                            ComponentManager<IdentityComponent>& im,
@@ -84,24 +82,47 @@ void SpawnSystem::init()
             AXLOG("Sprite texture ID: %p", spriteComp->frame->getTexture());
         }
     }
+
+
+
+    // Spawn một enemy "Slime"  để test va chạm
+    Entity enemyEntity = factory.createEntity("enemy", "Slime");
+    if (enemyEntity != 0)
+    {
+        if (auto transform = transformMgr.getComponent(enemyEntity))
+        {
+            transform->x = 800.0f;  // Vị trí cố định cho enemy
+            transform->y = 1100.0f;
+            AXLOG("SpawnSystem: Created enemy Slime with ID %u at (%f, %f)", enemyEntity, transform->x, transform->y);
+        }
+        if (auto animationComp = animationMgr.getComponent(enemyEntity))
+        {
+            animationComp->initializeAnimations();
+            animationComp->currentState = "idle";
+            AXLOG("Spawned enemy animation for entity %u", enemyEntity);
+        }
+        if (auto spriteComp = spriteMgr.getComponent(enemyEntity))
+        {
+            spriteComp->initializeSprite();
+            AXLOG("Spawned enemy sprite for entity %u", enemyEntity);
+        }
+    }
 }
 
 void SpawnSystem::update(float dt)
 {
+    /* chưa dùng
     spawnTimer += dt;
-    if (spawnTimer >= 1.0f)  // Sinh enemy mỗi 2 giây
+    if (spawnTimer >= 2.0f)  // Sinh enemy mỗi 2 giây
     {
         EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr);
         Entity enemy = factory.createEntity("enemy", "Slime");
-        auto playerPos = transformMgr.getComponent(playerEntity);
-
         if (enemy != 0)
         {
             if (auto transform = transformMgr.getComponent(enemy))
             {
-                auto spawnPoint = GetRandomSpawnPosition(playerPos, 100.0f, 200.0f);
-                transform->x = spawnPoint.x;
-                transform->y = spawnPoint.y;
+                transform->x = 700.0f;
+                transform->y = 1000.0f;
             }
             if (auto animationComp = animationMgr.getComponent(enemy))
             {
@@ -147,29 +168,10 @@ void SpawnSystem::update(float dt)
             spawnTimer = 0.0f;
         }
     }
-    
+    */
 }
 
 Entity SpawnSystem::getPlayerEntity() const
 {
     return playerEntity;
-}
-
-ax::Vec2 SpawnSystem:: GetRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius)
-{
-    // Generate a random angle between 0 and 2π.
-    float theta = static_cast<float>(rand()) / RAND_MAX * 2.0f * M_PI;
-
-    // Generate a uniform random number between 0 and 1.
-    float u = static_cast<float>(rand()) / RAND_MAX;
-
-    // Compute the radius so that spawn points are uniformly distributed in area.
-    float r = sqrt(u * (outerRadius * outerRadius - innerRadius * innerRadius) + innerRadius * innerRadius);
-
-    // Calculate spawn position
-    ax::Vec2 spawnPosition;
-    spawnPosition.x = playerPosition->x + r * cos(theta);
-    spawnPosition.y = playerPosition->y + r * sin(theta);
-
-    return spawnPosition;
 }
