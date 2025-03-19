@@ -43,7 +43,7 @@ bool GameLoadingScene::init()
 void GameLoadingScene::update(float dt)
 {
     delayTimer += dt;
-    if (delayTimer >= 1.0f) //Delay 1s
+    if (delayTimer >= 1.5f) //Delay 1s
     {
         if (nextScene)
         {

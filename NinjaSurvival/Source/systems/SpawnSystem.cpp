@@ -3,8 +3,6 @@
 #include "SystemManager.h"
 #include "GameData.h"
 #include "EntityFactory.h"
-#include <cmath>
-#include <cstdlib>
 
 SpawnSystem::SpawnSystem(EntityManager& em,
                            ComponentManager<IdentityComponent>& im,
@@ -84,78 +82,111 @@ void SpawnSystem::init()
             AXLOG("Sprite texture ID: %p", spriteComp->frame->getTexture());
         }
     }
+
+
+
+    // Spawn một enemy "Slime"  để test va chạm
+    Entity enemyEntity = factory.createEntity("enemy", "Slime");
+    if (enemyEntity != 0)
+    {
+        if (auto transform = transformMgr.getComponent(enemyEntity))
+        {
+            transform->x = 800.0f;  // Vị trí cố định cho enemy
+            transform->y = 1100.0f;
+            AXLOG("SpawnSystem: Created enemy Slime with ID %u at (%f, %f)", enemyEntity, transform->x, transform->y);
+        }
+        if (auto animationComp = animationMgr.getComponent(enemyEntity))
+        {
+            animationComp->initializeAnimations();
+            animationComp->currentState = "idle";
+            AXLOG("Spawned enemy animation for entity %u", enemyEntity);
+        }
+        if (auto spriteComp = spriteMgr.getComponent(enemyEntity))
+        {
+            spriteComp->initializeSprite();
+            AXLOG("Spawned enemy sprite for entity %u", enemyEntity);
+        }
+    }
 }
 
 void SpawnSystem::update(float dt)
 {
     spawnTimer += dt;
-    if (spawnTimer >= 1.0f)  // Sinh enemy mỗi 2 giây
-    {
-        EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr);
-        Entity enemy = factory.createEntity("enemy", "Slime");
-        auto playerPos = transformMgr.getComponent(playerEntity);
-
-        if (enemy != 0)
+    
+        if (spawnTimer >= 2.0f)  // Sinh enemy mỗi 2 giây
         {
-            if (auto transform = transformMgr.getComponent(enemy))
+            for (int i = 0; i < 5; i++)
             {
-                auto spawnPoint = GetRandomSpawnPosition(playerPos, 100.0f, 200.0f);
-                transform->x = spawnPoint.x;
-                transform->y = spawnPoint.y;
-            }
-            if (auto animationComp = animationMgr.getComponent(enemy))
+
+            EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr,
+                                  hitboxMgr);
+            Entity enemy   = factory.createEntity("enemy", "Slime");
+            auto playerPos = transformMgr.getComponent(playerEntity);
+
+            if (enemy != 0)
             {
-                animationComp->initializeAnimations();
-                animationComp->currentState = "idle";
-
-                AXLOG("Create animation");
-
-                AXLOG("AnimationComponent Info:");
-                AXLOG("plist: %s", animationComp->plist.c_str());
-                AXLOG("frameDuration: %f", animationComp->frameDuration);
-                AXLOG("currentState: %s", animationComp->currentState.c_str());
-
-                AXLOG("Frames Map:");
-                for (const auto& [state, frameList] : animationComp->frames)
+                if (auto transform = transformMgr.getComponent(enemy))
                 {
-                    std::string frameNames;
-                    for (const auto& frameName : frameList)
+                    auto spawnPoint = getRandomSpawnPosition(playerPos, 100.0f, 200.0f);
+                    transform->x    = spawnPoint.x;
+                    transform->y    = spawnPoint.y;
+                }
+                if (auto animationComp = animationMgr.getComponent(enemy))
+                {
+                    animationComp->initializeAnimations();
+                    animationComp->currentState = "idle";
+
+                    AXLOG("Create animation");
+
+                    AXLOG("AnimationComponent Info:");
+                    AXLOG("plist: %s", animationComp->plist.c_str());
+                    AXLOG("frameDuration: %f", animationComp->frameDuration);
+                    AXLOG("currentState: %s", animationComp->currentState.c_str());
+
+                    AXLOG("Frames Map:");
+                    for (const auto& [state, frameList] : animationComp->frames)
                     {
-                        frameNames += frameName + " ";
+                        std::string frameNames;
+                        for (const auto& frameName : frameList)
+                        {
+                            frameNames += frameName + " ";
+                        }
+                        AXLOG("  %s: [%s]", state.c_str(), frameNames.c_str());
                     }
-                    AXLOG("  %s: [%s]", state.c_str(), frameNames.c_str());
                 }
-            }
-            if (auto spriteComp = spriteMgr.getComponent(enemy))
-            {
-                spriteComp->initializeSprite();
-                AXLOG("Create sprite");
-
-                AXLOG("SpriteComponent Info:");
-                AXLOG("Filename: %s", spriteComp->filename.c_str());
-
-                if (spriteComp->frame)
+                if (auto spriteComp = spriteMgr.getComponent(enemy))
                 {
-                    AXLOG("Sprite is initialized.");
-                    AXLOG("Sprite position: (%.2f, %.2f)", spriteComp->frame->getPositionX(),
-                          spriteComp->frame->getPositionY());
-                    AXLOG("Sprite scale: (%.2f, %.2f)", spriteComp->frame->getScaleX(), spriteComp->frame->getScaleY());
-                    AXLOG("Sprite visible: %s", spriteComp->frame->isVisible() ? "true" : "false");
-                    AXLOG("Sprite texture ID: %p", spriteComp->frame->getTexture());
+                    spriteComp->initializeSprite();
+                    AXLOG("Create sprite");
+
+                    AXLOG("SpriteComponent Info:");
+                    AXLOG("Filename: %s", spriteComp->filename.c_str());
+
+                    if (spriteComp->frame)
+                    {
+                        AXLOG("Sprite is initialized.");
+                        AXLOG("Sprite position: (%.2f, %.2f)", spriteComp->frame->getPositionX(),
+                              spriteComp->frame->getPositionY());
+                        AXLOG("Sprite scale: (%.2f, %.2f)", spriteComp->frame->getScaleX(),
+                              spriteComp->frame->getScaleY());
+                        AXLOG("Sprite visible: %s", spriteComp->frame->isVisible() ? "true" : "false");
+                        AXLOG("Sprite texture ID: %p", spriteComp->frame->getTexture());
+                    }
                 }
+                spawnTimer = 0.0f;
             }
-            spawnTimer = 0.0f;
         }
     }
-    
 }
+    
+
 
 Entity SpawnSystem::getPlayerEntity() const
 {
     return playerEntity;
 }
 
-ax::Vec2 SpawnSystem:: GetRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius)
+ax::Vec2 SpawnSystem::getRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius)
 {
     // Generate a random angle between 0 and 2π.
     float theta = static_cast<float>(rand()) / RAND_MAX * 2.0f * M_PI;

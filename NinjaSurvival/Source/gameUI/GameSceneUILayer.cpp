@@ -49,7 +49,7 @@ bool GameSceneUILayer::init()
     auto cameraSystem = SystemManager::getInstance()->getSystem<CameraSystem>();
     if (cameraSystem && cameraSystem->getCamera())
     {
-        Vec2 cameraOffsetPos = cameraSystem->getCamera()->getPosition();
+        Vec2 cameraOffsetPos = cameraSystem->getCamera()->getPosition() - _director->getVisibleSize() / 2;
         this->setPosition(cameraOffsetPos);
     }
 
@@ -61,7 +61,7 @@ void GameSceneUILayer::update(float dt)
     auto cameraSystem = SystemManager::getInstance()->getSystem<CameraSystem>();
     if (cameraSystem && cameraSystem->getCamera())
     {
-        Vec2 cameraOffsetPos = cameraSystem->getCamera()->getPosition() -_director->getVisibleSize() / 2;
+        Vec2 cameraOffsetPos = cameraSystem->getCamera()->getPosition() - _director->getVisibleSize() / 2;
         this->setPosition(cameraOffsetPos);
     }
 }

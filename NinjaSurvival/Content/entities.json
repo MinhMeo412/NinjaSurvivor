@@ -6,8 +6,8 @@
             "available": true,
             "components": {
                 "transform": {
-                    "x": 300.0,
-                    "y": 300.0
+                    "x": 700.0,
+                    "y": 1000.0
                 },
                 "velocity": {
                     "vx": 0.0,
@@ -18,7 +18,7 @@
                     "height": 16.0
                 },
                 "animation": {
-                    "plist": "character.plist",
+                    "plist": "Entity/Character/character.plist",
                     "frames": {
                         "moveDown": [
                             "./character_down0",
@@ -43,7 +43,7 @@
                 },
                 "sprite": {
                     "frame": "HelloWorld.png",
-                    "gameSceneFrame": "character1.png"
+                    "gameSceneFrame": "Entity/Character/character1.png"
                 }
             }
         },
@@ -108,7 +108,7 @@
                     "height": 16.0
                 },
                 "animation": {
-                    "plist": "slime.plist",
+                    "plist": "Entity/Enemy/slime.plist",
                     "frames": {
                         "moveDown": [
                             "./slime_down0",
@@ -135,8 +135,8 @@
                     "frameDuration": 0.2
                 },
                 "sprite": {
-                    "frame": "slime1.png",
-                    "gameSceneFrame": "slime1.png"
+                    "frame": "Entity/Enemy/slime1.png",
+                    "gameSceneFrame": "Entity/Enemy/slime1.png"
                 }
             }
         }

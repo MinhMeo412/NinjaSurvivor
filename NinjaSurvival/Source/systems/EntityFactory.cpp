@@ -10,7 +10,7 @@ Entity EntityFactory::createEntity(const std::string& type, const std::string& n
 
     if (!templ.type.empty() && !templ.name.empty())
     {
-        IdentityComponent identity{templ.type, templ.name};
+        IdentityComponent identity(templ.type, templ.name);
         identityMgr.addComponent(entity, identity);
     }
     if (templ.transform)

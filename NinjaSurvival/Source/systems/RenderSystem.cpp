@@ -56,7 +56,7 @@ void RenderSystem::initializeEntitySprite(Entity entity)
         {
             sprite->gameSceneFrame->setPosition(transform->x, transform->y);
         }
-        // Chạy animation mặc định (idle) nếu có
+        // Chạy animation mặc định (idle)
         //if (auto animation = animationMgr.getComponent(entity))
         //{
         //    animation->currentState = "idle";   // Trạng thái mặc định

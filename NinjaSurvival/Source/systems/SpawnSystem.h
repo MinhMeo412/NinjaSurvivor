@@ -22,7 +22,7 @@ public:
 
     Entity getPlayerEntity() const;
 
-    ax::Vec2 GetRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius);
+    ax::Vec2 getRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius);
 
 private:
     EntityManager& entityManager;
