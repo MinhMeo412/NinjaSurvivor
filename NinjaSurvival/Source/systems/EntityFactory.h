@@ -5,7 +5,6 @@
 #include "components/ComponentManager.h"
 #include "entities/EntityManager.h"
 #include "axmol.h"
-#include <cstdio>
 
 class EntityFactory
 {
@@ -16,7 +15,11 @@ public:
                  ComponentManager<SpriteComponent>& sm,
                  ComponentManager<AnimationComponent>& am,
                  ComponentManager<VelocityComponent>& vm,
-                 ComponentManager<HitboxComponent>& hm)
+                 ComponentManager<HitboxComponent>& hm,
+                 ComponentManager<HealthComponent>& hem,
+                 ComponentManager<AttackComponent> & atm,
+                 ComponentManager<CooldownComponent> & cdm,
+                 ComponentManager<SpeedComponent>& spm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -24,6 +27,10 @@ public:
         , animationMgr(am)
         , velocityMgr(vm)
         , hitboxMgr(hm)
+        , healthMgr(hem)
+        , attackMgr(atm)
+        , cooldownMgr(cdm)
+        , speedMgr(spm)
     {}
     Entity createEntity(const std::string& type, const std::string& name);
 
@@ -35,6 +42,10 @@ private:
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
+    ComponentManager<HealthComponent>& healthMgr;
+    ComponentManager<AttackComponent>& attackMgr;
+    ComponentManager<CooldownComponent>& cooldownMgr;
+    ComponentManager<SpeedComponent>& speedMgr;
 };
 
 #endif  // __ENTITY_FACTORY_H__

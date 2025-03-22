@@ -28,9 +28,15 @@ private:
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
 
-    ax::Scene* scene = nullptr;
+    ax::Scene* scene                         = nullptr;
+    ax::SpriteBatchNode* enemyBatchNode      = nullptr;
+    //ax::SpriteBatchNode* bossBatchNode       = nullptr;
+    //ax::SpriteBatchNode* itemWeaponBatchNode = nullptr;
+    ax::DrawNode* debugDrawNode              = nullptr;
 
-    void initializeEntitySprite(Entity entity);
+    void addSpriteToScene(Entity entity);
+    void updateEntitySprite(Entity entity, float dt);
+    void updateDebugDraw();
 };
 
 

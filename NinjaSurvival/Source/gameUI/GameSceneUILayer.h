@@ -12,10 +12,10 @@ public:
     void update(float dt) override;
 
 private:
-    ax::MenuItemImage* closeButton;
+    ax::MenuItemImage* pauseButton;
 
 
-    void menuCloseCallback(ax::Object* sender);
+    void gamePauseCallback(ax::Object* sender);
 };
 
 #endif  // __GAMESCENE_UILAYER_H__

@@ -198,7 +198,7 @@ void MapSystem::onPlayerPositionChanged(const Vec2& playerPos)
     std::string currentQuadrant =
         (inUpperHalf && inRightHalf) ? "UR" : (inUpperHalf ? "UL" : (inRightHalf ? "LR" : "LL"));
 
-    AXLOG("Current quadrant: %s", currentQuadrant.c_str());
+    //AXLOG("Current quadrant: %s", currentQuadrant.c_str());
 
     // Cập nhật visibility khi chunk thay đổi HOẶC góc phần tư thay đổi
     if (currentChunk != lastPlayerChunk || currentQuadrant != lastQuadrant)
@@ -213,7 +213,7 @@ ax::Vec2 MapSystem::getChunkCoordFromPosition(const Vec2& pos)
     int chunkX = std::max(0, std::min(static_cast<int>(floor(pos.x / chunkSize.x)), static_cast<int>(gridSize.x) - 1));
     int chunkY = std::max(0, std::min(static_cast<int>(floor((gridSize.y * chunkSize.y - pos.y - 1) / chunkSize.y)),
                                       static_cast<int>(gridSize.y) - 1));  // Lật Y //Sử dụng min max tránh vượt grid, ép kiểu int
-    AXLOG("Player pos: (%f, %f), Chunk coord: (%d, %d)", pos.x, pos.y, chunkX, chunkY);
+    //AXLOG("Player pos: (%f, %f), Chunk coord: (%d, %d)", pos.x, pos.y, chunkX, chunkY);
     return Vec2(chunkX, chunkY);
 }
 

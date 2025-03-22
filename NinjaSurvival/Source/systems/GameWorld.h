@@ -7,7 +7,7 @@
 class GameWorld
 {
 public:
-    GameWorld();
+    GameWorld() {};
     EntityManager& getEntityManager() { return entityManager; }
     ComponentManager<IdentityComponent>& getIdentityManager() { return identityMgr; }
     ComponentManager<TransformComponent>& getTransformManager() { return transformMgr; }
@@ -15,6 +15,10 @@ public:
     ComponentManager<AnimationComponent>& getAnimationManager() { return animationMgr; }
     ComponentManager<VelocityComponent>& getVelocityManager() { return velocityMgr; }
     ComponentManager<HitboxComponent>& getHitboxManager() { return hitboxMgr; }
+    ComponentManager<HealthComponent>& getHealthManager() { return healthMgr; }
+    ComponentManager<AttackComponent>& getAttackManager() { return attackMgr; }
+    ComponentManager<CooldownComponent>& getCooldownManager() { return cooldownMgr; }
+    ComponentManager<SpeedComponent>& getSpeedManager() { return speedMgr; }
 
     // Thêm các get cho các ComponentManager khác khi cần
 
@@ -26,6 +30,11 @@ private:
     ComponentManager<AnimationComponent> animationMgr;
     ComponentManager<VelocityComponent> velocityMgr;
     ComponentManager<HitboxComponent> hitboxMgr;
+    ComponentManager<HealthComponent> healthMgr;
+    ComponentManager<AttackComponent> attackMgr;
+    ComponentManager<CooldownComponent> cooldownMgr;
+    ComponentManager<SpeedComponent> speedMgr;
+
     // Thêm các ComponentManager khác
 
 };

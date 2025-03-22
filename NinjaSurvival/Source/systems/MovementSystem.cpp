@@ -11,8 +11,9 @@ MovementSystem::MovementSystem(EntityManager& em,
                                ComponentManager<TransformComponent>& tm,
                                ComponentManager<VelocityComponent>& vm,
                                ComponentManager<AnimationComponent>& am,
-                               ComponentManager<HitboxComponent>& hm)
-    : entityManager(em), identityMgr(im), transformMgr(tm), velocityMgr(vm), animationMgr(am), hitboxMgr(hm)
+                               ComponentManager<HitboxComponent>& hm,
+                               ComponentManager<SpeedComponent>& spm)
+    : entityManager(em), identityMgr(im), transformMgr(tm), velocityMgr(vm), animationMgr(am), hitboxMgr(hm), speedMgr(spm)
 {
     // Khai báo các kiểu di chuyển
     // Kiểu di chuyển của player
@@ -108,15 +109,16 @@ void MovementSystem::movePlayer(Entity entity, float dt)
 {
     auto velocity       = velocityMgr.getComponent(entity);
     auto animation      = animationMgr.getComponent(entity);
+    auto speed          = speedMgr.getComponent(entity);
     auto joystickSystem = SystemManager::getInstance()->getSystem<JoystickSystem>();
 
-    if (!velocity || !joystickSystem)
+    if (!velocity || !joystickSystem || !speed)
         return; // Thoát nếu thiếu
 
     // Lấy hướng từ JoystickSystem và tính vận tốc
     ax::Vec2 joystickDirection = joystickSystem->getDirection();
-    velocity->vx               = joystickDirection.x * 500.0f;  // Chỗ này cần thay bằng SpeedComponent
-    velocity->vy               = joystickDirection.y * 500.0f;
+    velocity->vx               = joystickDirection.x * speed->speed;
+    velocity->vy               = joystickDirection.y * speed->speed;
 
     if (animation)
     {
@@ -143,7 +145,9 @@ void MovementSystem::moveEnemySlime(Entity entity, float dt)
 {
     auto velocity  = velocityMgr.getComponent(entity);
     auto transform = transformMgr.getComponent(entity);
-    if (!velocity || !transform)
+    auto speed     = speedMgr.getComponent(entity);
+    auto animation = animationMgr.getComponent(entity);
+    if (!velocity || !transform || !speed)
         return;
 
     // Cập nhật hướng mỗi 1 giây
@@ -163,9 +167,22 @@ void MovementSystem::moveEnemySlime(Entity entity, float dt)
                 ax::Vec2 slimePos(transform->x, transform->y);
                 ax::Vec2 direction = playerPos - slimePos;
                 direction.normalize();
-                velocity->vx = direction.x * 100.0f;
-                velocity->vy = direction.y * 100.0f;
+                velocity->vx = direction.x * speed->speed;
+                velocity->vy = direction.y * speed->speed;
             }
+        }
+        if (auto animation = animationMgr.getComponent(entity))
+        {
+            if (velocity->vx > 0)
+                animation->currentState = "moveRight";  //"moveRight";
+            else if (velocity->vx < 0)
+                animation->currentState = "moveLeft";  //"moveLeft";
+            else if (velocity->vy > 0)
+                animation->currentState = "moveDown";  // Move up changes
+            else if (velocity->vy < 0)
+                animation->currentState = "moveDown";  //"moveDown";
+            else
+                animation->currentState = "idle";
         }
         timer = 0.0f;  // Reset timer
     }

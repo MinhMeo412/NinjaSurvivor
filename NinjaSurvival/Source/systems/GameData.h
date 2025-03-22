@@ -34,11 +34,16 @@ struct EntityTemplate
     std::string type;
     std::string name;
     bool available;
+    std::optional<std::string> profilePhoto;
     std::optional<TransformComponent> transform;
     std::optional<SpriteComponent> sprite;
     std::optional<AnimationComponent> animation;
     std::optional<VelocityComponent> velocity;
+    std::optional<SpeedComponent> speed;
     std::optional<HitboxComponent> hitbox;
+    std::optional<HealthComponent> health;  
+    std::optional<AttackComponent> attack;  
+    std::optional<CooldownComponent> cooldown;
 
     EntityTemplate() : available(false) {};
 };

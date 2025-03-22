@@ -44,6 +44,9 @@ bool AppDelegate::applicationDidFinishLaunching()
         director->setGLView(glView);
     }
 
+     // **Đảm bảo không clear toàn bộ buffer**
+    director->setClearColor(Color4F(0, 0, 0, 0));
+
     // turn on display FPS
     director->setStatsDisplay(true);
 

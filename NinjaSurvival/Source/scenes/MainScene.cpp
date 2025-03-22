@@ -59,11 +59,8 @@ bool MainScene::init()
 
 
 
-
-
-
-    //Kiểm tra đọc file entities.json (xóa khi release)
-    auto gameData    = GameData::getInstance();
+        // Kiểm tra đọc file entities.json (xóa khi release)
+    auto gameData               = GameData::getInstance();
     const auto& entityTemplates = gameData->getEntityTemplates();
 
     if (!entityTemplates.empty())
@@ -85,6 +82,10 @@ bool MainScene::init()
                 }
                 if (entity.sprite)
                 {
+                    const auto& spriteComp = entity.sprite.value();
+                    AXLOG("      Sprite Component: Exists");
+                    AXLOG("        Plist: %s", spriteComp.plist.c_str());
+                    AXLOG("        Frame Name: %s", spriteComp.gameSceneFrameName.c_str());
                     AXLOG("      Sprite Component: Exists");
                 }
                 if (entity.animation)
@@ -108,7 +109,6 @@ bool MainScene::init()
 
 void MainScene::update(float dt) {}
 
-// Remove this button when release
 void MainScene::menuCloseCallback(ax::Object* sender)
 {
     _director->end();

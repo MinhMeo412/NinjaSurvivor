@@ -13,7 +13,8 @@ public:
                    ComponentManager<TransformComponent>& tm,
                    ComponentManager<VelocityComponent>& vm,
                    ComponentManager<AnimationComponent>& am,
-                   ComponentManager<HitboxComponent>& hm);
+                   ComponentManager<HitboxComponent>& hm,
+                   ComponentManager<SpeedComponent>& spm);
 
     void update(float dt) override;
     void init() override;
@@ -25,6 +26,7 @@ private:
     ComponentManager<VelocityComponent>& velocityMgr;
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
+    ComponentManager<SpeedComponent>& speedMgr;
 
     // Định nghĩa một kiểu hàm MoveFunc nhận Entity và float, trả về void
     // std::function khai báo kiểu hàm với tên bất kỳ có 2 tham số và kiểu trả về là void
