@@ -66,7 +66,7 @@ void CameraSystem::update(float dt)
 
         // Cập nhật vị trí camera
         camera->setPosition(newPos);
-        AXLOG("Camera moved to x: %f, y: %f (target x: %f, y: %f)", newPos.x, newPos.y, cameraTarget.x, cameraTarget.y);
+        //AXLOG("Camera moved to x: %f, y: %f (target x: %f, y: %f)", newPos.x, newPos.y, cameraTarget.x, cameraTarget.y);
     }
 }
 

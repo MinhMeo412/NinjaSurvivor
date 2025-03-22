@@ -29,162 +29,163 @@ void RenderSystem::init()
         return;
     }
 
+    enemyBatchNode      = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
+    //bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
+    //itemWeaponBatchNode = ax::SpriteBatchNode::create("Entity/ItemWeapon/item.png");
+
+    scene->addChild(enemyBatchNode, 3);
+    //scene->addChild(bossBatchNode, 4);
+    //scene->addChild(itemWeaponBatchNode, 5); //Có lẽ nên chia riêng item với weapon
+
+    debugDrawNode = ax::DrawNode::create();
+    scene->addChild(debugDrawNode, 10);
+
     // Khởi tạo sprite cho player
     Entity playerEntity = spawnSystem->getPlayerEntity();
-    initializeEntitySprite(playerEntity);
+    addSpriteToScene(playerEntity);
 }
 
-void RenderSystem::initializeEntitySprite(Entity entity)
+void RenderSystem::addSpriteToScene(Entity entity)
 {
-    if (auto sprite = spriteMgr.getComponent(entity))
+    auto sprite = spriteMgr.getComponent(entity);
+    if (!sprite || !sprite->gameSceneFrame)
     {
-        if (!sprite->gameSceneFrame)
-        {//Kiểm tra gameSceneFrame tồn tại
-            AXLOG("Error: No gameSceneFrame for entity %u in init", entity);
-            return;
-        }
+        AXLOG("Warning: Sprite or gameSceneFrame is null for entity %u", entity);
+        return;
+    }
 
-        // Thêm sprite vào scene
+    auto identity = identityMgr.getComponent(entity);
+    if (!identity)
+    {
+        AXLOG("Warning: Identity is null for entity %u", entity);
+        return;
+    }
+
+    if (identity->type == "player")
+    {
         if (sprite->gameSceneFrame->getParent() != scene)
         {
-            scene->addChild(sprite->gameSceneFrame, 3);  // zOrder = 3 cho entity
-            AXLOG("Added sprite for entity %u to scene", entity);
+            scene->addChild(sprite->gameSceneFrame, 3);
         }
+    }
+    else if (identity->type == "enemy")
+    {
+        sprite->setBatchNode(enemyBatchNode);
+    }
+    //else if (identity->type == "boss")
+    //{
+    //    sprite->setBatchNode(bossBatchNode);
+    //}
+    //else if (identity->type == "item" || identity->type == "weapon")
+    //{
+    //    sprite->setBatchNode(itemWeaponBatchNode);
+    //}
 
-        // Đặt vị trí ban đầu
-        if (auto transform = transformMgr.getComponent(entity))
-        {
-            sprite->gameSceneFrame->setPosition(transform->x, transform->y);
-        }
-        // Chạy animation mặc định (idle)
-        //if (auto animation = animationMgr.getComponent(entity))
-        //{
-        //    animation->currentState = "idle";   // Trạng thái mặc định
-        //    std::string entityName  = "Ninja";  // TODO: Lấy tên động từ config hoặc SpriteComponent
-        //    std::string anim        = entityName + animation->currentState;
-        //    auto cachedAnim         = ax::AnimationCache::getInstance()->getAnimation(anim);
-        //    if (cachedAnim)
-        //    {
-        //        auto animate = ax::Animate::create(cachedAnim);
-        //        if (animate)
-        //        {
-        //            animation->currentAction = ax::RepeatForever::create(animate);
-        //            animation->currentAction->setTag(AnimationComponent::ACTION_TAG_IDLE);
-        //            sprite->gameSceneFrame->runAction(animation->currentAction);
-        //            AXLOG("Initialized animation %s for entity %u", anim.c_str(), entity);
-        //        }
-        //    }
-        //}
+    TransformComponent* transform = transformMgr.getComponent(entity);
+    if (transform)
+    {
+        sprite->gameSceneFrame->setPosition(transform->x, transform->y);
     }
 }
 
 void RenderSystem::update(float dt)
 {
-    if (!scene)
+    for (auto entity : entityManager.getActiveEntities())
     {
-        AXLOG("Error: No scene available for RenderSystem");
-        return;
-    }
-
-    auto entities = entityManager.getActiveEntities();
-    for (Entity entity : entities)
-    {
-        if (auto sprite = spriteMgr.getComponent(entity))
+        auto sprite = spriteMgr.getComponent(entity);
+        if (!sprite)
         {
-            if (!sprite->gameSceneFrame)
+            AXLOG("Warning: No sprite component for entity %u", entity);
+            continue;
+        }
+
+        if (!sprite->gameSceneFrame || !sprite->gameSceneFrame->getParent())
+        {
+            addSpriteToScene(entity);
+            continue;
+        }
+
+        updateEntitySprite(entity, dt);
+    }
+    updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+}
+
+void RenderSystem::updateEntitySprite(Entity entity, float dt)
+{
+    auto sprite         = spriteMgr.getComponent(entity);
+    auto transform      = transformMgr.getComponent(entity);
+    auto animation      = animationMgr.getComponent(entity);
+
+    if (!sprite || !sprite->gameSceneFrame || !transform)
+        return;
+
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+    sprite->gameSceneFrame->setScale(transform->scale);
+
+    if (animation && !animation->currentState.empty())
+    {
+        std::string entityName;
+        if (auto identity = identityMgr.getComponent(entity))
+        {
+            entityName = identity->name;
+        }
+        std::string anim = entityName + animation->currentState;
+        int tag          = 0;
+
+        if (animation->currentState == "moveLeft")
+            tag = AnimationComponent::ACTION_TAG_LEFT;
+        else if (animation->currentState == "moveRight")
+            tag = AnimationComponent::ACTION_TAG_RIGHT;
+        else if (animation->currentState == "moveDown")
+            tag = AnimationComponent::ACTION_TAG_DOWN;
+        else if (animation->currentState == "idle")
+            tag = AnimationComponent::ACTION_TAG_IDLE;
+
+        if (tag != 0 && (animation->currentAction == nullptr || animation->currentAction->getTag() != tag))
+        {
+            auto cachedAnim = ax::AnimationCache::getInstance()->getAnimation(anim);
+            if (cachedAnim)
             {
-                AXLOG("Warning: No gameSceneFrame for entity %u", entity);
-                continue;
-            }
-                
-            if (auto animation = animationMgr.getComponent(entity))
-            {
-                if (!animation->currentState.empty())
+                auto animate = ax::Animate::create(cachedAnim);
+                if (animate)
                 {
-                    std::string entityName;
-                    if (auto identity = identityMgr.getComponent(entity))
+                    if (animation->currentAction)
                     {
-                        entityName = identity->name;
+                        sprite->gameSceneFrame->stopAction(animation->currentAction);
                     }
-                    std::string anim = entityName + animation->currentState;
-
-                    int tag = 0;
-
-                    // Gán tag dựa trên currentState
-                    if (animation->currentState == "moveLeft")
-                        tag = AnimationComponent::ACTION_TAG_LEFT;
-                    else if (animation->currentState == "moveRight")
-                        tag = AnimationComponent::ACTION_TAG_RIGHT;
-                    else if (animation->currentState == "moveDown")
-                        tag = AnimationComponent::ACTION_TAG_DOWN;
-                    else if (animation->currentState == "idle")
-                        tag = AnimationComponent::ACTION_TAG_IDLE;
-
-                    if (tag != 0 && (animation->currentAction == nullptr || animation->currentAction->getTag() != tag))
-                    {
-                        auto cachedAnim = ax::AnimationCache::getInstance()->getAnimation(anim);
-                        if (cachedAnim)
-                        {
-                            auto animate = ax::Animate::create(cachedAnim);
-                            if (animate)
-                            {
-                                if (animation->currentAction)
-                                {
-                                    sprite->gameSceneFrame->stopAction(animation->currentAction);
-                                }
-                                animation->currentAction = ax::RepeatForever::create(animate);
-                                animation->currentAction->setTag(tag);
-                                sprite->gameSceneFrame->runAction(animation->currentAction);
-                                AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
-                            }
-                            else
-                            {
-                                AXLOG("Warning: Failed to create Animate for %s, entity %u", anim.c_str(), entity);
-                            }
-                        }
-                        else
-                        {
-                            AXLOG("Warning: Animation %s not found in cache for entity %u", anim.c_str(), entity);
-                        }
-                    }
+                    animation->currentAction = ax::RepeatForever::create(animate);
+                    animation->currentAction->setTag(tag);
+                    sprite->gameSceneFrame->runAction(animation->currentAction);
+                    AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
                 }
-            }
-
-
-            //Vị trí
-            if (auto transform = transformMgr.getComponent(entity))
-            {
-                sprite->gameSceneFrame->setPosition(transform->x, transform->y);
-                //sprite->gameSceneFrame->setScale(transform->scale);
+                else
+                {
+                    AXLOG("Warning: Failed to create Animate for %s, entity %u", anim.c_str(), entity);
+                }
             }
             else
             {
-                AXLOG("Warning: No transform component for entity %u", entity);
-            }
-
-            if (sprite->gameSceneFrame->getParent() != scene)
-            {
-                scene->addChild(sprite->gameSceneFrame, 3);  // Hoặc thêm zOrder vào transform
-                AXLOG("Added sprite for entity %u to scene", entity);
-            }
-
-            //Vẽ hitbox
-            if (auto hitbox = hitboxMgr.getComponent(entity))
-            {
-                if (!sprite->debugDrawNode)
-                {
-                    sprite->debugDrawNode = ax::DrawNode::create();
-                    scene->addChild(sprite->debugDrawNode, 10);
-                }
-
-                sprite->debugDrawNode->clear();  // Xóa hình cũ
-                ax::Vec2 hitboxPos = sprite->gameSceneFrame->getPosition();
-                sprite->debugDrawNode->drawRect(hitboxPos - ax::Vec2(hitbox->size.width / 2, hitbox->size.height / 2),
-                                                hitboxPos + ax::Vec2(hitbox->size.width / 2, hitbox->size.height / 2),
-                                                ax::Color4F::RED);
+                AXLOG("Warning: Animation %s not found in cache for entity %u", anim.c_str(), entity);
             }
         }
     }
 }
+
+void RenderSystem::updateDebugDraw()
+{
+    debugDrawNode->clear();
+    for (auto entity : entityManager.getActiveEntities())
+    {
+        SpriteComponent* sprite = spriteMgr.getComponent(entity);
+        HitboxComponent* hitbox = hitboxMgr.getComponent(entity);
+        if (sprite && sprite->gameSceneFrame && hitbox)
+        {
+            ax::Vec2 pos = sprite->gameSceneFrame->getPosition();
+            debugDrawNode->drawRect(pos - ax::Vec2(hitbox->size.width / 2, hitbox->size.height / 2),
+                                    pos + ax::Vec2(hitbox->size.width / 2, hitbox->size.height / 2), ax::Color4F::RED);
+        }
+    }
+}
+
 
 

@@ -4,6 +4,7 @@
             "type": "player",
             "name": "Ninja",
             "available": true,
+            "profileImage": "HelloWorld.png",
             "components": {
                 "transform": {
                     "x": 700.0,
@@ -13,12 +14,19 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
+                "speed": 500.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
-                "animation": {
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "sprite": {
                     "plist": "Entity/Character/character.plist",
+                    "gameSceneFrame": "./character_down0"
+                },
+                "animation": {
                     "frames": {
                         "moveDown": [
                             "./character_down0",
@@ -40,10 +48,6 @@
                         ]
                     },
                     "frameDuration": 0.2
-                },
-                "sprite": {
-                    "frame": "HelloWorld.png",
-                    "gameSceneFrame": "Entity/Character/character1.png"
                 }
             }
         },
@@ -51,6 +55,7 @@
             "type": "player",
             "name": "Ninninjaja",
             "available": false,
+            "profileImage": "HelloWorld.png",
             "components": {
                 "transform": {
                     "x": 320.0,
@@ -60,8 +65,15 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
+                "speed": 500.0,
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "sprite": {
+                    "plist": "Entity/Character/character.plist",
+                    "gameSceneFrame": "./character_down0"
+                },
                 "animation": {
-                    "plist": "character.plist",
                     "frames": {
                         "moveDown": [
                             "./character_down0",
@@ -83,10 +95,6 @@
                         ]
                     },
                     "frameDuration": 0.2
-                },
-                "sprite": {
-                    "frame": "HelloWorld.png",
-                    "gameSceneFrame": "character1.png"
                 }
             }
         },
@@ -103,12 +111,27 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
+                "speed": 100.0,
                 "hitbox": {
-                    "width": 16.0,
-                    "height": 16.0
+                    "width": 32.0,
+                    "height": 32.0
+                },
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "attack": {
+                    "baseDamage": 50.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 1.0
+                },
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./slime_down0"
                 },
                 "animation": {
-                    "plist": "Entity/Enemy/slime.plist",
                     "frames": {
                         "moveDown": [
                             "./slime_down0",
@@ -133,10 +156,183 @@
                         ]
                     },
                     "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Bear",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 100.0,
+                "hitbox": {
+                    "width": 32.0,
+                    "height": 32.0
+                },
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "attack": {
+                    "baseDamage": 50.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 1.0
                 },
                 "sprite": {
-                    "frame": "Entity/Enemy/slime1.png",
-                    "gameSceneFrame": "Entity/Enemy/slime1.png"
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./bear_down0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./bear_down0",
+                            "./bear_down1",
+                            "./bear_down2"
+                        ],
+                        "moveRight": [
+                            "./bear_right0",
+                            "./bear_right1",
+                            "./bear_right2"
+                        ],
+                        "moveLeft": [
+                            "./bear_left0",
+                            "./bear_left1",
+                            "./bear_left2"
+                        ],
+                        "idle": [
+                            "./bear_down0"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Snake",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 300.0,
+                "hitbox": {
+                    "width": 32.0,
+                    "height": 32.0
+                },
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "attack": {
+                    "baseDamage": 50.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 1.0
+                },
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./snake_down0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./snake_down0",
+                            "./snake_down1",
+                            "./snake_down2",
+                            "./snake_down3"
+                        ],
+                        "moveRight": [
+                            "./snake_right0",
+                            "./snake_right1",
+                            "./snake_right2",
+                            "./snake_right3"
+                        ],
+                        "moveLeft": [
+                            "./snake_left0",
+                            "./snake_left1",
+                            "./snake_left2",
+                            "./snake_left3"
+                        ],
+                        "idle": [
+                            "./snake_down0"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Octopus",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 100.0,
+                "hitbox": {
+                    "width": 32.0,
+                    "height": 32.0
+                },
+                "health": {
+                    "maxHealth": 100.0
+                },
+                "attack": {
+                    "baseDamage": 50.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 1.0
+                },
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./octopus_down0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./octopus_down0",
+                            "./octopus_down1",
+                            "./octopus_down2"
+                        ],
+                        "moveRight": [
+                            "./octopus_right0",
+                            "./octopus_right1",
+                            "./octopus_right2"
+                        ],
+                        "moveLeft": [
+                            "./octopus_left0",
+                            "./octopus_left1",
+                            "./octopus_left2"
+                        ],
+                        "idle": [
+                            "./octopus_down0"
+                        ]
+                    },
+                    "frameDuration": 0.2
                 }
             }
         }

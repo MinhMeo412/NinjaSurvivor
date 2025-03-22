@@ -1,6 +1,6 @@
 #include "Utils.h"
 #include "GameSceneUILayer.h"
-#include "scenes/MainScene.h"
+#include "GameOverGamePauseLayer.h"
 #include "systems/SystemManager.h"
 #include "systems/CameraSystem.h"
 
@@ -29,14 +29,14 @@ bool GameSceneUILayer::init()
     Vec2 safeOrigin  = safeArea.origin;
 
     // Close button
-    closeButton = Utils::createMenuItem("CloseNormal.png", "CloseSelected.png",
-                                        AX_CALLBACK_1(GameSceneUILayer::menuCloseCallback, this), Vec2(0, 0));
-    float x     = safeOrigin.x + safeArea.size.width - closeButton->getContentSize().width / 2;
-    float y     = safeOrigin.y + closeButton->getContentSize().height / 2;
-    closeButton->setPosition(Vec2(x, y));
+    pauseButton = Utils::createMenuItem("CloseNormal.png", "CloseSelected.png",
+                                        AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
+    float x     = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2;
+    float y     = safeOrigin.y + pauseButton->getContentSize().height / 2;
+    pauseButton->setPosition(Vec2(x, y));
 
     // Create menu
-    auto menu = Menu::create(closeButton, NULL);
+    auto menu = Menu::create(pauseButton, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 10);
 
@@ -67,8 +67,18 @@ void GameSceneUILayer::update(float dt)
 }
 
 
-void GameSceneUILayer::menuCloseCallback(ax::Object* sender)
+void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
 {
-    auto scene = utils::createInstance<MainScene>();
-    _director->replaceScene(scene);
+    auto pauseLayer   = GameOverGamePauseLayer::create(false);
+    if (pauseLayer)
+    {
+        auto gameScene = this->getParent();
+        if (gameScene)
+        {
+            Vec2 layerPos = this->getPosition();
+            pauseLayer->setPosition(layerPos);
+            gameScene->addChild(pauseLayer, 1000);  // Thêm layer với z-order cao
+            gameScene->unscheduleUpdate();         // Dừng update của GameScene
+        }
+    }
 }

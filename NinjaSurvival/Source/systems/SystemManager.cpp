@@ -2,11 +2,13 @@
 
 #include "MapSystem.h"
 #include "JoystickSystem.h"
+#include "TimeSystem.h"
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
+#include "HealthSystem.h"
 
 
 using namespace ax;
@@ -42,12 +44,14 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
 
     registerSystem("MapSystem");
     registerSystem("JoystickSystem");
-    
+    registerSystem("TimeSystem");
     registerSystem("SpawnSystem");
     registerSystem("CameraSystem");
 
     registerSystem("MovementSystem");
     registerSystem("CollisionSystem");
+    registerSystem("HealthSystem");
+
     registerSystem("RenderSystem");
 
     for (auto& system : systems)
@@ -86,12 +90,18 @@ void SystemManager::registerSystem(const std::string& systemType)
     else if (systemType == "MapSystem")
         addSystem(std::make_unique<MapSystem>());
 
+    // Thêm TimeSystem
+    else if (systemType == "TimeSystem")
+        addSystem(std::make_unique<TimeSystem>());
+
     // Thêm SpawnSystem
     else if (systemType == "SpawnSystem")
         addSystem(std::make_unique<SpawnSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                 gameWorld->getTransformManager(), gameWorld->getSpriteManager(),
                                                 gameWorld->getAnimationManager(), gameWorld->getVelocityManager(),
-                                                gameWorld->getHitboxManager()));
+                                                gameWorld->getHitboxManager(), gameWorld->getHealthManager(),
+                                                gameWorld->getAttackManager(), gameWorld->getCooldownManager(),
+                                                gameWorld->getSpeedManager()));
 
     // Thêm RenderSystem
     else if (systemType == "RenderSystem")
@@ -104,7 +114,7 @@ void SystemManager::registerSystem(const std::string& systemType)
         addSystem(std::make_unique<MovementSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                    gameWorld->getTransformManager(),
                                                    gameWorld->getVelocityManager(), gameWorld->getAnimationManager(),
-                                                   gameWorld->getHitboxManager()));
+                                                   gameWorld->getHitboxManager(), gameWorld->getSpeedManager()));
 
     // Thêm CameraSystem
     else if (systemType == "CameraSystem")
@@ -114,4 +124,10 @@ void SystemManager::registerSystem(const std::string& systemType)
     else if (systemType == "CollisionSystem")
         addSystem(std::make_unique<CollisionSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                     gameWorld->getTransformManager(), gameWorld->getHitboxManager()));
+
+    else if (systemType == "HealthSystem")
+        addSystem(std::make_unique<HealthSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
+                                                 gameWorld->getHealthManager(), gameWorld->getAttackManager(),
+                                                 gameWorld->getCooldownManager()));
+    
 }

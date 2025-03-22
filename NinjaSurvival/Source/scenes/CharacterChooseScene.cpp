@@ -88,7 +88,8 @@ void CharacterChooseScene::menuUISetup()
         {
             for (const auto& [name, templ] : templates)
             {
-                std::string spritePath = templ.sprite ? templ.sprite->filename : "CloseNormal.png";
+                std::string spritePath =
+                    templ.profilePhoto.has_value() ? templ.profilePhoto.value() : "CloseNormal.png";
                 bool available         = templ.available;
                 auto button =
                     Utils::createCharacterButton(spritePath,             

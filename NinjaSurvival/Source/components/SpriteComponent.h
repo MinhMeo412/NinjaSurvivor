@@ -3,43 +3,59 @@
 
 #include "axmol.h"
 
+
 struct SpriteComponent
 {
-    ax::RefPtr<ax::Sprite> frame = nullptr;
     ax::RefPtr<ax::Sprite> gameSceneFrame = nullptr;
-
-    ax::DrawNode* debugDrawNode = nullptr;//Debug
-    std::string filename;
-    std::string gameSceneFilename;
+    std::string plist;
+    std::string gameSceneFrameName;
+    ax::SpriteBatchNode* batchNode = nullptr;  // Batch node để tối ưu render (không dùng cho player)
 
     SpriteComponent() = default;
-    SpriteComponent(const std::string& fname, const std::string& gameSceneFname)
-        : filename(fname), gameSceneFilename(gameSceneFname) {}
-
+    SpriteComponent(const std::string& gameSceneFname, const std::string& plistFile)
+        : gameSceneFrameName(gameSceneFname), plist(plistFile) {}
+    
     void initializeSprite()
-    { 
-        if (!frame && !filename.empty())
+    {
+        if (!gameSceneFrame && !gameSceneFrameName.empty() && !plist.empty())
         {
-            frame = ax::Sprite::create(filename);
+            // Load plist vào cache nếu chưa load
+            if (!ax::SpriteFrameCache::getInstance()->isSpriteFramesWithFileLoaded(plist))
+            {
+                ax::SpriteFrameCache::getInstance()->addSpriteFramesWithFile(plist);
+            }
+
+            auto spriteFrame = ax::SpriteFrameCache::getInstance()->getSpriteFrameByName(gameSceneFrameName);
+
+            if (spriteFrame)
+            {
+                gameSceneFrame = ax::Sprite::createWithSpriteFrame(spriteFrame);
+            }
+            else
+            {
+                AXLOG("Warning: Sprite frame %s not found in plist %s", gameSceneFrameName.c_str(), plist.c_str());
+            }
         }
-        if (!gameSceneFrame && !gameSceneFilename.empty())
+    }
+
+    void setBatchNode(ax::SpriteBatchNode* node)
+    { //Thực ra có thể tạo function này bên render nhưng lười
+        batchNode = node;
+        if (gameSceneFrame && batchNode && gameSceneFrame->getParent() != batchNode)
         {
-            gameSceneFrame = ax::Sprite::create(gameSceneFilename);
+            gameSceneFrame->removeFromParent();
+            batchNode->addChild(gameSceneFrame);
         }
-
-
     }
 };
 
 struct AnimationComponent
 {
-    std::string plist;
-    std::unordered_map<std::string,std::vector<std::string>> frames;
-    float frameDuration                 = 0.2f;
+    std::unordered_map<std::string,std::vector<std::string>> frames; // Danh sách frame cho từng trạng thái
+    float frameDuration                 = 0.2f;// Thời gian mỗi frame
 
-    std::string currentState;
-
-    ax::Action* currentAction = nullptr;
+    std::string currentState;               // Trạng thái hiện tại
+    ax::Action* currentAction = nullptr;    // Hành động animation hiện tại
 
     static const int ACTION_TAG_LEFT  = 1;  // Tag cho animation trái
     static const int ACTION_TAG_RIGHT = 2;  // Tag cho animation phải
@@ -48,20 +64,11 @@ struct AnimationComponent
     static const int ACTION_TAG_IDLE  = 5;  // Tag cho animation idle
 
     AnimationComponent() = default;
-    AnimationComponent(const std::string& plistFile,
-                       const std::unordered_map<std::string, std::vector<std::string>>& frameMap,
-                       float duration)
-        : plist(plistFile), frames(frameMap), frameDuration(duration)
-    {}
+    AnimationComponent(const std::unordered_map<std::string, std::vector<std::string>>& frameMap, float duration)
+        : frames(frameMap), frameDuration(duration) {}
 
     void initializeAnimations()
     {
-        //Kiểm tra plist nếu không trống thì lưu danh sách các frame trong plist
-        if (!plist.empty())
-        {
-            ax::SpriteFrameCache::getInstance()->addSpriteFramesWithFile(plist);
-        }
-
         //Duyệt danh sách từng trạng thái animation và danh sách frame của animation đó
         for (const auto& [state, frameList] : frames)
         {

@@ -1,6 +1,7 @@
 #include "CollisionSystem.h"
 #include "SpawnSystem.h"
 #include "MapSystem.h"
+#include "HealthSystem.h"
 
 #include "SystemManager.h"
 
@@ -23,13 +24,13 @@ void CollisionSystem::init()
     }
 
     // Đặt callback logic khi va chạm xảy ra
-    setCollisionCallback([](Entity e1, Entity e2)
+    onCollision = [](Entity e1, Entity e2)
         {
-            //Thông báo
             AXLOG("Collision between %u and %u", e1, e2);
             //Xử lý logic va chạm
-            //Ví dụ: 1+1 = 2
-        });
+            auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
+            healthSystem->handleCollision(e1, e2);
+        };
 }
 
 // cập nhật hệ thống va chạm, gọi mỗi frame
@@ -55,13 +56,13 @@ void CollisionSystem::update(float dt)
         //Kiểm tra có va chạm không
         if (entity != player && checkCollision(player, entity))
         {
-            if (onCollision) // Kiểm tra biến onCollision đã được gán callback hay chưa
+            if (onCollision) // Kiểm tra đã được gán callback hay chưa
                 onCollision(player, entity); // Gọi callback
         }
     }
 }
 
-// Hàm xử lý vị trí mới của entity khi di chuyểnzxc
+// Hàm xử lý vị trí mới của entity khi di chuyển
 ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
 {
     auto identity = identityMgr.getComponent(entity);
@@ -78,73 +79,98 @@ ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
     // Enemy/Boss: Không overlay với enemy/boss, chặn bởi collision tile
     if (type == "enemy" || type == "boss")
     {
-        //Kiểm tra va chạm với tile và entity khác
-        bool collidesWithTile   = isCollidingWithTileMap(entity, newPos);
-        bool collidesWithEntity = false;
-        //Lấy các entity ở gần trong lưới
-        auto nearby             = spatialGrid.getNearbyEntities(newPos);
+        bool collidesWithTile   = isCollidingWithTileMap(entity, newPos);//Kiểm tra xem có va chạm với tilemap tại newPos không
+        ax::Vec2 adjustedPos        = newPos;
+        bool collidesWithEntity = false; //Định nghĩa biến: xác định có va chạm với entity khác hay không (mặc định false)
+        ax::Vec2 pushDirection(0, 0); // hướng đẩy 
+        float pushStrength = 2.0f; //lực đẩy
+
+        // Kiểm tra va chạm với entity khác
+        auto nearby = spatialGrid.getNearbyEntities(newPos);
         for (Entity other : nearby)
         {
             if (other != entity && identityMgr.getComponent(other))
             {
                 std::string otherType = identityMgr.getComponent(other)->type;
+                //Kiểm tra type nếu là enemy hoặc boss và có va chạm
                 if ((otherType == "enemy" || otherType == "boss") && checkCollision(entity, other))
                 {
                     collidesWithEntity = true;
-                    break;
+                    ax::Vec2 otherPos(transformMgr.getComponent(other)->x, transformMgr.getComponent(other)->y);
+                    pushDirection += (currentPos - otherPos);
+                    // Hướng đẩy bằng hiệu currentPos - otherPos, tức là hướng di chuyển ra xa khỏi other
                 }
             }
         }
 
-        if (!collidesWithTile && !collidesWithEntity)
-            return newPos; // Trả về vị trí mới nếu không có va chạm
-
-        //Thử di chuyển theo trục X,Y
-        ax::Vec2 testPosX = currentPos + ax::Vec2(moveStep.x, 0);
-        ax::Vec2 testPosY = currentPos + ax::Vec2(0, moveStep.y);
-
-        bool canMoveXTile   = !isCollidingWithTileMap(entity, testPosX);
-        bool canMoveXEntity = true;
-        if (canMoveXTile)
+        // Nếu va chạm với cả tile và entity, ưu tiên trượt theo hướng thoát
+        if (collidesWithTile && collidesWithEntity)
         {
-            auto nearbyX = spatialGrid.getNearbyEntities(testPosX);
-            for (Entity other : nearbyX)
+            pushStrength = 2.0f;  // cần tăng lực đẩy khi bị kẹt quá nhiều
+            pushDirection.normalize(); 
+
+            // Kiểm tra hướng thoát khả thi (trái hoặc lên)
+            ax::Vec2 leftPos = currentPos + ax::Vec2(-pushStrength, 0);
+            ax::Vec2 upPos   = currentPos + ax::Vec2(0, pushStrength);
+            bool canMoveLeft = !isCollidingWithTileMap(entity, leftPos);
+            bool canMoveUp   = !isCollidingWithTileMap(entity, upPos);
+
+            if (canMoveLeft || canMoveUp)
             {
-                if (other != entity && identityMgr.getComponent(other))
+                ax::Vec2 escapeDir(0, 0); //ĐN hướng thoát 
+                if (canMoveLeft)
+                    escapeDir.x = -1.0f;  // Ưu tiên thoát trái nếu trống
+                if (canMoveUp && !canMoveLeft)
+                    escapeDir.y = 1.0f;  // Sau đó là thoát lên
+                escapeDir.normalize();
+                adjustedPos = currentPos + escapeDir * pushStrength;
+
+                // Kiểm tra lại va chạm entity sau khi đẩy
+                bool stillCollides  = false; //Đặt một biến kiểm tra còn va chạm không
+                //Kiểm tra va chạm với các entity tại vị trí mới
+                auto nearbyAdjusted = spatialGrid.getNearbyEntities(adjustedPos);
+                for (Entity other : nearbyAdjusted)
                 {
-                    std::string otherType = identityMgr.getComponent(other)->type;
-                    if ((otherType == "enemy" || otherType == "boss") && checkCollision(entity, other))
+                    if (other != entity && identityMgr.getComponent(other) &&
+                        (identityMgr.getComponent(other)->type == "enemy" ||
+                         identityMgr.getComponent(other)->type == "boss") &&
+                        checkCollision(entity, other))
                     {
-                        canMoveXEntity = false;
+                        stillCollides = true;
                         break;
                     }
                 }
+                //Nếu không còn va chạm với tile và entity, trả về adjustedPos
+                if (!isCollidingWithTileMap(entity, adjustedPos) && !stillCollides)
+                    return adjustedPos;
             }
-        }
-
-        bool canMoveYTile   = !isCollidingWithTileMap(entity, testPosY);
-        bool canMoveYEntity = true;
-        if (canMoveYTile)
+        } //Nếu chỉ va chạm entity, không va chạm tile (chỉ cần đẩy)
+        else if (collidesWithEntity && !collidesWithTile)
         {
-            auto nearbyY = spatialGrid.getNearbyEntities(testPosY);
-            for (Entity other : nearbyY)
-            {
-                if (other != entity && identityMgr.getComponent(other))
-                {
-                    std::string otherType = identityMgr.getComponent(other)->type;
-                    if ((otherType == "enemy" || otherType == "boss") && checkCollision(entity, other))
-                    {
-                        canMoveYEntity = false;
-                        break;
-                    }
-                }
-            }
+            pushDirection.normalize();
+            adjustedPos = newPos + pushDirection * pushStrength;
+            if (!isCollidingWithTileMap(entity, adjustedPos))
+                return adjustedPos;
+        } //Nếu chỉ va chạm tile, không va chạm entity (di chuyển theo trục)
+        else if (collidesWithTile && !collidesWithEntity)
+        {
+            ax::Vec2 testPosX = currentPos + ax::Vec2(moveStep.x, 0);
+            ax::Vec2 testPosY = currentPos + ax::Vec2(0, moveStep.y);
+
+            if (!isCollidingWithTileMap(entity, testPosX))
+                return testPosX;
+            if (!isCollidingWithTileMap(entity, testPosY))
+                return testPosY;
+            return currentPos;
+        } //Không va chạm di chuyển bình thường
+        else if (!collidesWithTile && !collidesWithEntity)
+        {
+            return newPos;
         }
 
-        if (canMoveXTile && canMoveXEntity)
-            return testPosX; // Di chuyển được theo X
-        if (canMoveYTile && canMoveYEntity)
-            return testPosY; // Di chuyển được theo y
+        // Nếu vẫn kẹt, trả về vị trí đẩy cuối cùng nếu hợp lệ
+        if (!isCollidingWithTileMap(entity, adjustedPos))
+            return adjustedPos;
         return currentPos;
     }
 

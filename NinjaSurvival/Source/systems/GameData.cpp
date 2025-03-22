@@ -134,6 +134,12 @@ bool GameData::loadEntityData(const std::string& jsonString)
             return false;
         }
 
+        //Profile Image
+        if (entityObj.HasMember("profileImage") && entityObj["profileImage"].IsString())
+        {
+            templ.profilePhoto = entityObj["profileImage"].GetString();
+        }
+
         //Kiểu data có thể có hoặc không
         //Kiểm tra có phần tử components trong entity không
         if (entityObj.HasMember("components") && entityObj["components"].IsObject())
@@ -146,9 +152,9 @@ bool GameData::loadEntityData(const std::string& jsonString)
             if (components.HasMember("sprite") && components["sprite"].IsObject())
             {
                 const auto& sprite    = components["sprite"];
-                std::string frameFile = sprite.HasMember("frame") ? sprite["frame"].GetString() : "";
-                std::string gameSceneFile = sprite.HasMember("gameSceneFrame") ? sprite["gameSceneFrame"].GetString() : "";
-                templ.sprite = SpriteComponent(frameFile, gameSceneFile);
+                std::string plist = sprite.HasMember("plist") ? sprite["plist"].GetString() : "";
+                std::string gameSceneFrame = sprite.HasMember("gameSceneFrame") ? sprite["gameSceneFrame"].GetString() : "";
+                templ.sprite = SpriteComponent(gameSceneFrame, plist);
             }
 
             //Animation
@@ -188,9 +194,7 @@ bool GameData::loadEntityData(const std::string& jsonString)
                     }
                 }
                 //Kiểm tra các object còn lại và thêm vào nếu có
-                templ.animation =
-                    AnimationComponent(anim.HasMember("plist") ? anim["plist"].GetString() : "", frameMap,
-                                       anim.HasMember("frameDuration") ? anim["frameDuration"].GetFloat() : 0.2f);
+                templ.animation = AnimationComponent(frameMap, anim.HasMember("frameDuration") ? anim["frameDuration"].GetFloat() : 0.2f);
             }
             
             // Transform
@@ -237,6 +241,50 @@ bool GameData::loadEntityData(const std::string& jsonString)
                     AXLOG("Warning: hitbox component missing width or height for entity %s-%s", templ.type.c_str(),
                           templ.name.c_str());
                 }
+            }
+
+            //Health
+            if (components.HasMember("health") && components["health"].IsObject())
+            {
+                const auto& health = components["health"];
+                if (health.HasMember("maxHealth") && health["maxHealth"].IsFloat())
+                {
+                    templ.health = HealthComponent{health["maxHealth"].GetFloat()};
+                }
+            }
+
+            // Attack
+            if (components.HasMember("attack") && components["attack"].IsObject())
+            {
+                const auto& attack = components["attack"];
+                if (attack.HasMember("baseDamage") && attack["baseDamage"].IsFloat())
+                {
+                    float baseDamage = attack["baseDamage"].GetFloat();
+                    float flatBonus  = attack.HasMember("flatBonus") && attack["flatBonus"].IsFloat()
+                                           ? attack["flatBonus"].GetFloat()
+                                           : 0.0f;
+                    float damageMultiplier =
+                        attack.HasMember("damageMultiplier") && attack["damageMultiplier"].IsFloat()
+                            ? attack["damageMultiplier"].GetFloat()
+                            : 0.0f;
+                    templ.attack = AttackComponent{baseDamage, flatBonus, damageMultiplier};
+                }
+            }
+
+            // Cooldown
+            if (components.HasMember("cooldown") && components["cooldown"].IsObject())
+            {
+                const auto& cooldown = components["cooldown"];
+                if (cooldown.HasMember("cooldownDuration") && cooldown["cooldownDuration"].IsFloat())
+                {
+                    templ.cooldown = CooldownComponent{cooldown["cooldownDuration"].GetFloat()};
+                }
+            }
+
+            //Speed
+            if (components.HasMember("speed") && components["speed"].IsFloat())
+            {
+                templ.speed = SpeedComponent{components["speed"].GetFloat()};
             }
         }
         entityTemplates[templ.type][templ.name] = templ;

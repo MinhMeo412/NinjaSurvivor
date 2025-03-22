@@ -18,6 +18,8 @@ public:
 
     void startUpdate(float dt);
 
+    ax::Layer* getUILayer() const { return uiLayer; }
+
 private:
     ax::Layer* uiLayer = nullptr;
 

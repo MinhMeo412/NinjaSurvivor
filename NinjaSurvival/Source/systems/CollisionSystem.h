@@ -20,10 +20,6 @@ public:
     // Xử lý vị trí mới của entity khi di chuyển, trả về vị trí đã điều chỉnh nếu có va chạm
     ax::Vec2 resolvePosition(Entity entity, const ax::Vec2& newPos);
 
-    // Callback khi va chạm xảy ra
-    void setCollisionCallback(std::function<void(Entity, Entity)> callback) { onCollision = callback; }
-
-
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -45,7 +41,7 @@ private:
 
     SpatialGrid spatialGrid; // Khởi tạo lưới
 
-    std::function<void(Entity, Entity)> onCollision; // Callback khi va chạm xảy ra (kiểm tra giữa entity
+    std::function<void(Entity, Entity)> onCollision; // Callback khi va chạm xảy ra
 
     // Kiểm tra va chạm giữa 2 entity
     bool checkCollision(Entity e1, Entity e2);
