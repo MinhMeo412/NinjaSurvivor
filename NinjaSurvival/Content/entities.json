@@ -113,14 +113,14 @@
                 },
                 "speed": 100.0,
                 "hitbox": {
-                    "width": 32.0,
-                    "height": 32.0
+                    "width": 16.0,
+                    "height": 16.0
                 },
                 "health": {
                     "maxHealth": 100.0
                 },
                 "attack": {
-                    "baseDamage": 50.0,
+                    "baseDamage": 5.0,
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
@@ -174,8 +174,8 @@
                 },
                 "speed": 100.0,
                 "hitbox": {
-                    "width": 32.0,
-                    "height": 32.0
+                    "width": 16.0,
+                    "height": 16.0
                 },
                 "health": {
                     "maxHealth": 100.0
@@ -232,8 +232,8 @@
                 },
                 "speed": 300.0,
                 "hitbox": {
-                    "width": 32.0,
-                    "height": 32.0
+                    "width": 16.0,
+                    "height": 16.0
                 },
                 "health": {
                     "maxHealth": 100.0
@@ -293,8 +293,8 @@
                 },
                 "speed": 100.0,
                 "hitbox": {
-                    "width": 32.0,
-                    "height": 32.0
+                    "width": 16.0,
+                    "height": 16.0
                 },
                 "health": {
                     "maxHealth": 100.0

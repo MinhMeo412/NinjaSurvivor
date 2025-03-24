@@ -13,7 +13,6 @@ public:
 
     // Callback để cập nhật visibility khi player đổi chunk hoặc đổi góc phần tư
     void onPlayerPositionChanged(const ax::Vec2& playerPos);
-
 private:        
     ax::Scene* parentScene   = nullptr;
 

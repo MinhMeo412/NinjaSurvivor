@@ -191,3 +191,17 @@ void HealthSystem::resetCooldown(Entity attacker)
         cooldown->cooldownTimer = cooldown->cooldownDuration;
     }
 }
+
+float HealthSystem::getPlayerMaxHealth() const
+{
+    Entity playerEntity = SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerEntity();
+
+    return healthMgr.getComponent(playerEntity)->maxHealth;
+}
+
+float HealthSystem::getPlayerCurrentHealth() const
+{
+    Entity playerEntity = SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerEntity();
+
+    return healthMgr.getComponent(playerEntity)->currentHealth;
+}

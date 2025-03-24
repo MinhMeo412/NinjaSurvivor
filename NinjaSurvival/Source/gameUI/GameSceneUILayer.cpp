@@ -3,6 +3,8 @@
 #include "GameOverGamePauseLayer.h"
 #include "systems/SystemManager.h"
 #include "systems/CameraSystem.h"
+#include "systems/SpawnSystem.h"
+#include "systems/HealthSystem.h"
 
 using namespace ax;
 
@@ -53,6 +55,14 @@ bool GameSceneUILayer::init()
         this->setPosition(cameraOffsetPos);
     }
 
+    //Tạo thanh HP cho player
+    hpBarRed = Sprite ::create("LifeBarMiniProgress.png");
+    hpBarGray = Sprite ::create("LifeBarMiniUnder.png");
+    hpBarRed->setAnchorPoint(Vec2(0, 0.5f));  //Cố định bên trái
+    hpBarGray->setAnchorPoint(Vec2(0, 0.5f)); //Cố định bên trái
+    this->addChild(hpBarRed, 2);
+    this->addChild(hpBarGray, 1);
+
     return true;
 }
 
@@ -64,6 +74,35 @@ void GameSceneUILayer::update(float dt)
         Vec2 cameraOffsetPos = cameraSystem->getCamera()->getPosition() - _director->getVisibleSize() / 2;
         this->setPosition(cameraOffsetPos);
     }
+
+    updateHPBar();
+}
+
+//Cập nhật vị trí và máu của thanh HP
+void GameSceneUILayer::updateHPBar()
+{
+    // Lấy SpawnSystem từ SystemManager
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (!spawnSystem)
+        return;
+
+    // Lấy vị trí world của player
+    ax::Vec2 playerWorldPos = spawnSystem->getPlayerPosition();
+
+    // Điều chỉnh vị trí xuống dưới chân player
+    playerWorldPos.x -= (hpBarRed->getContentSize().width / 2);
+    playerWorldPos.y -= 12.0f;
+
+    // Chuyển đổi sang tọa độ local trong UILayer
+    ax::Vec2 localPos = this->convertToNodeSpace(playerWorldPos);
+    hpBarGray->setPosition(localPos);
+    hpBarRed->setPosition(localPos);
+
+    auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
+    if (!healthSystem)
+        return;
+    // Cập nhật tỷ lệ thanh đỏ theo phần trăm máu còn lại
+    hpBarRed->setScaleX(healthSystem->getPlayerCurrentHealth() / healthSystem->getPlayerMaxHealth());
 }
 
 
