@@ -179,9 +179,7 @@ std::string MapSystem::getRandomTMXFile(const std::vector<std::string>& tmxFiles
 
 
 void MapSystem::update(float dt)
-{
-
-}
+{}
 
 void MapSystem::onPlayerPositionChanged(const Vec2& playerPos)
 {
@@ -370,3 +368,4 @@ void MapSystem::drawCollisionOutline(Chunk& chunk)
         AXLOG("Drew collision outline for chunk (%d, %d)", (int)chunk.gridPos.x, (int)chunk.gridPos.y);
     }
 }
+

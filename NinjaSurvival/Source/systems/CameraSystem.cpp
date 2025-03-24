@@ -41,6 +41,8 @@ void CameraSystem::init()
     {
         AXLOG("Warning: SpawnSystem not found, assuming player is entity 0");
     }
+
+    //camera->setZoom(0.5f); //Dùng test màn 360x640
 }
 
 void CameraSystem::update(float dt)

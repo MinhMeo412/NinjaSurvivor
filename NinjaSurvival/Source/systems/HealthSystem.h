@@ -20,6 +20,8 @@ public:
 
     // Hàm xử lý sát thương khi va chạm xảy ra (gọi với callback từ collision system)
     void handleCollision(Entity e1, Entity e2);
+    float getPlayerMaxHealth() const;
+    float getPlayerCurrentHealth() const;
 
 private:
     EntityManager& entityManager;

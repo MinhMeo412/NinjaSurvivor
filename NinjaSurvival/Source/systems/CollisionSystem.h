@@ -19,6 +19,8 @@ public:
 
     // Xử lý vị trí mới của entity khi di chuyển, trả về vị trí đã điều chỉnh nếu có va chạm
     ax::Vec2 resolvePosition(Entity entity, const ax::Vec2& newPos);
+    // Kiểm tra va chạm giữa entity và collision tile tại vị trí cụ thể
+    bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
 
 private:
     EntityManager& entityManager;
@@ -45,8 +47,6 @@ private:
 
     // Kiểm tra va chạm giữa 2 entity
     bool checkCollision(Entity e1, Entity e2);
-    // Kiểm tra va chạm giữa entity và collision tile tại vị trí cụ thể
-    bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
     // Chuyển đổi tọa độ pixel sang tọa độ tile trong tile map
     ax::Vec2 convertToTileCoord(const ax::Vec2& position, ax::TMXTiledMap* tiledMap);
     // Lấy tile map của chunk tại vị trí cụ thể

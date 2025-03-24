@@ -43,6 +43,9 @@ public:
     std::function<void()> onEnemyDeath;
     int getLivingEnemyCount() const { return livingEnemyCount; }
 
+    // Lấy vị trí world của player
+    ax::Vec2 getPlayerPosition() const;
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -66,8 +69,10 @@ private:
     void spawnBoss(float elapsedTime);
     void adjustEnemySpawnDuringBoss(bool isBossActive);
 
-    Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& position);
-    ax::Vec2 getRandomSpawnPosition(TransformComponent* playerPosition, float innerRadius, float outerRadius);
+    Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& playerPosition);
+    ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
+
+    bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
 };
 
 

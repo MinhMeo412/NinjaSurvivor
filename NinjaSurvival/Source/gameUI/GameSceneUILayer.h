@@ -14,7 +14,10 @@ public:
 private:
     ax::MenuItemImage* pauseButton;
 
+    ax::Sprite* hpBarRed;
+    ax::Sprite* hpBarGray;
 
+    void updateHPBar();
     void gamePauseCallback(ax::Object* sender);
 };
 
