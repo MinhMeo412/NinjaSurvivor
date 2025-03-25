@@ -36,17 +36,25 @@ private:
 
     void updateEntityMovement(Entity entity, float dt);  // Hàm chung bao gồm xử lý sub-stepping
     // Các hàm di chuyển trả về velocity cho entity
-    void movePlayer(Entity entity, float dt);      // Di chuyển player
-    void moveEnemySlime(Entity entity, float dt);  // Di chuyển cho Slime
+    void movePlayer(Entity entity, float dt);       // Di chuyển player
+    void moveMeleeEnemy(Entity entity, float dt);   // Di chuyển cho melee enemy
+    void moveRangedEnemy(Entity entity, float dt);  // Di chuyển cho ranged enemy
+
     void moveItem(Entity entity, float dt); //Khi item được "nhặt"
-    // Thêm cjo các entity khác: moveBossX, moveProjectileY...
+    // Thêm các entity khác: moveBossX, moveProjectileY...
 
-    // Unordered_map lưu thời gian giãn cách để cập nhật hướng di chuyển cho từng Slime
-    // Có thể xem xét bỏ nếu không cần thiết (nếu bỏ thì phải kiểm tra quá nhiều entity mỗi frame, nếu giữ thì entity nào cũng cần có)
-    std::unordered_map<Entity, float> slimeDirectionTimers;
+    //Re position nếu entity ra ngoài view quá xa
+    bool isOutOfView(Entity entity);
+
+    // Quyết định ngẫu nhiên xem có cập nhật hướng không
+    std::random_device rd;                                  // Seed cho random
+    std::mt19937 gen{rd()};                                 // Generator ngẫu nhiên
+    std::uniform_real_distribution<float> dis{0.0f, 1.0f};  // Phân phối từ 0 đến 1
+    const float updateProbability = 1.0f / 10.0f;           // Tỷ lệ 10% mỗi frame
 
 
-
+    std::unordered_map<Entity, float> timers;   // Timer riêng cho ranged enemy
+    std::uniform_real_distribution<float> distance{150.0f, 360.0f}; // Khoảng cách cho ranged enemy với player
 };
 
 #endif  // __MOVEMENT_SYSTEM_H__

@@ -17,11 +17,15 @@ MovementSystem::MovementSystem(EntityManager& em,
 {
     // Khai báo các kiểu di chuyển
     // Kiểu di chuyển của player
-    movementStrategies["player"] = [this](Entity e, float dt) { movePlayer(e, dt); };
-    // Enemy_Slime
-    movementStrategies["enemy_Slime"] = [this](Entity e, float dt) { moveEnemySlime(e, dt); };
+    movementStrategies["player"]        = [this](Entity e, float dt) { movePlayer(e, dt); };
+    // Enemy_Slime_Bear_Snake
+    movementStrategies["enemy_Slime"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Bear"]    = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    // Enemy_Octopus
+    movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
     // Item
-    movementStrategies["item"] = [this](Entity e, float dt) { moveItem(e, dt); };
+    movementStrategies["item"]          = [this](Entity e, float dt) { moveItem(e, dt); };
 }
 
 void MovementSystem::init() {}
@@ -140,8 +144,8 @@ void MovementSystem::movePlayer(Entity entity, float dt)
     }
 }
 
-// Logic di chuyển cho enemy loại Slime (hoặc tất cả melee enemy - sửa cả điều kiện trên hàm updateMovement)
-void MovementSystem::moveEnemySlime(Entity entity, float dt)
+// Logic di chuyển cho enemy loại melee enemy
+void MovementSystem::moveMeleeEnemy(Entity entity, float dt)
 {
     auto velocity  = velocityMgr.getComponent(entity);
     auto transform = transformMgr.getComponent(entity);
@@ -150,41 +154,124 @@ void MovementSystem::moveEnemySlime(Entity entity, float dt)
     if (!velocity || !transform || !speed)
         return;
 
-    // Cập nhật hướng mỗi 1 giây
-    float& timer = slimeDirectionTimers[entity];  // Timer riêng cho mỗi Slime
-    //Nếu không dùng timer thì mỗi frame phải tính hướng cho toàn bộ entity (quá nhiều)
-    timer += dt;
-    if (timer >= 1.0f)
+    //Re-position nếu quá xa
+    isOutOfView(entity);
+
+    // Quyết định ngẫu nhiên xem có cập nhật hướng không
+    if (dis(gen) < updateProbability)
     {
         auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
         if (spawnSystem)
         {
-            // Lấy thông tin vị trí player (kiểu di chuyển follow)
-            Entity player = spawnSystem->getPlayerEntity();
-            if (auto playerTransform = transformMgr.getComponent(player))
+            ax::Vec2 playerPos = spawnSystem->getPlayerPosition();
+            ax::Vec2 slimePos(transform->x, transform->y);
+            ax::Vec2 direction = playerPos - slimePos;
+            direction.normalize();
+            velocity->vx = direction.x * speed->speed;
+            velocity->vy = direction.y * speed->speed;
+
+            if (auto animation = animationMgr.getComponent(entity))
             {
-                ax::Vec2 playerPos(playerTransform->x, playerTransform->y);
-                ax::Vec2 slimePos(transform->x, transform->y);
-                ax::Vec2 direction = playerPos - slimePos;
-                direction.normalize();
-                velocity->vx = direction.x * speed->speed;
-                velocity->vy = direction.y * speed->speed;
+                // Tính góc di chuyển từ hướng joystick (độ sang radian)
+                // Chuyển đổi vector direction thành hệ góc (-180;180)
+                float angle = AX_RADIANS_TO_DEGREES(atan2(direction.y, direction.x));
+                if (angle < 0)
+                    angle += 360.0f;  // Nếu là góc âm chuyển thành hệ góc (0;360)
+
+                // Kiểm tra góc cho "moveDown" (255° đến 285°)
+                if (angle >= 255.0f && angle <= 285.0f)
+                    animation->currentState = "moveDown";
+                else if (velocity->vx < 0)
+                    animation->currentState = "moveLeft";
+                else if (velocity->vx > 0)
+                    animation->currentState = "moveRight";
+                else  // Mặc định (= 0)
+                    animation->currentState = "idle";
             }
         }
-        if (auto animation = animationMgr.getComponent(entity))
+    }
+}
+
+// Logic di chuyển cho enemy loại ranged enemy
+void MovementSystem::moveRangedEnemy(Entity entity, float dt)
+{
+    auto velocity  = velocityMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto speed     = speedMgr.getComponent(entity);
+    auto animation = animationMgr.getComponent(entity);
+    if (!velocity || !transform || !speed)
+        return;
+
+    // Re-position nếu quá xa
+    isOutOfView(entity);
+
+    // Timer kiểm tra vị trí (lưu trong MovementSystem)
+    timers[entity] += dt;
+
+    // Lấy vị trí player từ SpawnSystem
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (!spawnSystem)
+        return;
+
+    ax::Vec2 playerPos = spawnSystem->getPlayerPosition();
+    ax::Vec2 enemyPos(transform->x, transform->y);
+
+    // Kiểm tra vị trí mỗi x giây
+    if (timers[entity] >= 2.0f)
+    {
+        float currentDistance = playerPos.distance(enemyPos);
+
+        // Nếu không trong vùng, chọn vị trí mới
+        if (currentDistance < distance.min() || currentDistance > distance.max())
         {
-            if (velocity->vx > 0)
-                animation->currentState = "moveRight";  //"moveRight";
-            else if (velocity->vx < 0)
-                animation->currentState = "moveLeft";  //"moveLeft";
-            else if (velocity->vy > 0)
-                animation->currentState = "moveDown";  // Move up changes
-            else if (velocity->vy < 0)
-                animation->currentState = "moveDown";  //"moveDown";
-            else
-                animation->currentState = "idle";
+            // Chọn khoảng cách ngẫu nhiên trong
+            float targetDistance = distance(gen);
+
+            // Tính vector hướng từ enemy đến player
+            ax::Vec2 direction = playerPos - enemyPos;
+            direction.normalize();
+
+            // Tính vị trí mục tiêu
+            ax::Vec2 targetPos = playerPos - direction * targetDistance;
+
+            // Tính hướng di chuyển đến targetPos
+            ax::Vec2 moveDirection = targetPos - enemyPos;
+            moveDirection.normalize();
+
+            // Cập nhật vận tốc
+            velocity->vx = moveDirection.x * speed->speed;
+            velocity->vy = moveDirection.y * speed->speed;
         }
-        timer = 0.0f;  // Reset timer
+        else // Trong vùng, dừng lại
+        {   
+            velocity->vx = 0.0f;
+            velocity->vy = 0.0f;
+        }
+        timers[entity] = 0.0f;  // Reset timer
+    }
+
+    // Xử lý animation
+    if (animation)
+    {
+        if (velocity->vx == 0.0f && velocity->vy == 0.0f)
+        {
+            animation->currentState = "idle";
+        }
+        else
+        {
+            ax::Vec2 moveDirection = ax::Vec2(velocity->vx, velocity->vy);
+            moveDirection.normalize();
+            float angle = AX_RADIANS_TO_DEGREES(atan2(moveDirection.y, moveDirection.x));
+            if (angle < 0)
+                angle += 360.0f;
+
+            if (angle >= 255.0f && angle <= 285.0f)
+                animation->currentState = "moveDown";
+            else if (velocity->vx < 0)
+                animation->currentState = "moveLeft";
+            else if (velocity->vx > 0)
+                animation->currentState = "moveRight";
+        }
     }
 }
 
@@ -224,3 +311,29 @@ void MovementSystem::moveItem(Entity entity, float dt)
         }
     }
 }
+
+bool MovementSystem::isOutOfView(Entity entity)
+{
+    auto transform = transformMgr.getComponent(entity);
+    if (!transform)
+        return false;
+
+    //Player & enemy position
+    ax::Vec2 playerPos = SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerPosition();
+    ax::Vec2 enemyPos(transform->x, transform->y);
+
+    // Check khoảng cách giữa player & enemy
+    float distance = playerPos.distance(enemyPos);
+    if (distance > 950.0f)
+    {
+        // Re-position
+        ax::Vec2 newEnemyPos =
+            SystemManager::getInstance()->getSystem<SpawnSystem>()->getRandomSpawnPosition(entity, playerPos);
+        transform->x = newEnemyPos.x;
+        transform->y = newEnemyPos.y;
+        return true;
+    }
+    return false;
+}
+
+

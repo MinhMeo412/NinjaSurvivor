@@ -45,7 +45,6 @@ void SpawnSystem::init()
 
 void SpawnSystem::update(float dt)
 {
-
     spawnTimer += dt;
 
     // Lấy elapsedTime từ TimeSystem
@@ -58,12 +57,12 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    if (spawnTimer >= spawnInterval)
-    {
-        spawnEnemies(elapsedTime);
-        spawnBoss(elapsedTime);
-        spawnTimer = 0.0f;  // Reset timer
-    }
+    //if (spawnTimer >= spawnInterval)
+    //{
+    //    spawnEnemies(elapsedTime);
+    //    spawnBoss(elapsedTime);
+    //    spawnTimer = 0.0f;  // Reset timer
+    //}
 }
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
@@ -82,16 +81,14 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     numEnemies                = static_cast<int>(numEnemies * spawnRateMultiplier);
 
     // Tỷ lệ spawn từng loại quái
-    float slimeRatio, snakeRatio, bearRatio, octopusRatio;
+    float slimeRatio = 0.0, snakeRatio = 0.0, bearRatio = 0.0, octopusRatio = 0.0;
     if (elapsedTime < 300)
     {  // 0 - 5 phút
         //slimeRatio   = 0.7;
-        slimeRatio   = 1.0; //test
+        //slimeRatio   = 1.0; //test
         //snakeRatio = 0.2;
         //bearRatio    = 0.1;
-        snakeRatio   = 0.0;
-        bearRatio    = 0.0;
-        octopusRatio = 0.0;
+        octopusRatio = 1.0;
     }
     else if (elapsedTime < 600)
     {  // 5 - 10 phút

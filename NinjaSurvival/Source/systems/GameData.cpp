@@ -1,8 +1,6 @@
 #include "GameData.h"
 #include "rapidjson/document.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
 
 std::unique_ptr<GameData> GameData::instance = nullptr;
 
@@ -295,16 +293,32 @@ bool GameData::loadEntityData(const std::string& jsonString)
 
 std::string GameData::readFileContent(const std::string& filename)
 {
-    std::ifstream file(filename);
-    if (!file)
-    {
-        std::cerr << "Error opening file: " << filename << std::endl;
+    // Dễ gây lỗi khi chạy trên android (chỉ phù hợp PC)
+    //std::ifstream file(filename);
+    //if (!file)
+    //{
+    //    std::cerr << "Error opening file: " << filename << std::endl;
+    //    return "";
+    //}
+    //std::stringstream buffer;
+    //buffer << file.rdbuf();
+    //return buffer.str();
+
+    //Sử dụng FileUtils của Axmol
+    // Lấy đường dẫn đầy đủ từ FileUtils
+    std::string fullPath = ax::FileUtils::getInstance()->fullPathForFilename(filename);
+    if (fullPath.empty()) {
+        AXLOG("Error: File %s not found in assets", filename.c_str());
         return "";
     }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
+    // Đọc nội dung tệp
+    std::string content = ax::FileUtils::getInstance()->getStringFromFile(fullPath);
+    if (content.empty()) {
+        AXLOG("Error: Failed to read content from %s (file might be empty or inaccessible)", filename.c_str());
+    } else {
+        AXLOG("Successfully read %s: %d bytes", filename.c_str(), content.size());
+    }
+    return content;
 }
 
 //Nhận tên file .json

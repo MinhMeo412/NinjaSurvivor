@@ -2,7 +2,7 @@
     "maps": [
         {
             "name": "Map",
-            "sprite": "HelloWorld.png",
+            "sprite": "Map/Map.png",
             "available": true,
             "mapSize": {
                 "width": 8,
@@ -49,31 +49,35 @@
                 "height": 8
             },
             "upRightCornerTMXFile": [
-                "Map.tmx"
+                "Map/URC.tmx"
             ],
             "downRightCornerTMXFile": [
-                "Map.tmx"
+                "Map/LRC.tmx"
             ],
             "upLeftCornerTMXFile": [
-                "Map.tmx"
+                "Map/ULC.tmx"
             ],
             "downLeftCornerTMXFile": [
-                "Map.tmx"
+                "Map/LLC.tmx"
             ],
             "upRearTMXFile": [
-                "Map.tmx"
+                "Map/UpperR.tmx"
             ],
             "downRearTMXFile": [
-                "Map.tmx"
+                "Map/LowerR.tmx"
             ],
             "leftRearTMXFile": [
-                "Map.tmx"
+                "Map/LeftR.tmx"
             ],
             "rightRearTMXFile": [
-                "Map.tmx"
+                "Map/RightR.tmx"
             ],
             "middleTMXFile": [
-                "Map.tmx"
+                "Map/Middle1.tmx",
+                "Map/Middle2.tmx",
+                "Map/Middle3.tmx",
+                "Map/Middle4.tmx",
+                "Map/Middle5.tmx"
             ]
         }
     ]

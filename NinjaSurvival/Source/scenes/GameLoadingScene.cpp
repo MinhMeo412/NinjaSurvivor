@@ -2,7 +2,6 @@
 #include "GameLoadingScene.h"
 #include "GameScene.h"
 
-
 using namespace ax;
 
 GameLoadingScene::GameLoadingScene() : SceneBase("GameLoadingScene") {}

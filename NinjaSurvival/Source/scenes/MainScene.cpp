@@ -2,8 +2,6 @@
 #include "MainScene.h"
 #include "CharacterChooseScene.h"
 
-#include "systems/GameData.h"
-
 using namespace ax;
 
 MainScene::MainScene() : SceneBase("MainScene") {}
@@ -56,53 +54,6 @@ bool MainScene::init()
     drawNode->setPosition(Vec2(0, 0));
     addChild(drawNode);
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-
-
-
-        // Kiểm tra đọc file entities.json (xóa khi release)
-    auto gameData               = GameData::getInstance();
-    const auto& entityTemplates = gameData->getEntityTemplates();
-
-    if (!entityTemplates.empty())
-    {
-        AXLOG("Entity Templates:");
-        for (const auto& [category, entities] : entityTemplates)
-        {
-            AXLOG("  Category: %s", category.c_str());
-            for (const auto& [key, entity] : entities)
-            {
-                AXLOG("    Entity Key: %s", key.c_str());
-                AXLOG("      Type: %s", entity.type.c_str());
-                AXLOG("      Name: %s", entity.name.c_str());
-                AXLOG("      Available: %s", entity.available ? "true" : "false");
-
-                if (entity.transform)
-                {
-                    AXLOG("      Transform Component: Exists");
-                }
-                if (entity.sprite)
-                {
-                    const auto& spriteComp = entity.sprite.value();
-                    AXLOG("      Sprite Component: Exists");
-                    AXLOG("        Plist: %s", spriteComp.plist.c_str());
-                    AXLOG("        Frame Name: %s", spriteComp.gameSceneFrameName.c_str());
-                    AXLOG("      Sprite Component: Exists");
-                }
-                if (entity.animation)
-                {
-                    AXLOG("      Animation Component: Exists");
-                }
-                if (entity.velocity)
-                {
-                    AXLOG("      Velocity Component: Exists");
-                }
-            }
-        }
-    }
-    else
-    {
-        AXLOG("Entity Templates is empty.");
-    }
 
     return true;
 }

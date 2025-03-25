@@ -3,6 +3,7 @@
 
 #include "axmol.h"
 #include "SceneBase.h"
+#include "systems/SystemManager.h"
 
 class CharacterChooseScene : public SceneBase
 {
@@ -16,6 +17,8 @@ private:
     ax::MenuItemSprite* nextButton = nullptr;
     ax::MenuItemSprite* selectedCharacterItem = nullptr;
     std::string selectedCharacterName;
+
+    SystemManager* systemManager = nullptr;
 
     // a selector callback
     void menuReturnCallback(ax::Object* sender);
