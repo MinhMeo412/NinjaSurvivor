@@ -4,7 +4,7 @@
             "type": "player",
             "name": "Ninja",
             "available": true,
-            "profileImage": "HelloWorld.png",
+            "profileImage": "Entity/Character/Faceset.png",
             "components": {
                 "transform": {
                     "x": 700.0,
@@ -14,7 +14,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 500.0,
+                "speed": 100.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -23,28 +23,28 @@
                     "maxHealth": 100.0
                 },
                 "sprite": {
-                    "plist": "Entity/Character/character.plist",
-                    "gameSceneFrame": "./character_down0"
+                    "plist": "Entity/Character/ninja.plist",
+                    "gameSceneFrame": "./ninja_down0"
                 },
                 "animation": {
                     "frames": {
                         "moveDown": [
-                            "./character_down0",
-                            "./character_down1",
-                            "./character_down2"
+                            "./ninja_down0",
+                            "./ninja_down1",
+                            "./ninja_down2"
                         ],
                         "moveRight": [
-                            "./character_right0",
-                            "./character_right1",
-                            "./character_right2"
+                            "./ninja_right0",
+                            "./ninja_right1",
+                            "./ninja_right2"
                         ],
                         "moveLeft": [
-                            "./character_left0",
-                            "./character_left1",
-                            "./character_left2"
+                            "./ninja_left0",
+                            "./ninja_left1",
+                            "./ninja_left2"
                         ],
                         "idle": [
-                            "./character_down0"
+                            "./ninja_down0"
                         ]
                     },
                     "frameDuration": 0.2
@@ -53,45 +53,46 @@
         },
         {
             "type": "player",
-            "name": "Ninninjaja",
-            "available": false,
-            "profileImage": "HelloWorld.png",
+            "name": "Master",
+            "available": true,
+            "profileImage": "Entity/Character/Faceset1.png",
             "components": {
                 "transform": {
-                    "x": 320.0,
-                    "y": 240.0
+                    "x": 700.0,
+                    "y": 1000.0
                 },
                 "velocity": {
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 500.0,
+                "speed": 100.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
                 "health": {
                     "maxHealth": 100.0
                 },
                 "sprite": {
-                    "plist": "Entity/Character/character.plist",
-                    "gameSceneFrame": "./character_down0"
+                    "plist": "Entity/Character/master.plist",
+                    "gameSceneFrame": "./master_down0"
                 },
                 "animation": {
                     "frames": {
                         "moveDown": [
-                            "./character_down0",
-                            "./character_down1",
-                            "./character_down2"
+                            "./master_down0",
+                            "./master_down1"
                         ],
                         "moveRight": [
-                            "./character_right0",
-                            "./character_right1",
-                            "./character_right2"
+                            "./master_right0",
+                            "./master_right1"
                         ],
                         "moveLeft": [
-                            "./character_left0",
-                            "./character_left1",
-                            "./character_left2"
+                            "./master_left0",
+                            "./master_left1"
                         ],
                         "idle": [
-                            "./character_down0"
+                            "./master_down0"
                         ]
                     },
                     "frameDuration": 0.2
@@ -172,7 +173,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 100.0,
+                "speed": 70.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -230,7 +231,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 300.0,
+                "speed": 200.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -239,7 +240,7 @@
                     "maxHealth": 100.0
                 },
                 "attack": {
-                    "baseDamage": 50.0,
+                    "baseDamage": 5.0,
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
@@ -300,7 +301,7 @@
                     "maxHealth": 100.0
                 },
                 "attack": {
-                    "baseDamage": 50.0,
+                    "baseDamage": 1.0,
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },

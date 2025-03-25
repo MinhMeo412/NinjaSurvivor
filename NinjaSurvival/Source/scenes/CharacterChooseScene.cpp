@@ -15,6 +15,9 @@ bool CharacterChooseScene::init()
     {
         return false;
     }
+
+    systemManager = SystemManager::getInstance();
+    systemManager->resetSystems();
         
     menuUISetup();
 

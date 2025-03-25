@@ -45,6 +45,7 @@ public:
 
     // Lấy vị trí world của player
     ax::Vec2 getPlayerPosition() const;
+    ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
 
 private:
     EntityManager& entityManager;
@@ -63,14 +64,14 @@ private:
     float spawnTimer    = 0.0f;
     float spawnInterval  = 2.0f;   // Spawn mỗi 2 giây
     int livingEnemyCount = 0;      // Đếm số enemy đang hoạt động
-    bool isBossActive    = false;  // Trạng thái boss xuất hiện
+    bool isBossActive    = false;  
 
     void spawnEnemies(float elapsedTime);
     void spawnBoss(float elapsedTime);
     void adjustEnemySpawnDuringBoss(bool isBossActive);
 
     Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& playerPosition);
-    ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
+    
 
     bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
 };
