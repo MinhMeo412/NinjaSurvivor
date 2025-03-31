@@ -19,6 +19,7 @@ public:
     void init() override;
     void update(float dt) override;
 
+    void onEntityDestroyed(Entity entity);
 
 private:
     EntityManager& entityManager;
@@ -31,7 +32,9 @@ private:
     ax::Scene* scene                         = nullptr;
     ax::SpriteBatchNode* enemyBatchNode      = nullptr;
     //ax::SpriteBatchNode* bossBatchNode       = nullptr;
-    //ax::SpriteBatchNode* itemWeaponBatchNode = nullptr;
+    ax::SpriteBatchNode* itemBatchNode = nullptr;
+    //ax::SpriteBatchNode* weaponBatchNode = nullptr;
+
     ax::DrawNode* debugDrawNode              = nullptr;
 
     void addSpriteToScene(Entity entity);

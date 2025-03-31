@@ -20,41 +20,34 @@ bool MainScene::init()
 
     // Background image (need update)
 
-    auto background = Sprite::create("UI/background2.png");
-    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-
-    // Điều chỉnh tỷ lệ để phủ kín màn hình
-    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-    this->addChild(background, 0);
-
-    auto titleSprite = Sprite::create("UI/Title1.png");
-    titleSprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height * 5 / 6));
-    this->addChild(titleSprite, 1);
-
-    float buttonSpacing = visibleSize.width / 10;  // Khoảng cách đều nhau giữa các nút
-    float startY        = origin.y + visibleSize.height * 3 / 4 - visibleSize.height / 6;
     // Play button
-    playItem = Utils::createMenuItem("UI/buttonPlayGame.png", "UI/buttonPlayGame.png",
-                                     AX_CALLBACK_1(MainScene::menuPlayCallback, this),
-                                     Vec2(origin.x + visibleSize.width / 2, startY));
+    playItem =
+        Utils::createMenuItem("CloseNormal.png", "CloseSelected.png", AX_CALLBACK_1(MainScene::menuPlayCallback, this),
+                              Vec2(centerX, centerY - itemOrderNum++ * itemSpacing));
 
-    /*
-    Chưa có scene shop vs archive thì chưa cần đến
-    auto shopButton =
-        MenuItemImage::create("UI/buttonShop.png", "UI/buttonShop.png", AX_CALLBACK_1(MainScene::shopCallback, this));
-    shopButton->setPosition(
-        Vec2(origin.x + visibleSize.width / 2, startY - buttonSpacing - shopButton->getContentSize().height));
+    auto label1 = Label::createWithTTF("Play button", "fonts/Marker Felt.ttf", 24);
+    label1->setPosition(playItem->getPosition() + Vec2(100, 0));
+    this->addChild(label1, 1);
 
+    // Close button
+    closeItem =
+        Utils::createMenuItem("CloseNormal.png", "CloseSelected.png", AX_CALLBACK_1(MainScene::menuCloseCallback, this),
+                              Vec2(centerX, centerY - itemOrderNum++ * itemSpacing));
 
-    auto achieveButton = MenuItemImage::create("UI/buttonArchive.png", "UI/buttonArchive.png",
-                                               AX_CALLBACK_1(MainScene::achieveCallback, this));
-    achieveButton->setPosition(Vec2(
-        origin.x + visibleSize.width / 2,
-       startY - 2 * buttonSpacing - shopButton->getContentSize().height - achieveButton->getContentSize().height));
-    */
-    auto menu = Menu::create(playItem, NULL);
+    auto label2 = Label::createWithTTF("Exit button", "fonts/Marker Felt.ttf", 24);
+    label2->setPosition(closeItem->getPosition() + Vec2(100, 0));
+    this->addChild(label2, 1);
+
+    // Create menu
+    auto menu = Menu::create(playItem, closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
+
+    // Title (replace with image)
+    auto label = Label::createWithTTF("Ninja Survival Title", "fonts/Marker Felt.ttf", 24);
+    label->setPosition(
+        Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - label->getContentSize().height));
+    this->addChild(label, 1);
 
     // Border
     auto drawNode = DrawNode::create();
