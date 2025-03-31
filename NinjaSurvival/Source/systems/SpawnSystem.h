@@ -41,11 +41,10 @@ public:
 
     // Callback khi enemy chết
     std::function<void()> onEnemyDeath;
+    int getLivingEnemyCount() const { return livingEnemyCount; }
 
     // Lấy vị trí world của player
     ax::Vec2 getPlayerPosition() const;
-
-    //Re-position cho moveSystem
     ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
 
 private:

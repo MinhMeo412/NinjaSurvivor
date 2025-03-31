@@ -3,7 +3,7 @@
 
 Entity EntityFactory::createEntity(const std::string& type, const std::string& name)
 {
-    auto gameData     = GameData::getInstance();
+    auto gameData = GameData::getInstance();
     const auto& templ = gameData->getEntityTemplates().at(type).at(name);
 
     Entity entity = entityManager.createEntity();
@@ -32,6 +32,6 @@ Entity EntityFactory::createEntity(const std::string& type, const std::string& n
     if (templ.speed)
         speedMgr.addComponent(entity, *templ.speed);
 
-    // thêm if cho các component khác
+    //thêm if cho các component khác
     return entity;
 }

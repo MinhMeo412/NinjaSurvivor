@@ -9,9 +9,7 @@
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
 #include "HealthSystem.h"
-#include "ItemSystem.h"
-#include "PickupSystem.h"
-#include "CleanupSystem.h"
+
 
 using namespace ax;
 
@@ -53,13 +51,8 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
     registerSystem("MovementSystem");
     registerSystem("CollisionSystem");
     registerSystem("HealthSystem");
-    registerSystem("ItemSystem");
-    registerSystem("PickupSystem");
-
 
     registerSystem("RenderSystem");
-    registerSystem("CleanupSystem");
-
 
     for (auto& system : systems)
         system->init();
@@ -67,16 +60,10 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
 
 void SystemManager::update(float dt)
 {
-    auto start = std::chrono::high_resolution_clock::now();
-
     for (auto& system : systems)
     {
         system->update(dt);
     }
-
-    auto end      = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    //AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
 }
 
 void SystemManager::resetSystems()
@@ -109,11 +96,12 @@ void SystemManager::registerSystem(const std::string& systemType)
 
     // Thêm SpawnSystem
     else if (systemType == "SpawnSystem")
-        addSystem(std::make_unique<SpawnSystem>(
-            gameWorld->getEntityManager(), gameWorld->getIdentityManager(), gameWorld->getTransformManager(),
-            gameWorld->getSpriteManager(), gameWorld->getAnimationManager(), gameWorld->getVelocityManager(),
-            gameWorld->getHitboxManager(), gameWorld->getHealthManager(), gameWorld->getAttackManager(),
-            gameWorld->getCooldownManager(), gameWorld->getSpeedManager()));
+        addSystem(std::make_unique<SpawnSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
+                                                gameWorld->getTransformManager(), gameWorld->getSpriteManager(),
+                                                gameWorld->getAnimationManager(), gameWorld->getVelocityManager(),
+                                                gameWorld->getHitboxManager(), gameWorld->getHealthManager(),
+                                                gameWorld->getAttackManager(), gameWorld->getCooldownManager(),
+                                                gameWorld->getSpeedManager()));
 
     // Thêm RenderSystem
     else if (systemType == "RenderSystem")
@@ -124,9 +112,9 @@ void SystemManager::registerSystem(const std::string& systemType)
     // Thêm MovementSystem
     else if (systemType == "MovementSystem")
         addSystem(std::make_unique<MovementSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
-                                                   gameWorld->getTransformManager(), gameWorld->getVelocityManager(),
-                                                   gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),
-                                                   gameWorld->getSpeedManager()));
+                                                   gameWorld->getTransformManager(),
+                                                   gameWorld->getVelocityManager(), gameWorld->getAnimationManager(),
+                                                   gameWorld->getHitboxManager(), gameWorld->getSpeedManager()));
 
     // Thêm CameraSystem
     else if (systemType == "CameraSystem")
@@ -137,26 +125,9 @@ void SystemManager::registerSystem(const std::string& systemType)
         addSystem(std::make_unique<CollisionSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                     gameWorld->getTransformManager(), gameWorld->getHitboxManager()));
 
-    // Thêm HealthSystem
     else if (systemType == "HealthSystem")
         addSystem(std::make_unique<HealthSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                  gameWorld->getHealthManager(), gameWorld->getAttackManager(),
                                                  gameWorld->getCooldownManager()));
-
-    // Thêm ItemSystem
-    else if (systemType == "ItemSystem")
-        addSystem(std::make_unique<ItemSystem>(
-            gameWorld->getEntityManager(), gameWorld->getIdentityManager(), gameWorld->getTransformManager(),
-            gameWorld->getSpriteManager(), gameWorld->getAnimationManager(), gameWorld->getVelocityManager(),
-            gameWorld->getHitboxManager(), gameWorld->getHealthManager(), gameWorld->getAttackManager(),
-            gameWorld->getCooldownManager(), gameWorld->getSpeedManager()));
-
-    // Thêm PickupSystem
-    else if (systemType == "PickupSystem")
-        addSystem(std::make_unique<PickupSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
-                                                 gameWorld->getTransformManager()));
-
-    // Thêm CleanupSystem
-    else if (systemType == "CleanupSystem")
-        addSystem(std::make_unique<CleanupSystem>(gameWorld->getEntityManager(), gameWorld->getSpriteManager()));
-}   
+    
+}
