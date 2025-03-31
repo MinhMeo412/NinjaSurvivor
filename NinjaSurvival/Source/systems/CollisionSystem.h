@@ -32,7 +32,7 @@ private:
     struct SpatialGrid
     {
         std::vector<std::vector<std::vector<Entity>>> cells;// Lưới chứa các entity theo ô
-        ax::Vec2 cellSize = ax::Vec2(64, 64);               // Kích thước mỗi ô trong lưới
+        ax::Vec2 cellSize = ax::Vec2(32, 32);               // Kích thước mỗi ô trong lưới
         ax::Vec2 gridSize;                                  // Kích thước lưới
 
         void init(const ax::Vec2& worldSize);               // Khởi tạo lưới với kích thước tổng của map

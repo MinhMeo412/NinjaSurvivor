@@ -2,6 +2,7 @@
 #include "SystemManager.h"
 #include "CameraSystem.h"
 #include "SpawnSystem.h"
+#include "ItemSystem.h"
 #include "gameUI/GameOverGamePauseLayer.h"
 #include "scenes/GameScene.h"
 
@@ -163,6 +164,8 @@ void HealthSystem::applyDamage(Entity target, float damage)
                 if (id->type == "enemy" && spawnSystem->onEnemyDeath)
                 {
                     spawnSystem->onEnemyDeath();
+                    auto itemSystem = SystemManager::getInstance()->getSystem<ItemSystem>();
+                    itemSystem->spawnItemAtDeath(target,false);
                 }
                 if (id->type == "player" && onPlayerOutOfHealth)
                 {
