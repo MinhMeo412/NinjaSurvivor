@@ -79,8 +79,7 @@ void CharacterChooseScene::menuUISetup()
     float marginY = visibleSize.height * 0.001;
 
     // Position the back button in the top-left corner
-    float backX =
-        origin.x + marginX + (backButton->getContentSize().width / 2);  // Center of the button, offset by margin
+    float backX = origin.x + marginX + (backButton->getContentSize().width / 2); // Center of the button, offset by margin
     float backY = origin.y + visibleSize.height - marginY - (backButton->getContentSize().height / 2);
     backButton->setPosition(Vec2(backX, backY));
     this->addChild(backButton, 6);
@@ -132,7 +131,7 @@ void CharacterChooseScene::menuUISetup()
             break;
         }
     }
-    const int cols = 6;                                  // Số cột (6 characters per row)
+    const int cols = 6;  // Số cột (6 characters per row)
     const int rows = (numCharacters + cols - 1) / cols;  // Số hàng, làm tròn lên
     float iconSpacingX =
         panelChooseCharacter->getContentSize().width * 0.08;  // Khoảng cách giữa các icon (5% chiều rộng panel)
@@ -159,8 +158,7 @@ void CharacterChooseScene::menuUISetup()
                 // Tính tọa độ X, Y của button
                 // Tính tổng chiều rộng của tất cả button và khoảng cách
                 float totalButtonWidth = cols * button->getContentSize().width + (cols - 1) * iconSpacingX;
-                float startX           = panelChooseCharacter->getPositionX() - (totalButtonWidth / 2) +
-                               (button->getContentSize().width / 2);
+                float startX = panelChooseCharacter->getPositionX() - (totalButtonWidth / 2) + (button->getContentSize().width / 2);
                 float startY = panelChooseCharacter->getPositionY() +
                                (panelChooseCharacter->getContentSize().height / 2.2) -
                                (button->getContentSize().height / 2) - iconSpacingY;
@@ -169,7 +167,7 @@ void CharacterChooseScene::menuUISetup()
                 float buttonY = startY - row * (button->getContentSize().height + iconSpacingY);
 
                 button->setPosition(Vec2(buttonX, buttonY));
-                //                button->setScale(2);  // Có thể điều chỉnh kích thước button
+//                button->setScale(2);  // Có thể điều chỉnh kích thước button
                 menuItems.pushBack(button);
                 index++;
             }
