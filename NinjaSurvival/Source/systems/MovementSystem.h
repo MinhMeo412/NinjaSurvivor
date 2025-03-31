@@ -19,6 +19,9 @@ public:
     void update(float dt) override;
     void init() override;
 
+    bool isAnimating(Entity item) const { return lootedItems.find(item) != lootedItems.end(); }
+    void moveItemToPlayer(Entity item);
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -34,13 +37,17 @@ private:
     // Một map lưu cặp key(kiểu string entity type) và value(kiểu MoveFunc)
     std::unordered_map<std::string, MoveFunc> movementStrategies;
 
-    void updateEntityMovement(Entity entity, float dt);  // Hàm chung bao gồm xử lý sub-stepping
-    // Các hàm di chuyển trả về velocity cho entity
+    //Gọi update với key type
+    void updateEntityMovement(Entity entity, float dt);
+    // Xử lý sub-stepping
+    ax::Vec2 subSteppingHandle(Entity entity, float dt);
+
+    // Các hàm di chuyển trả về velocity và đặt vị trí mới cho entity
     void movePlayer(Entity entity, float dt);       // Di chuyển player
     void moveMeleeEnemy(Entity entity, float dt);   // Di chuyển cho melee enemy
     void moveRangedEnemy(Entity entity, float dt);  // Di chuyển cho ranged enemy
 
-    void moveItem(Entity entity, float dt); //Khi item được "nhặt"
+    void moveItem(float dt); //Khi item được "nhặt"
     // Thêm các entity khác: moveBossX, moveProjectileY...
 
     //Re position nếu entity ra ngoài view quá xa
@@ -55,6 +62,8 @@ private:
 
     std::unordered_map<Entity, float> timers;   // Timer riêng cho ranged enemy
     std::uniform_real_distribution<float> distance{150.0f, 360.0f}; // Khoảng cách cho ranged enemy với player
+
+    std::set<Entity> lootedItems;  // Set: danh sách Entity của item đang nhặt
 };
 
 #endif  // __MOVEMENT_SYSTEM_H__

@@ -31,11 +31,13 @@ void RenderSystem::init()
 
     enemyBatchNode      = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
     //bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
-    //itemWeaponBatchNode = ax::SpriteBatchNode::create("Entity/ItemWeapon/item.png");
+    itemBatchNode = ax::SpriteBatchNode::create("coin.png");
+    //weaponBatchNode = ax::SpriteBatchNode::create("coin.png");
 
     scene->addChild(enemyBatchNode, 3);
     //scene->addChild(bossBatchNode, 4);
-    //scene->addChild(itemWeaponBatchNode, 5); //Có lẽ nên chia riêng item với weapon
+    scene->addChild(itemBatchNode, 2);  // Có lẽ nên chia riêng item với weapon
+    //scene->addChild(weaponBatchNode, 5);
 
     debugDrawNode = ax::DrawNode::create();
     scene->addChild(debugDrawNode, 10);
@@ -76,9 +78,13 @@ void RenderSystem::addSpriteToScene(Entity entity)
     //{
     //    sprite->setBatchNode(bossBatchNode);
     //}
-    //else if (identity->type == "item" || identity->type == "weapon")
+    else if (identity->type == "item")
+    {
+        sprite->setBatchNode(itemBatchNode);
+    }
+    //else if (identity->type == "weapon")
     //{
-    //    sprite->setBatchNode(itemWeaponBatchNode);
+    //    sprite->setBatchNode(weaponBatchNode);
     //}
 
     TransformComponent* transform = transformMgr.getComponent(entity);
@@ -90,6 +96,7 @@ void RenderSystem::addSpriteToScene(Entity entity)
 
 void RenderSystem::update(float dt)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     for (auto entity : entityManager.getActiveEntities())
     {
         auto sprite = spriteMgr.getComponent(entity);
@@ -107,7 +114,10 @@ void RenderSystem::update(float dt)
 
         updateEntitySprite(entity, dt);
     }
-    updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+    //updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+    auto end      = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    //AXLOG("Thời gian thực thi RenderSystem: %ld ms", duration);
 }
 
 void RenderSystem::updateEntitySprite(Entity entity, float dt)
@@ -156,7 +166,7 @@ void RenderSystem::updateEntitySprite(Entity entity, float dt)
                     animation->currentAction = ax::RepeatForever::create(animate);
                     animation->currentAction->setTag(tag);
                     sprite->gameSceneFrame->runAction(animation->currentAction);
-                    AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
+                    //AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
                 }
                 else
                 {
@@ -189,3 +199,12 @@ void RenderSystem::updateDebugDraw()
 
 
 
+void RenderSystem::onEntityDestroyed(Entity entity)
+{
+    auto sprite = spriteMgr.getComponent(entity);
+    if (sprite && sprite->gameSceneFrame)
+    {
+        sprite->gameSceneFrame->removeFromParent();
+        sprite->gameSceneFrame = nullptr;
+    }
+}
