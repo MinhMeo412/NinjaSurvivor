@@ -10,16 +10,16 @@ class EntityFactory
 {
 public:
     EntityFactory(EntityManager& em,
-                 ComponentManager<IdentityComponent>& im,
-                 ComponentManager<TransformComponent>& tm,
-                 ComponentManager<SpriteComponent>& sm,
-                 ComponentManager<AnimationComponent>& am,
-                 ComponentManager<VelocityComponent>& vm,
-                 ComponentManager<HitboxComponent>& hm,
-                 ComponentManager<HealthComponent>& hem,
-                 ComponentManager<AttackComponent> & atm,
-                 ComponentManager<CooldownComponent> & cdm,
-                 ComponentManager<SpeedComponent>& spm)
+                  ComponentManager<IdentityComponent>& im,
+                  ComponentManager<TransformComponent>& tm,
+                  ComponentManager<SpriteComponent>& sm,
+                  ComponentManager<AnimationComponent>& am,
+                  ComponentManager<VelocityComponent>& vm,
+                  ComponentManager<HitboxComponent>& hm,
+                  ComponentManager<HealthComponent>& hem,
+                  ComponentManager<AttackComponent>& atm,
+                  ComponentManager<CooldownComponent>& cdm,
+                  ComponentManager<SpeedComponent>& spm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)

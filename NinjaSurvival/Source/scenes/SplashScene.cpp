@@ -13,13 +13,10 @@ bool SplashScene::init()
         return false;
     }
 
-    auto background = Sprite::create("UI/background3.png");
-    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-    this->addChild(background, 0);
-
-    auto titleSprite = Sprite::create("UI/Title1.png");
-    titleSprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height * 2 / 3));
-    this->addChild(titleSprite, 1);
+    // Add a background image
+    auto label = Label::createWithTTF("This Is Splash Scene", "fonts/Marker Felt.ttf", 24);
+    label->setPosition(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+    this->addChild(label);
 
     this->scheduleOnce(AX_SCHEDULE_SELECTOR(SplashScene::goToLoadingScene), DISPLAY_TIME_SPLASH_SCENE);
 

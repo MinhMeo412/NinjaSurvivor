@@ -21,7 +21,6 @@ public:
     ax::Vec2 resolvePosition(Entity entity, const ax::Vec2& newPos);
     // Kiểm tra va chạm giữa entity và collision tile tại vị trí cụ thể
     bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
-
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -32,7 +31,7 @@ private:
     struct SpatialGrid
     {
         std::vector<std::vector<std::vector<Entity>>> cells;// Lưới chứa các entity theo ô
-        ax::Vec2 cellSize = ax::Vec2(64, 64);               // Kích thước mỗi ô trong lưới
+        ax::Vec2 cellSize = ax::Vec2(16, 16);               // Kích thước mỗi ô trong lưới
         ax::Vec2 gridSize;                                  // Kích thước lưới
 
         void init(const ax::Vec2& worldSize);               // Khởi tạo lưới với kích thước tổng của map

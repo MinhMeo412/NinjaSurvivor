@@ -57,23 +57,23 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    //if (spawnTimer >= spawnInterval)
-    //{
-    //    spawnEnemies(elapsedTime);
-    //    spawnBoss(elapsedTime);
-    //    spawnTimer = 0.0f;  // Reset timer
-    //}
+    if (spawnTimer >= spawnInterval)
+    {
+        spawnEnemies(elapsedTime);
+        spawnBoss(elapsedTime);
+        spawnTimer = 0.0f;  // Reset timer
+    }
 }
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-    int maxEnemies = 300;                         // Giới hạn tối đa enemy sống
-    int numEnemies = 2 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
+    int maxEnemies = 150;                         // Giới hạn tối đa enemy sống
+    int numEnemies = 50 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
 
     // Giới hạn spawn khi vượt quá 300 enemy
     if (livingEnemyCount >= maxEnemies)
     {
-        numEnemies = std::min(numEnemies, 2);  // Chỉ spawn tối đa 2 con
+        numEnemies = std::min(numEnemies, 0);  // Chỉ spawn tối đa 2 con
     }
 
     // Điều chỉnh tỷ lệ spawn khi boss xuất hiện (hoặc cho = 0 để ko spawn)
@@ -85,10 +85,9 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     if (elapsedTime < 300)
     {  // 0 - 5 phút
         //slimeRatio   = 0.7;
-        //slimeRatio   = 1.0; //test
+        slimeRatio   = 1.0; //test
         //snakeRatio = 0.2;
         //bearRatio    = 0.1;
-        octopusRatio = 1.0;
     }
     else if (elapsedTime < 600)
     {  // 5 - 10 phút
@@ -113,7 +112,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     }
 
     //Lấy vị trí player
-    TransformComponent* playerTransform = transformMgr.getComponent(playerEntity);
+    auto playerTransform = transformMgr.getComponent(playerEntity);
     if (!playerTransform)
         return;
     ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);

@@ -4,6 +4,8 @@
 #include "SpawnSystem.h"
 #include "MapSystem.h"
 #include "CollisionSystem.h"
+#include "PickupSystem.h"
+#include "CleanupSystem.h"
 #include "SystemManager.h"
 
 MovementSystem::MovementSystem(EntityManager& em,
@@ -24,8 +26,6 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     // Enemy_Octopus
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
-    // Item
-    movementStrategies["item"]          = [this](Entity e, float dt) { moveItem(e, dt); };
 }
 
 void MovementSystem::init() {}
@@ -33,6 +33,7 @@ void MovementSystem::init() {}
 // update toàn bộ hệ thống di chuyển, gọi mỗi frame
 void MovementSystem::update(float dt)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     // Lấy hệ thống CollisionSystem từ SystemManager
     auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
     if (!collisionSystem)
@@ -45,6 +46,12 @@ void MovementSystem::update(float dt)
     {
         updateEntityMovement(entity, dt);
     }
+
+    // Nhặt item
+    moveItem(dt);
+    auto end      = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    AXLOG("Thời gian thực thi MovementSystem: %ld ms", duration);
 }
 
 // Hàm cập nhật di chuyển cho entity
@@ -63,60 +70,81 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
         // Nếu là player hoặc item, dùng type làm key; nếu không, kết hợp type và name (cần update thêm, viết lại cho rõ khi thêm boss, projectile)
         key = (identity->type == "player" || identity->type == "item") ? identity->type
                                                                          : identity->type + "_" + identity->name;
-    }
 
-    // Tìm hàm di chuyển qua key
-    auto it = movementStrategies.find(key);
-    if (it != movementStrategies.end())
-    {
-        // Gọi hàm di chuyển tương ứng
-        it->second(entity, dt);
+        if (key != "item") //Không cần chạy với key = item
+        {
+            // Tìm hàm di chuyển qua key
+            auto it = movementStrategies.find(key);
+            if (it != movementStrategies.end())
+            {
+                // Gọi hàm di chuyển tương ứng
+                it->second(entity, dt);
+            }
+        }
     }
+}
 
+// // Xử lý sub-stepping và đặt vị trí mới
+ax::Vec2 MovementSystem::subSteppingHandle(Entity entity, float dt)
+{
     // Sub-stepping
-    ax::Vec2 currentPos = ax::Vec2(transform->x, transform->y); //Lấy vị trí hiện tại
-    ax::Vec2 moveStep   = ax::Vec2(velocity->vx, velocity->vy) * dt; //Một bước di chuyển (Vec2) trong 1 frame
-    float stepLength    = moveStep.length(); //Tính số pixel di chuyển trong 1 frame
-    ax::Size tileSize   = SystemManager::getInstance()->getSystem<MapSystem>()->getTileSize(); //Lấy kích thước 1 ô trong tileMap(pixel)
-    // Số bước nhỏ cần thực hiện trong 1 frame
-    // ceil làm phép chia luôn trả về kết quả >= 1 trừ khi tử số = 0 (làm tròn để số bước di chuyển luôn ít nhất là 1)
-    // Chia cho nửa tileSize để tránh một bước dài hơn 1 tileSize (tunneling)
-    int steps           = std::ceil(stepLength / (tileSize.width * 0.5f));
+    ax::Vec2 currentPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);  // Lấy vị trí hiện tại
+    ax::Vec2 moveStep   = ax::Vec2(velocityMgr.getComponent(entity)->vx, velocityMgr.getComponent(entity)->vy) * dt;  // Một bước di chuyển (Vec2) trong 1 frame
 
-    // Một bước nhỏ trong Tổng số bước cần thực hiện/frame
-    // Đảm bảo luôn chia được kể cả khi không di chuyển (steps = 0)
-    ax::Vec2 step       = moveStep / (steps > 0 ? steps : 1);
+    // Thêm giới hạn tốc độ để bỏ tính toán sub stepping (giới hạn trong khoảng 500speed)
+    /*
+    float stepLength    = moveStep.length();                          // Tính số pixel di chuyển trong 1 frame
+    ax::Size tileSize =
+        SystemManager::getInstance()->getSystem<MapSystem>()->getTileSize();  // Lấy kích thước 1 ô trong tileMap(pixel)
     
-    // Khai báo biến mới để tính toán vị trí nhân vật di chuyển tiếp theo trong frame
-    ax::Vec2 adjustedPos = currentPos;
-    auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
-    for (int i = 0; i < steps; ++i)
+    if (stepLength > tileSize.width * 0.5f)
     {
-        ax::Vec2 newPos = adjustedPos + step;
-        // Kiểm tra và điều chỉnh vị trí với CollisionSystem để tránh va chạm
-        adjustedPos = collisionSystem->resolvePosition(entity, newPos);  // Nhận giá trị vị trí mới với mỗi step trong steps
-        
-    }
-    // Cập nhật vị trí entity sau khi tính toán
-    transform->x = adjustedPos.x;
-    transform->y = adjustedPos.y;
+        // Số bước nhỏ cần thực hiện trong 1 frame
+        // ceil làm phép chia luôn trả về kết quả >= 1 trừ khi tử số = 0 (làm tròn để số bước di chuyển luôn ít nhất là 1)
+        // Chia cho nửa tileSize để tránh một bước dài hơn 1 tileSize (tunneling)
+        int steps = std::min(3, static_cast<int>(std::ceil(stepLength / (tileSize.width * 0.5f))));  // Giới hạn tối đa 3 bước (giảm tính toán)
 
-    //Gọi callback để update chunk map khi entity thay đổi vị trí là player
-    if (key == "player")
-    {
-        SystemManager::getInstance()->getSystem<MapSystem>()->onPlayerPositionChanged(adjustedPos);
+        // Một bước nhỏ trong Tổng số bước cần thực hiện/frame
+        // Đảm bảo luôn chia được kể cả khi không di chuyển (steps = 0)
+        ax::Vec2 step = moveStep / (steps > 0 ? steps : 1);
+
+        // Khai báo biến mới để tính toán vị trí nhân vật di chuyển tiếp theo trong frame
+        ax::Vec2 adjustedPos = currentPos;
+        auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+        for (int i = 0; i < steps; ++i)
+        {
+            ax::Vec2 newPos = adjustedPos + step;
+            // Kiểm tra và điều chỉnh vị trí với CollisionSystem để tránh va chạm
+            adjustedPos =
+                collisionSystem->resolvePosition(entity, newPos);  // Nhận giá trị vị trí mới với mỗi step trong steps
+        }
+        // Cập nhật vị trí entity sau khi tính toán
+        transform->x = adjustedPos.x;
+        transform->y = adjustedPos.y;
+
+        return adjustedPos;
     }
+    else
+    {*/
+        // Di chuyển trực tiếp nếu vận tốc nhỏ
+        ax::Vec2 newPos = currentPos + moveStep;
+        newPos          = SystemManager::getInstance()->getSystem<CollisionSystem>()->resolvePosition(entity, newPos);
+        transformMgr.getComponent(entity)->x = newPos.x;
+        transformMgr.getComponent(entity)->y = newPos.y;
+        return newPos;
+    //}
 }
 
 // Logic di chuyển của player (tính toán velocity và đặt animation state)
 void MovementSystem::movePlayer(Entity entity, float dt)
 {
+    auto transform      = transformMgr.getComponent(entity);
     auto velocity       = velocityMgr.getComponent(entity);
     auto animation      = animationMgr.getComponent(entity);
     auto speed          = speedMgr.getComponent(entity);
     auto joystickSystem = SystemManager::getInstance()->getSystem<JoystickSystem>();
 
-    if (!velocity || !joystickSystem || !speed)
+    if (!transform || !velocity || !joystickSystem || !speed)
         return; // Thoát nếu thiếu
 
     // Lấy hướng từ JoystickSystem và tính vận tốc
@@ -142,6 +170,12 @@ void MovementSystem::movePlayer(Entity entity, float dt)
         else  // Mặc định (= 0)
             animation->currentState = "idle";
     }
+
+    // Xử lý sub-stepping và đặt vị trí mới
+    ax::Vec2 newPos = subSteppingHandle(entity, dt);
+
+    //Kiểm tra chunk và cập nhật khi player di chuyển
+    SystemManager::getInstance()->getSystem<MapSystem>()->onPlayerPositionChanged(newPos);
 }
 
 // Logic di chuyển cho enemy loại melee enemy
@@ -167,6 +201,7 @@ void MovementSystem::moveMeleeEnemy(Entity entity, float dt)
             ax::Vec2 slimePos(transform->x, transform->y);
             ax::Vec2 direction = playerPos - slimePos;
             direction.normalize();
+
             velocity->vx = direction.x * speed->speed;
             velocity->vy = direction.y * speed->speed;
 
@@ -190,6 +225,8 @@ void MovementSystem::moveMeleeEnemy(Entity entity, float dt)
             }
         }
     }
+    // Xử lý sub-stepping và đặt vị trí mới
+    subSteppingHandle(entity, dt);
 }
 
 // Logic di chuyển cho enemy loại ranged enemy
@@ -273,45 +310,58 @@ void MovementSystem::moveRangedEnemy(Entity entity, float dt)
                 animation->currentState = "moveRight";
         }
     }
+
+    //Xử lý sub-stepping và đặt vị trí mới
+    subSteppingHandle(entity, dt);
 }
 
-// Logic di chuyển cho item (sẽ sửa)
-void MovementSystem::moveItem(Entity entity, float dt)
+// Logic di chuyển cho item
+void MovementSystem::moveItem(float dt)
 {
-    auto velocity  = velocityMgr.getComponent(entity);
-    auto transform = transformMgr.getComponent(entity);
-    if (!velocity || !transform)
+    std::vector<Entity> toRemove;
+    auto pickupSystem = SystemManager::getInstance()->getSystem<PickupSystem>();
+    if (!pickupSystem)
         return;
 
-    //Lấy spawn system để lấy ID player
-    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
-    if (!spawnSystem)
-        return;
-
-    Entity player = spawnSystem->getPlayerEntity();
-    if (auto playerTransform = transformMgr.getComponent(player))
+    for (auto& item : lootedItems)
     {
-        //Lấy vị trí player và item
-        ax::Vec2 playerPos(playerTransform->x, playerTransform->y);
-        ax::Vec2 itemPos(transform->x, transform->y);
+        auto itemTransform   = transformMgr.getComponent(item);
+        auto playerTransform = transformMgr.getComponent(SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerEntity());
+        if (!itemTransform || !playerTransform)
+            continue;
 
-        //Tính khoảng cách từ player đến item
-        float distance = playerPos.distance(itemPos);
-        if (distance <= 200.0f)  // Trong tầm 200 pixel (thay đổi nếu có update tầm nhặt)
+        ax::Vec2 itemPos(itemTransform->x, itemTransform->y);
+        ax::Vec2 playerPos(playerTransform->x, playerTransform->y);
+        ax::Vec2 direction = (playerPos - itemPos).getNormalized();
+        float distance     = itemPos.distance(playerPos);
+
+        const float speed = 200.0f;
+        if (distance > 5.0f)  // Ngưỡng dừng
         {
-            ax::Vec2 direction = playerPos - itemPos;
-            direction.normalize();
-            velocity->vx = direction.x * 300.0f;  // Cần thay đổi tốc độ cho những item ở xa bay về
-            velocity->vy = direction.y * 300.0f;
+            itemTransform->x += direction.x * speed * dt;
+            itemTransform->y += direction.y * speed * dt;
         }
-        else
+
+        if (distance <= 5.0f)
         {
-            velocity->vx = 0.0f; //Cần thay đổi để mỗi entity item chỉ cần nhặt 1 lần duy nhất
-            velocity->vy = 0.0f; //Tránh di chuyển nhanh hơn tốc độ bay sẽ khiến item rớt lại -> cần nhặt lại
+            auto identity = identityMgr.getComponent(item);
+            if (identity)
+            {
+                //pickupSystem->applyPickupEffect(identity->name);
+            }
+            SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(item);
+            toRemove.push_back(item);
         }
+    }
+
+    //Xóa item đã nhặt trong list các item đang nhặt
+    for (auto item : toRemove)
+    {
+        lootedItems.erase(item);
     }
 }
 
+//Kiểm tra xem entity có quá xa view không
 bool MovementSystem::isOutOfView(Entity entity)
 {
     auto transform = transformMgr.getComponent(entity);
@@ -337,3 +387,7 @@ bool MovementSystem::isOutOfView(Entity entity)
 }
 
 
+void MovementSystem::moveItemToPlayer(Entity item)
+{
+    lootedItems.insert(item);  // Thêm item vào danh sách nhặt
+}
