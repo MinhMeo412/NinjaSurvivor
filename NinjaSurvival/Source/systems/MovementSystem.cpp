@@ -28,7 +28,11 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
 }
 
-void MovementSystem::init() {}
+void MovementSystem::init()
+{
+    //Tạo batch để cập nhật di chuyển cho entity
+    initializeBatches();
+}
 
 // update toàn bộ hệ thống di chuyển, gọi mỗi frame
 void MovementSystem::update(float dt)
@@ -39,29 +43,38 @@ void MovementSystem::update(float dt)
     if (!collisionSystem)
         return;// Thoát nếu không có CollisionSystem
 
-    // Lấy danh sách các entity đang hoạt động từ EntityManager
-    auto entities = entityManager.getActiveEntities();
-    //Gọi updateEntityMovement với mỗi entity còn active
-    for (Entity entity : entities)
+    // Xử lý player riêng biệt
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (spawnSystem)
     {
-        updateEntityMovement(entity, dt);
+        Entity player = spawnSystem->getPlayerEntity();
+        updateEntityMovement(player, dt);
+    }
+
+    // Xử lý một batch của kẻ thù mỗi frame
+    if (!enemyBatches.empty())
+    {
+        processBatch(currentBatchIndex, dt);
+        currentBatchIndex = (currentBatchIndex + 1) % BATCH_COUNT;  // Chuyển sang batch tiếp theo
     }
 
     // Nhặt item
     moveItem(dt);
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    AXLOG("Thời gian thực thi MovementSystem: %ld ms", duration);
+    //AXLOG("Thời gian thực thi MovementSystem: %ld ms", duration);
 }
 
 // Hàm cập nhật di chuyển cho entity
 void MovementSystem::updateEntityMovement(Entity entity, float dt)
 {
-    // Lấy các component Transform và Velocity của entity
     auto transform = transformMgr.getComponent(entity);
     auto velocity  = velocityMgr.getComponent(entity);
     if (!transform || !velocity)
-        return;// Thoát nếu thiếu component
+        return;
+
+    //auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+    //int oldGroup         = collisionSystem->getSpatialGroup(transform->x, transform->y);
 
     // Xác định key để tìm kiểu di chuyển
     std::string key;
@@ -82,6 +95,13 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
             }
         }
     }
+
+    //int newGroup = collisionSystem->getSpatialGroup(transform->x, transform->y);
+    //if (newGroup != oldGroup)
+    //{
+    //    collisionSystem->removeFromSpatialGroup(oldGroup, entity);
+    //    collisionSystem->addToSpatialGroup(newGroup, entity);
+    //}
 }
 
 // // Xử lý sub-stepping và đặt vị trí mới
@@ -191,40 +211,37 @@ void MovementSystem::moveMeleeEnemy(Entity entity, float dt)
     //Re-position nếu quá xa
     isOutOfView(entity);
 
-    // Quyết định ngẫu nhiên xem có cập nhật hướng không
-    if (dis(gen) < updateProbability)
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (spawnSystem)
     {
-        auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
-        if (spawnSystem)
+        ax::Vec2 playerPos = spawnSystem->getPlayerPosition();
+        ax::Vec2 slimePos(transform->x, transform->y);
+        ax::Vec2 direction = playerPos - slimePos;
+        direction.normalize();
+
+        velocity->vx = direction.x * speed->speed;
+        velocity->vy = direction.y * speed->speed;
+
+        if (auto animation = animationMgr.getComponent(entity))
         {
-            ax::Vec2 playerPos = spawnSystem->getPlayerPosition();
-            ax::Vec2 slimePos(transform->x, transform->y);
-            ax::Vec2 direction = playerPos - slimePos;
-            direction.normalize();
+            // Tính góc di chuyển từ hướng joystick (độ sang radian)
+            // Chuyển đổi vector direction thành hệ góc (-180;180)
+            float angle = AX_RADIANS_TO_DEGREES(atan2(direction.y, direction.x));
+            if (angle < 0)
+                angle += 360.0f;  // Nếu là góc âm chuyển thành hệ góc (0;360)
 
-            velocity->vx = direction.x * speed->speed;
-            velocity->vy = direction.y * speed->speed;
-
-            if (auto animation = animationMgr.getComponent(entity))
-            {
-                // Tính góc di chuyển từ hướng joystick (độ sang radian)
-                // Chuyển đổi vector direction thành hệ góc (-180;180)
-                float angle = AX_RADIANS_TO_DEGREES(atan2(direction.y, direction.x));
-                if (angle < 0)
-                    angle += 360.0f;  // Nếu là góc âm chuyển thành hệ góc (0;360)
-
-                // Kiểm tra góc cho "moveDown" (255° đến 285°)
-                if (angle >= 255.0f && angle <= 285.0f)
-                    animation->currentState = "moveDown";
-                else if (velocity->vx < 0)
-                    animation->currentState = "moveLeft";
-                else if (velocity->vx > 0)
-                    animation->currentState = "moveRight";
-                else  // Mặc định (= 0)
-                    animation->currentState = "idle";
-            }
+            // Kiểm tra góc cho "moveDown" (255° đến 285°)
+            if (angle >= 255.0f && angle <= 285.0f)
+                animation->currentState = "moveDown";
+            else if (velocity->vx < 0)
+                animation->currentState = "moveLeft";
+            else if (velocity->vx > 0)
+                animation->currentState = "moveRight";
+            else  // Mặc định (= 0)
+                animation->currentState = "idle";
         }
     }
+    
     // Xử lý sub-stepping và đặt vị trí mới
     subSteppingHandle(entity, dt);
 }
@@ -386,8 +403,77 @@ bool MovementSystem::isOutOfView(Entity entity)
     return false;
 }
 
-
+//Thêm item được nhặt vào danh sách
 void MovementSystem::moveItemToPlayer(Entity item)
 {
     lootedItems.insert(item);  // Thêm item vào danh sách nhặt
+}
+
+// Tạo Batch cho các entity
+void MovementSystem::initializeBatches()
+{
+    for (int i = 0; i < BATCH_COUNT; ++i)
+    {
+        enemyBatches[i]        = std::vector<Entity>();
+        BatchScore* batchScore = new BatchScore(i, 0);
+        batchScoreMap[i]       = batchScore;
+        batchQueue.push(*batchScore);
+    }
+}
+
+//Thêm entity vào batch
+void MovementSystem::assignEntityToBatch(Entity entity)
+{
+    auto identity = identityMgr.getComponent(entity);
+    if (!identity || identity->type != "enemy")
+        return;
+
+    int batchId = getBestBatch();
+    enemyBatches[batchId].push_back(entity);
+    // Lưu batchId vào một component nếu cần (có thể thêm vào IdentityComponent hoặc một component mới)
+}
+
+int MovementSystem::getBestBatch()
+{
+    if (batchQueue.empty())
+        return 0;
+
+    BatchScore leastLoaded = batchQueue.top();
+    batchQueue.pop();
+    leastLoaded.score += 1;
+    batchQueue.push(leastLoaded);
+    return leastLoaded.batchId;
+}
+
+void MovementSystem::updateBatchOnDeath(Entity entity)
+{
+    for (auto& batch : enemyBatches)
+    {
+        auto it = std::find(batch.second.begin(), batch.second.end(), entity);
+        if (it != batch.second.end())
+        {
+            batch.second.erase(it);
+            BatchScore* batchScore = batchScoreMap[batch.first];
+            batchScore->score -= 1;
+
+            // Cập nhật batchQueue (tái tạo vì std::priority_queue không hỗ trợ cập nhật trực tiếp)
+            std::vector<BatchScore> temp;
+            while (!batchQueue.empty())
+            {
+                temp.push_back(batchQueue.top());
+                batchQueue.pop();
+            }
+            for (const auto& bs : temp)
+                batchQueue.push(bs);
+            break;
+        }
+    }
+}
+
+void MovementSystem::processBatch(int batchId, float dt)
+{
+    for (Entity entity : enemyBatches[batchId])
+    {
+        updateEntityMovement(entity, dt);
+    }
 }

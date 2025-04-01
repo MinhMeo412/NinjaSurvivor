@@ -6,6 +6,7 @@
 #include "MapSystem.h"
 #include "TimeSystem.h"
 #include "CollisionSystem.h"
+#include "MovementSystem.h"
 
 
 void SpawnSystem::init()
@@ -67,7 +68,7 @@ void SpawnSystem::update(float dt)
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-    int maxEnemies = 150;                         // Giới hạn tối đa enemy sống
+    int maxEnemies = 300;                         // Giới hạn tối đa enemy sống
     int numEnemies = 50 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
 
     // Giới hạn spawn khi vượt quá 300 enemy
@@ -207,24 +208,49 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
             animationComp->currentState = "idle";
         }
     }
+
+    //Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
+    SystemManager::getInstance()->getSystem<MovementSystem>()->assignEntityToBatch(entity);
+    
+   
+    //Thêm vào lưới để kiểm tra collision (cần xóa khi chết)
+    //auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+    //if (collisionSystem && transformMgr.getComponent(entity))
+    //{
+    //    int groupId = collisionSystem->getSpatialGroup(transformMgr.getComponent(entity)->x,
+    //                                                   transformMgr.getComponent(entity)->y);
+    //    collisionSystem->addToSpatialGroup(groupId, entity);
+    //}
+
+    // Xóa entity khỏi batch cập nhật di chuyển khi chết
+    //SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(deadEnemyEntity);
+
+    /* //Xóa lưới để kiểm tra collision khi chết
+    auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+    if (collisionSystem && transformMgr.getComponent(entityToDestroy))
+    {
+        int groupId = collisionSystem->getSpatialGroup(transformMgr.getComponent(entityToDestroy)->x, transformMgr.getComponent(entityToDestroy)->y);
+        collisionSystem->removeFromSpatialGroup(groupId, entityToDestroy);
+    }*/
+
     return entity;
 }
 
 ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition)
 {
-    const float VIEW_WIDTH   = 720.0f;   // Chiều rộng view
-    const float VIEW_HEIGHT  = 1280.0f;  // Chiều cao view
+    const float VIEW_WIDTH   = 360.0f;   // Chiều rộng view
+    const float VIEW_HEIGHT  = 640.0f;  // Chiều cao view
     const float SPAWN_MARGIN = 300.0f;   // Khoảng cách spawn bên ngoài viền
 
     // Kích thước vùng spawn (view + margin hai bên)
-    const float spawnWidth  = VIEW_WIDTH + 2 * SPAWN_MARGIN;   // 1320
-    const float spawnHeight = VIEW_HEIGHT + 2 * SPAWN_MARGIN;  // 1880
+    const float spawnWidth  = VIEW_WIDTH + 2 * SPAWN_MARGIN;  
+    const float spawnHeight = VIEW_HEIGHT + 2 * SPAWN_MARGIN; 
 
     // Tọa độ vùng view (không spawn trong này)
-    float viewMinX = playerPosition.x - VIEW_WIDTH / 2;   // player.x - 360
-    float viewMaxX = playerPosition.x + VIEW_WIDTH / 2;   // player.x + 360
-    float viewMinY = playerPosition.y - VIEW_HEIGHT / 2;  // player.y - 640
-    float viewMaxY = playerPosition.y + VIEW_HEIGHT / 2;  // player.y + 640
+    float viewMinX = playerPosition.x - VIEW_WIDTH / 2;   // player.x - 180
+    float viewMaxX = playerPosition.x + VIEW_WIDTH / 2;   // player.x + 180
+    float viewMinY = playerPosition.y - VIEW_HEIGHT / 2;  // player.y - 320
+    float viewMaxY = playerPosition.y + VIEW_HEIGHT / 2;  // player.y + 320
 
     auto mapSystem  = SystemManager::getInstance()->getSystem<MapSystem>();
     float mapWidth  = mapSystem->getChunkSize().width * mapSystem->getGridSize().width;
@@ -275,7 +301,7 @@ ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& play
     }
 
     // Nếu không tìm thấy vị trí hợp lệ, chọn vị trí gần viền map
-    AXLOG("Warning: Could not find valid spawn position, using fallback.");
+    //AXLOG("Warning: Could not find valid spawn position, using fallback.");
     spawnPosition.x = std::max(0.0f, std::min(viewMinX - SPAWN_MARGIN, mapWidth));
     spawnPosition.y = std::max(0.0f, std::min(viewMinY - SPAWN_MARGIN, mapHeight));
     return spawnPosition;

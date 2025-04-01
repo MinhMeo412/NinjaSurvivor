@@ -14,7 +14,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 70.0,
+                "speed": 50.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -65,7 +65,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 300.0,
+                "speed": 50.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -112,7 +112,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 50.0,
+                "speed": 120.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -173,7 +173,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 40.0,
+                "speed": 100.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -231,7 +231,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 70.0,
+                "speed": 150.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -292,7 +292,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 70.0,
+                "speed": 120.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0

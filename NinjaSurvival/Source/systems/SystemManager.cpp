@@ -76,7 +76,7 @@ void SystemManager::update(float dt)
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    //AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
+    AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
 }
 
 void SystemManager::resetSystems()

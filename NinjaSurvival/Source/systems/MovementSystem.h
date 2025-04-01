@@ -56,14 +56,39 @@ private:
     // Quyết định ngẫu nhiên xem có cập nhật hướng không
     std::random_device rd;                                  // Seed cho random
     std::mt19937 gen{rd()};                                 // Generator ngẫu nhiên
-    std::uniform_real_distribution<float> dis{0.0f, 1.0f};  // Phân phối từ 0 đến 1
-    const float updateProbability = 1.0f / 10.0f;           // Tỷ lệ 10% mỗi frame
-
-
     std::unordered_map<Entity, float> timers;   // Timer riêng cho ranged enemy
     std::uniform_real_distribution<float> distance{150.0f, 360.0f}; // Khoảng cách cho ranged enemy với player
 
     std::set<Entity> lootedItems;  // Set: danh sách Entity của item đang nhặt
+
+public:
+    // Batch Processing
+    struct BatchScore
+    {
+        int batchId;
+        int score;
+        BatchScore(int id, int s) : batchId(id), score(s) {}
+        //Toán tử so sánh (true nếu lớn hơn)
+        bool operator>(const BatchScore& other) const
+        {
+            if (score == other.score)
+                return batchId > other.batchId;
+            return score > other.score;
+        }
+    };
+
+    std::unordered_map<int, std::vector<Entity>> enemyBatches;  // Batch chứa danh sách entity
+    std::priority_queue<BatchScore, std::vector<BatchScore>, std::greater<BatchScore>> batchQueue;  // Min-heap
+    std::unordered_map<int, BatchScore*> batchScoreMap;  // Ánh xạ batchId tới BatchScore
+    int currentBatchIndex        = 0;                    // Batch hiện tại được xử lý trong frame
+    static const int BATCH_COUNT = 10;                   // Số batch cố định
+
+    // Batch Management
+    void initializeBatches();
+    void assignEntityToBatch(Entity entity);
+    int getBestBatch();
+    void updateBatchOnDeath(Entity entity);
+    void processBatch(int batchId, float dt);
 };
 
 #endif  // __MOVEMENT_SYSTEM_H__
