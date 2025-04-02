@@ -65,7 +65,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 50.0,
+                "speed": 200.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -347,8 +347,113 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "coin.plist",
+                    "plist": "items.plist",
                     "gameSceneFrame": "./coin"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "greenGem",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./greenGem"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "blueGem",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./blueGem"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "redGem",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./redGem"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "heart",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./heart"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "bomb",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./bomb"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "magnet",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./magnet"
+                }
+            }
+        },
+        {
+            "type": "item",
+            "name": "chest",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "items.plist",
+                    "gameSceneFrame": "./chest"
                 }
             }
         }

@@ -11,6 +11,7 @@
 #include "HealthSystem.h"
 #include "ItemSystem.h"
 #include "PickupSystem.h"
+#include "LevelSystem.h"
 #include "CleanupSystem.h"
 
 using namespace ax;
@@ -55,6 +56,7 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
     registerSystem("HealthSystem");
     registerSystem("ItemSystem");
     registerSystem("PickupSystem");
+    registerSystem("LevelSystem");
 
 
     registerSystem("RenderSystem");
@@ -76,7 +78,7 @@ void SystemManager::update(float dt)
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
+    //AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
 }
 
 void SystemManager::resetSystems()
@@ -159,4 +161,8 @@ void SystemManager::registerSystem(const std::string& systemType)
     // Thêm CleanupSystem
     else if (systemType == "CleanupSystem")
         addSystem(std::make_unique<CleanupSystem>(gameWorld->getEntityManager(), gameWorld->getSpriteManager()));
+
+    // Thêm LevelSystem
+    else if (systemType == "LevelSystem")
+        addSystem(std::make_unique<LevelSystem>());
 }   

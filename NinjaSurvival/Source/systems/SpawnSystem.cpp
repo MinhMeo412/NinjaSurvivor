@@ -58,12 +58,12 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    if (spawnTimer >= spawnInterval)
-    {
-        spawnEnemies(elapsedTime);
-        spawnBoss(elapsedTime);
-        spawnTimer = 0.0f;  // Reset timer
-    }
+    //if (spawnTimer >= spawnInterval)
+    //{
+    //    spawnEnemies(elapsedTime);
+    //    spawnBoss(elapsedTime);
+    //    spawnTimer = 0.0f;  // Reset timer
+    //}
 }
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
