@@ -11,13 +11,22 @@ public:
     bool init() override;
     void update(float dt) override;
 
+    void increaseCoin(float coin);
 private:
     ax::MenuItemImage* pauseButton;
 
     ax::Sprite* hpBarRed;
     ax::Sprite* hpBarGray;
 
+    ax::Sprite* xpBar;
+    ax::Sprite* xpBarUnder;
+
+    ax::Label* coinLabel = nullptr;
+    float collectedCoin;
+
     void updateHPBar();
+    void updateXPBar();
+    void updateCoinLabel();
     void gamePauseCallback(ax::Object* sender);
 };
 

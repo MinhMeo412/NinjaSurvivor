@@ -5,6 +5,8 @@
 #include "systems/CameraSystem.h"
 #include "systems/SpawnSystem.h"
 #include "systems/HealthSystem.h"
+#include "systems/LevelSystem.h"
+
 
 using namespace ax;
 
@@ -47,6 +49,12 @@ bool GameSceneUILayer::init()
     this->addChild(drawNode,20);
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
 
+    // Tạo label để hiển thị coin
+    collectedCoin = 0;
+    coinLabel = ax::Label::createWithTTF("0", "fonts/Marker Felt.ttf", 24);
+    coinLabel->setPosition(ax::Vec2(180, 600));  // Xem lại vị trí theo UI
+    this->addChild(coinLabel, 5);                // Gán vào uiLayer
+
     //Vị trí
     auto cameraSystem = SystemManager::getInstance()->getSystem<CameraSystem>();
     if (cameraSystem && cameraSystem->getCamera())
@@ -63,6 +71,16 @@ bool GameSceneUILayer::init()
     this->addChild(hpBarRed, 2);
     this->addChild(hpBarGray, 1);
 
+    //Tạo thanh XP
+    xpBar = Sprite ::create("XPBar.png");
+    xpBarUnder = Sprite ::create("XPBarUnder.png");
+    xpBar->setAnchorPoint(Vec2(0, 0.5f));      // Cố định bên trái
+    xpBarUnder->setAnchorPoint(Vec2(0, 0.5f));  // Cố định bên trái
+    xpBar->setPosition(1,580);
+    xpBarUnder->setPosition(0, 580);
+    this->addChild(xpBar, 2);
+    this->addChild(xpBarUnder, 1);
+
     return true;
 }
 
@@ -76,6 +94,20 @@ void GameSceneUILayer::update(float dt)
     }
 
     updateHPBar();
+    updateCoinLabel();
+    updateXPBar();
+}
+
+void GameSceneUILayer::increaseCoin(float coin)
+{
+    collectedCoin = collectedCoin + coin;
+    AXLOG("%f", collectedCoin);
+}
+
+void GameSceneUILayer::updateCoinLabel()
+{
+    //coinLabel->setString(std::to_string((int)collectedCoin));
+    coinLabel->setString(ax::StringUtils::format("%d", (int)collectedCoin));
 }
 
 //Cập nhật vị trí và máu của thanh HP
@@ -105,6 +137,15 @@ void GameSceneUILayer::updateHPBar()
     hpBarRed->setScaleX(healthSystem->getPlayerCurrentHealth() / healthSystem->getPlayerMaxHealth());
 }
 
+void GameSceneUILayer::updateXPBar()
+{
+    auto levelSystem = SystemManager::getInstance()->getSystem<LevelSystem>();
+    if (!levelSystem)
+        return;
+
+    // Cập nhật tỷ lệ thanh xp theo phần trăm
+    xpBar->setScaleX(levelSystem->getCurrentXP() / levelSystem->getNeededXP());
+}
 
 void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
 {

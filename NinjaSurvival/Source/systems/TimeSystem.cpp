@@ -14,7 +14,7 @@ void TimeSystem::init()
 
     // Tạo label để hiển thị thời gian
     timerLabel = ax::Label::createWithTTF("00:00", "fonts/Marker Felt.ttf", 24);
-    timerLabel->setPosition(ax::Vec2(500, 500)); //Xem lại vị trí theo UI
+    timerLabel->setPosition(ax::Vec2(180, 620)); //Xem lại vị trí theo UI
     uiLayer->addChild(timerLabel,5); //Gán vào uiLayer
 
 }

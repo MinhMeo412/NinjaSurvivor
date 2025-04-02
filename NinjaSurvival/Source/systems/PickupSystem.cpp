@@ -1,6 +1,8 @@
 #include "PickupSystem.h"
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
+#include "LevelSystem.h"
+#include "gameUI/GameSceneUILayer.h"
 #include "SystemManager.h"
 
 PickupSystem::PickupSystem(EntityManager& em, ComponentManager<IdentityComponent>& im, ComponentManager<TransformComponent>& tm)
@@ -11,10 +13,15 @@ void PickupSystem::init()
 {
     PICKUP_RANGE = 100.0f; //+buff
     TOUCH_RANGE  = 10.0f;
+
+    pickupItems = {"greenGem", "blueGem", "redGem", "coin", "heart"};
+    touchItems  = {"bomb", "magnet", "chest"};
 }
 
 void PickupSystem::update(float dt)
 {
+    auto start          = std::chrono::high_resolution_clock::now();
+
     auto spawnSystem    = SystemManager::getInstance()->getSystem<SpawnSystem>();
     auto movementSystem = SystemManager::getInstance()->getSystem<MovementSystem>();
     if (!spawnSystem || !movementSystem)
@@ -36,11 +43,11 @@ void PickupSystem::update(float dt)
         float distance = playerPos.distance(itemPos);
 
         bool shouldPickup = false;
-        if (identity->name == "xp_gem" || identity->name == "coin" || identity->name == "heart")
+        if (pickupItems.count(identity->name))
         {
             shouldPickup = (distance <= PICKUP_RANGE);
         }
-        else if (identity->name == "bomb" || identity->name == "magnet" || identity->name == "chest")
+        else if (touchItems.count(identity->name))
         {
             shouldPickup = (distance <= TOUCH_RANGE);
         }
@@ -50,5 +57,54 @@ void PickupSystem::update(float dt)
             movementSystem->moveItemToPlayer(entity);
         }
     }
+
+   
+
+    auto end      = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    //AXLOG("Thời gian thực thi PickupSystem: %ld ms", duration);
 }
 
+void PickupSystem::applyPickupEffect(std::string& itemName)
+{
+    if (itemName == "greenGem" || itemName == "blueGem" || itemName == "redGem")
+    {
+        applyXPGem(itemName);
+        return;
+    }
+
+    if (itemName == "coin")
+    {
+        applyCoin();
+        return;
+    }
+}
+
+void PickupSystem::applyHeart() {}
+void PickupSystem::applyCoin()
+{
+    float amount   = 1;
+    auto gameLayer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
+    gameLayer->increaseCoin(amount);
+}
+void PickupSystem::applyXPGem(std::string& itemName)
+{
+    if (itemName == "greenGem")
+    {
+        SystemManager::getInstance()->getSystem<LevelSystem>()->increaseXP(1.0);
+        return;
+    }
+    if (itemName == "blueGem")
+    {
+        SystemManager::getInstance()->getSystem<LevelSystem>()->increaseXP(3.0);
+        return;
+    }
+    if (itemName == "redGem")
+    {
+        SystemManager::getInstance()->getSystem<LevelSystem>()->increaseXP(5.0);
+        return;
+    }
+}
+void PickupSystem::applyBomb() {}
+void PickupSystem::applyMagnet() {}
+void PickupSystem::applyChest() {}

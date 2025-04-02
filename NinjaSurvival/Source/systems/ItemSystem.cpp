@@ -14,26 +14,49 @@ void ItemSystem::init()
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr);
 
-    for (int i = 0; i < 1000; i++)
+    int num = 1000;
+    for (int i = 0; i < num; i++)
+    {
+        Entity item = factory->createEntity("item", "coin");
+
+        if (auto spriteComp = spriteMgr.getComponent(item))
         {
-            Entity item = factory->createEntity("item", "coin");
-
-            if (auto spriteComp = spriteMgr.getComponent(item))
-            {
-                spriteComp->initializeSprite();
-            }
-
-            auto transform = transformMgr.getComponent(item);
-            if (!transform)
-                continue;
-
-            // Tính toán vị trí dựa trên số thứ tự i
-            float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-            float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-
-            transform->x = 1000 + offsetX;
-            transform->y = 1000 + offsetY;
+            spriteComp->initializeSprite();
         }
+
+        auto transform = transformMgr.getComponent(item);
+        if (!transform)
+            continue;
+
+        // Tính toán vị trí dựa trên số thứ tự i
+        float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+        float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+
+        transform->x = 1000 + offsetX;
+        transform->y = 1000 + offsetY;
+    }
+
+    for (int i = 0; i < num; i++)
+    {
+        Entity item = factory->createEntity("item", "greenGem");
+
+        if (auto spriteComp = spriteMgr.getComponent(item))
+        {
+            spriteComp->initializeSprite();
+        }
+
+        auto transform = transformMgr.getComponent(item);
+        if (!transform)
+            continue;
+
+        // Tính toán vị trí dựa trên số thứ tự i
+        float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+        float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+
+        transform->x = 1000 + offsetX;
+        transform->y = 1500 + offsetY;
+    }
+
 }
 
 

@@ -352,7 +352,7 @@ void MovementSystem::moveItem(float dt)
         ax::Vec2 direction = (playerPos - itemPos).getNormalized();
         float distance     = itemPos.distance(playerPos);
 
-        const float speed = 200.0f;
+        const float speed = 250.0f;
         if (distance > 5.0f)  // Ngưỡng dừng
         {
             itemTransform->x += direction.x * speed * dt;
@@ -364,7 +364,7 @@ void MovementSystem::moveItem(float dt)
             auto identity = identityMgr.getComponent(item);
             if (identity)
             {
-                //pickupSystem->applyPickupEffect(identity->name);
+                pickupSystem->applyPickupEffect(identity->name);
             }
             SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(item);
             toRemove.push_back(item);
@@ -430,7 +430,6 @@ void MovementSystem::assignEntityToBatch(Entity entity)
 
     int batchId = getBestBatch();
     enemyBatches[batchId].push_back(entity);
-    // Lưu batchId vào một component nếu cần (có thể thêm vào IdentityComponent hoặc một component mới)
 }
 
 int MovementSystem::getBestBatch()
