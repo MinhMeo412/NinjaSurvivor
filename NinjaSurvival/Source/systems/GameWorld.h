@@ -19,6 +19,7 @@ public:
     ComponentManager<AttackComponent>& getAttackManager() { return attackMgr; }
     ComponentManager<CooldownComponent>& getCooldownManager() { return cooldownMgr; }
     ComponentManager<SpeedComponent>& getSpeedManager() { return speedMgr; }
+    ComponentManager<WeaponInventoryComponent>& getWeaponInventoryManager() { return weaponInventoryMgr; }
 
     // Thêm các get cho các ComponentManager khác khi cần
 
@@ -34,6 +35,7 @@ private:
     ComponentManager<AttackComponent> attackMgr;
     ComponentManager<CooldownComponent> cooldownMgr;
     ComponentManager<SpeedComponent> speedMgr;
+    ComponentManager<WeaponInventoryComponent> weaponInventoryMgr;
 
     // Thêm các ComponentManager khác
 

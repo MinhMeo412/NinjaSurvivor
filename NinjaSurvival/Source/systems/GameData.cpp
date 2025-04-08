@@ -284,6 +284,12 @@ bool GameData::loadEntityData(const std::string& jsonString)
             {
                 templ.speed = SpeedComponent{components["speed"].GetFloat()};
             }
+
+            //WeaponInventory (default weapon)
+            if (components.HasMember("weapon") && components["weapon"].IsString())
+            {
+                templ.weaponInventory = WeaponInventoryComponent{components["weapon"].GetString()};
+            }
         }
         entityTemplates[templ.type][templ.name] = templ;
     }
@@ -379,4 +385,19 @@ void GameData::setSelectedMap(const std::string& mapName)
 std::string GameData::getSelectedMap() const
 {
     return selectedMapName;
+}
+
+std::string GameData::findTypeByName(
+    const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& entityTemplates,
+    const std::string& name)
+{
+    for (const auto& [typeKey, nameMap] : entityTemplates)
+    {
+        if (nameMap.find(name) != nameMap.end())
+        {
+            return typeKey;  // Tìm thấy type chứa name
+        }
+    }
+    // Không tìm thấy -> ném exception
+    throw std::runtime_error("Entity name '" + name + "' not found in any type.");
 }

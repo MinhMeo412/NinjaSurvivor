@@ -2,7 +2,7 @@
 #include "SpawnSystem.h"
 #include "MapSystem.h"
 #include "HealthSystem.h"
-
+#include "WeaponSystem.h"
 #include "SystemManager.h"
 
 
@@ -26,11 +26,29 @@ void CollisionSystem::init()
     // Đặt callback logic khi va chạm xảy ra
     onCollision = [](Entity e1, Entity e2)
         {
-            //AXLOG("Collision between %u and %u", e1, e2);
+            AXLOG("Collision between %u and %u", e1, e2);
             //Xử lý logic va chạm
             auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
-            //healthSystem->handleCollision(e1, e2);
+            healthSystem->handleCollision(e1, e2);
         };
+
+    onWeaponCollision = [](Entity e1, Entity e2) {
+        AXLOG("Collision between %u and %u", e1, e2);
+        // Xử lý logic va chạm
+        auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
+
+        healthSystem->damagedEnemy[e1].push_back(e2);
+        healthSystem->handleWeaponCollision(healthSystem->damagedEnemy);
+        for (const auto& [attacker, targets] : healthSystem->damagedEnemy)
+        {
+            AXLOG("Attacker Entity: %u", attacker);
+
+            for (const auto& target : targets)
+            {
+                AXLOG("  -> Damaged Target: %u", target);
+            }
+        }
+    };
 }
 
 // cập nhật hệ thống va chạm, gọi mỗi frame
@@ -52,14 +70,31 @@ void CollisionSystem::update(float dt)
     }
 
     // Kiểm tra va chạm giữa player và các entity khác
-    auto entities = entityManager.getActiveEntities();
-    for (Entity entity : entities)
+    auto entitiesNearby = spatialGrid.getNearbyEntities(spawnSystem->getPlayerPosition(),1);
+    for (Entity entity : entitiesNearby)
     {
+        auto entityType = identityMgr.getComponent(entity)->type;
         //Kiểm tra có va chạm không
-        if (entity != player && checkCollision(player, entity))
+        if (entity != player && entityType != "weapon_melee" && checkCollision(player, entity))
         {
             if (onCollision) // Kiểm tra đã được gán callback hay chưa
                 onCollision(player, entity); // Gọi callback
+        }
+    }
+
+    //Kiểm tra va chạm giữa weapon trong pool với enemy/boss
+    auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
+    for (auto& weapon : weaponPool)
+    {
+        auto weaponPos      = ax::Vec2(transformMgr.getComponent(weapon)->x,transformMgr.getComponent(weapon)->y);
+        auto entitiesNearby = spatialGrid.getNearbyEntities(weaponPos,2);
+        for (auto& entity : entitiesNearby)
+        {
+            auto entityType = identityMgr.getComponent(entity)->type;
+            if ((entityType == "enemy" || entityType == "boss") && checkCollision(weapon, entity))
+            {
+                onWeaponCollision(weapon, entity);
+            }
         }
     }
 
@@ -94,7 +129,7 @@ ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
         float pushStrength = 2.0f;     // lực đẩy
 
         // Kiểm tra va chạm với entity khác
-        auto nearby = spatialGrid.getNearbyEntities(newPos);
+        auto nearby = spatialGrid.getNearbyEntities(newPos,1);
         for (Entity other : nearby)
         {
             if (other != entity && identityMgr.getComponent(other))
@@ -136,7 +171,7 @@ ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
                 // Kiểm tra lại va chạm entity sau khi đẩy
                 bool stillCollides = false;  // Đặt một biến kiểm tra còn va chạm không
                 // Kiểm tra va chạm với các entity tại vị trí mới
-                auto nearbyAdjusted = spatialGrid.getNearbyEntities(adjustedPos);
+                auto nearbyAdjusted = spatialGrid.getNearbyEntities(adjustedPos,1);
                 for (Entity other : nearbyAdjusted)
                 {
                     if (other != entity && identityMgr.getComponent(other) &&
@@ -218,6 +253,9 @@ bool CollisionSystem::checkCollision(Entity e1, Entity e2)
 
     if (!transform1 || !transform2 || !hitbox1 || !hitbox2)
         return false; // Không va chạm nếu thiếu component
+
+    if (hitbox1->size == ax::Size(0, 0) || hitbox1->size == ax::Size(0, 0))
+        return false; //Không va chạm nếu hitbox = 0
 
     // Tính toán hình chữ nhật hitbox cho cả 2 entity
     ax::Vec2 pos1(transform1->x, transform1->y);
@@ -336,17 +374,17 @@ void CollisionSystem::SpatialGrid::insert(Entity entity, const ax::Vec2& pos)
         cells[cellY][cellX].push_back(entity);
 }
 
-// Lấy danh sách các entity gần vị trí (trong ô và 8 ô xung quanh của lưới)
-std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Vec2& pos)
+// Lấy danh sách các entity gần vị trí (trong ô và radius ô xung quanh của lưới)
+std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Vec2& pos, int radius)
 {
     std::vector<Entity> nearby;
-    int cellX = std::floor(pos.x / cellSize.x); //Tính vị trí X trong lưới
-    int cellY = std::floor(pos.y / cellSize.y); //Tính vị trí Y trong lưới
+    int cellX = std::floor(pos.x / cellSize.x);  // Tính vị trí X trong lưới
+    int cellY = std::floor(pos.y / cellSize.y);  // Tính vị trí Y trong lưới
 
     // Duyệt qua 9 ô (ô hiện tại và 8 ô xung quanh) trong lưới
-    for (int dy = -1; dy <= 1; dy++)
+    for (int dy = -radius; dy <= radius; dy++)
     {
-        for (int dx = -1; dx <= 1; dx++)
+        for (int dx = -radius; dx <= radius; dx++)
         {
             int nx = cellX + dx;
             int ny = cellY + dy;
@@ -357,5 +395,5 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Ve
             }
         }
     }
-    return nearby; // Trả về danh sách entity gần vị trí
+    return nearby;  // Trả về danh sách entity gần vị trí
 }

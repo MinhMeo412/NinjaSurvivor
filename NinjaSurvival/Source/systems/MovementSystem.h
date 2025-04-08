@@ -48,6 +48,7 @@ private:
     void moveRangedEnemy(Entity entity, float dt);  // Di chuyển cho ranged enemy
 
     void moveItem(float dt); //Khi item được "nhặt"
+    void moveWeapon(Entity entity, float dt);
     // Thêm các entity khác: moveBossX, moveProjectileY...
 
     //Re position nếu entity ra ngoài view quá xa

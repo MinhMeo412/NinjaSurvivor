@@ -6,6 +6,7 @@
 #include "CollisionSystem.h"
 #include "PickupSystem.h"
 #include "CleanupSystem.h"
+#include "WeaponSystem.h"
 #include "SystemManager.h"
 
 MovementSystem::MovementSystem(EntityManager& em,
@@ -26,6 +27,8 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     // Enemy_Octopus
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
+
+    movementStrategies["weapon_melee_sword"]  = [this](Entity e, float dt) { moveWeapon(e, dt); };
 }
 
 void MovementSystem::init()
@@ -58,6 +61,13 @@ void MovementSystem::update(float dt)
         currentBatchIndex = (currentBatchIndex + 1) % BATCH_COUNT;  // Chuyển sang batch tiếp theo
     }
 
+    // Xử lý move của weapon
+    auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
+    for (auto& weapon : weaponPool)
+    {
+        updateEntityMovement(weapon, dt);
+    }
+
     // Nhặt item
     moveItem(dt);
     auto end      = std::chrono::high_resolution_clock::now();
@@ -72,9 +82,6 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
     auto velocity  = velocityMgr.getComponent(entity);
     if (!transform || !velocity)
         return;
-
-    //auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
-    //int oldGroup         = collisionSystem->getSpatialGroup(transform->x, transform->y);
 
     // Xác định key để tìm kiểu di chuyển
     std::string key;
@@ -95,16 +102,9 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
             }
         }
     }
-
-    //int newGroup = collisionSystem->getSpatialGroup(transform->x, transform->y);
-    //if (newGroup != oldGroup)
-    //{
-    //    collisionSystem->removeFromSpatialGroup(oldGroup, entity);
-    //    collisionSystem->addToSpatialGroup(newGroup, entity);
-    //}
 }
 
-// // Xử lý sub-stepping và đặt vị trí mới
+// Xử lý sub-stepping và đặt vị trí mới
 ax::Vec2 MovementSystem::subSteppingHandle(Entity entity, float dt)
 {
     // Sub-stepping
@@ -407,6 +407,50 @@ bool MovementSystem::isOutOfView(Entity entity)
 void MovementSystem::moveItemToPlayer(Entity item)
 {
     lootedItems.insert(item);  // Thêm item vào danh sách nhặt
+}
+
+void MovementSystem::moveWeapon(Entity entity, float dt)
+{
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    if (!transform)
+        return;
+
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (!spawnSystem)
+        return;
+
+    // Lấy vị trí player
+    Entity player        = spawnSystem->getPlayerEntity();
+    auto playerTransform = transformMgr.getComponent(player);
+    auto playerVel = velocityMgr.getComponent(player);
+    if (!playerTransform)
+        return;
+
+    float offsetX = 24.0f;  // Khoảng cách từ nhân vật đến kiếm
+    if (playerVel->vx > 0)  // Sang phải
+    {
+        transform->x = playerTransform->x + offsetX;
+        vel->vx      = 1.0f;  // Lưu hướng sang phải
+    }
+    else if (playerVel->vx < 0)  // Sang trái
+    {
+        transform->x = playerTransform->x - offsetX;
+        vel->vx      = -1.0f;  // Lưu hướng sang trái
+    }
+    else
+    {
+        if (vel->vx == 0.0f)
+        {
+            transform->x = playerTransform->x + offsetX;  // Mặc định bên phải
+        }
+        else
+        {
+            transform->x = (vel->vx > 0) ? (playerTransform->x + offsetX) : (playerTransform->x - offsetX);
+        }
+    }
+
+    transform->y = playerTransform->y;
 }
 
 // Tạo Batch cho các entity
