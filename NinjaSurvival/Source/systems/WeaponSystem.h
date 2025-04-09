@@ -39,7 +39,7 @@ public:
     void init() override;
     void update(float dt) override;
 
-    void upgradeWeapon();  // Nâng cấp vũ khí
+    void upgradeWeapon(std::string weaponName);  // Nâng cấp vũ khí
 
     // Lấy danh sách entity vũ khí (moveSystem truy cập để xử lý vị trí)
     const std::vector<Entity>& getWeaponEntities() const { return weaponPool; }
@@ -60,10 +60,17 @@ private:
 
     std::unique_ptr<EntityFactory> factory;
 
+    // Định nghĩa một kiểu hàm CreateFunc nhận Entity và float, trả về void
+    // std::function khai báo kiểu hàm với tên bất kỳ có tham số là string và kiểu trả về là void
+    using CreateFunc = std::function<Entity(std::string)>;
+    // Một map lưu cặp key(kiểu string weapon name) và value(kiểu CreateFunc)
+    std::unordered_map<std::string, CreateFunc> createWeapon;
+
     Entity playerEntity = 0;          // Entity của player để gắn vị trí vũ khí
     std::vector<Entity> weaponPool;   // Pool chứa các entity vũ khí
 
     Entity createSwordEntity(std::string weaponName);  // Tạo entity weapon
+    Entity createShurikenEntity(std::string weaponName);
 
     // Khởi tạo vũ khí cho player
     void initializePlayerWeapon(Entity player);

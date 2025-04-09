@@ -477,8 +477,70 @@
                     "gameSceneFrame": "./sword"
                 },
                 "hitbox": {
-                    "width": 32.0,
+                    "width": 40.0,
+                    "height": 20.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 2.0
+                }
+            }
+        },
+        {
+            "type": "weapon_melee",
+            "name": "shuriken",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "sprite": {
+                    "plist": "weapon.plist",
+                    "gameSceneFrame": "./shuriken"
+                },
+                "hitbox": {
+                    "width": 16.0,
                     "height": 16.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": {
+                    "cooldownDuration": 2.0
+                }
+            }
+        },
+        {
+            "type": "weapon_projectile",
+            "name": "kunai",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "sprite": {
+                    "plist": "weapon.plist",
+                    "gameSceneFrame": "./kunai"
+                },
+                "hitbox": {
+                    "width": 4.0,
+                    "height": 7.0
                 },
                 "attack": {
                     "baseDamage": 10.0,

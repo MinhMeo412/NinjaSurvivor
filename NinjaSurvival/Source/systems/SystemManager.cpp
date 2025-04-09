@@ -60,6 +60,7 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
     registerSystem("PickupSystem");
     registerSystem("LevelSystem");
     registerSystem("WeaponSystem");
+
     registerSystem("DamageTextSystem");
 
 

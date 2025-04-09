@@ -8,6 +8,7 @@
 #include "CleanupSystem.h"
 #include "WeaponSystem.h"
 #include "SystemManager.h"
+#include "Utils.h"
 
 MovementSystem::MovementSystem(EntityManager& em,
                                ComponentManager<IdentityComponent>& im,
@@ -27,14 +28,16 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     // Enemy_Octopus
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
-
-    movementStrategies["weapon_melee_sword"]  = [this](Entity e, float dt) { moveWeapon(e, dt); };
 }
 
 void MovementSystem::init()
 {
     //Tạo batch để cập nhật di chuyển cho entity
     initializeBatches();
+
+    //Khởi tạo weaponMovementSystem
+    weaponMovementSystem = std::make_unique<WeaponMovementSystem>(entityManager, identityMgr, transformMgr, velocityMgr,
+                                                              animationMgr, hitboxMgr, speedMgr);
 }
 
 // update toàn bộ hệ thống di chuyển, gọi mỗi frame
@@ -62,14 +65,11 @@ void MovementSystem::update(float dt)
     }
 
     // Xử lý move của weapon
-    auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
-    for (auto& weapon : weaponPool)
-    {
-        updateEntityMovement(weapon, dt);
-    }
+    weaponMovementSystem->update(dt);
 
     // Nhặt item
     moveItem(dt);
+
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     //AXLOG("Thời gian thực thi MovementSystem: %ld ms", duration);
@@ -91,7 +91,7 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
         key = (identity->type == "player" || identity->type == "item") ? identity->type
                                                                          : identity->type + "_" + identity->name;
 
-        if (key != "item") //Không cần chạy với key = item
+        if (Utils::not_in(key, "item", "weapon_melee", "weapon_projectile"))  // Không cần chạy với key này
         {
             // Tìm hàm di chuyển qua key
             auto it = movementStrategies.find(key);
@@ -111,48 +111,12 @@ ax::Vec2 MovementSystem::subSteppingHandle(Entity entity, float dt)
     ax::Vec2 currentPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);  // Lấy vị trí hiện tại
     ax::Vec2 moveStep   = ax::Vec2(velocityMgr.getComponent(entity)->vx, velocityMgr.getComponent(entity)->vy) * dt;  // Một bước di chuyển (Vec2) trong 1 frame
 
-    // Thêm giới hạn tốc độ để bỏ tính toán sub stepping (giới hạn trong khoảng 500speed)
-    /*
-    float stepLength    = moveStep.length();                          // Tính số pixel di chuyển trong 1 frame
-    ax::Size tileSize =
-        SystemManager::getInstance()->getSystem<MapSystem>()->getTileSize();  // Lấy kích thước 1 ô trong tileMap(pixel)
-    
-    if (stepLength > tileSize.width * 0.5f)
-    {
-        // Số bước nhỏ cần thực hiện trong 1 frame
-        // ceil làm phép chia luôn trả về kết quả >= 1 trừ khi tử số = 0 (làm tròn để số bước di chuyển luôn ít nhất là 1)
-        // Chia cho nửa tileSize để tránh một bước dài hơn 1 tileSize (tunneling)
-        int steps = std::min(3, static_cast<int>(std::ceil(stepLength / (tileSize.width * 0.5f))));  // Giới hạn tối đa 3 bước (giảm tính toán)
-
-        // Một bước nhỏ trong Tổng số bước cần thực hiện/frame
-        // Đảm bảo luôn chia được kể cả khi không di chuyển (steps = 0)
-        ax::Vec2 step = moveStep / (steps > 0 ? steps : 1);
-
-        // Khai báo biến mới để tính toán vị trí nhân vật di chuyển tiếp theo trong frame
-        ax::Vec2 adjustedPos = currentPos;
-        auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
-        for (int i = 0; i < steps; ++i)
-        {
-            ax::Vec2 newPos = adjustedPos + step;
-            // Kiểm tra và điều chỉnh vị trí với CollisionSystem để tránh va chạm
-            adjustedPos =
-                collisionSystem->resolvePosition(entity, newPos);  // Nhận giá trị vị trí mới với mỗi step trong steps
-        }
-        // Cập nhật vị trí entity sau khi tính toán
-        transform->x = adjustedPos.x;
-        transform->y = adjustedPos.y;
-
-        return adjustedPos;
-    }
-    else
-    {*/
-        // Di chuyển trực tiếp nếu vận tốc nhỏ
-        ax::Vec2 newPos = currentPos + moveStep;
-        newPos          = SystemManager::getInstance()->getSystem<CollisionSystem>()->resolvePosition(entity, newPos);
-        transformMgr.getComponent(entity)->x = newPos.x;
-        transformMgr.getComponent(entity)->y = newPos.y;
-        return newPos;
-    //}
+    // Di chuyển trực tiếp nếu vận tốc nhỏ
+    ax::Vec2 newPos = currentPos + moveStep;
+    newPos          = SystemManager::getInstance()->getSystem<CollisionSystem>()->resolvePosition(entity, newPos);
+    transformMgr.getComponent(entity)->x = newPos.x;
+    transformMgr.getComponent(entity)->y = newPos.y;
+    return newPos;
 }
 
 // Logic di chuyển của player (tính toán velocity và đặt animation state)
@@ -407,50 +371,6 @@ bool MovementSystem::isOutOfView(Entity entity)
 void MovementSystem::moveItemToPlayer(Entity item)
 {
     lootedItems.insert(item);  // Thêm item vào danh sách nhặt
-}
-
-void MovementSystem::moveWeapon(Entity entity, float dt)
-{
-    auto transform = transformMgr.getComponent(entity);
-    auto vel       = velocityMgr.getComponent(entity);
-    if (!transform)
-        return;
-
-    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
-    if (!spawnSystem)
-        return;
-
-    // Lấy vị trí player
-    Entity player        = spawnSystem->getPlayerEntity();
-    auto playerTransform = transformMgr.getComponent(player);
-    auto playerVel = velocityMgr.getComponent(player);
-    if (!playerTransform)
-        return;
-
-    float offsetX = 24.0f;  // Khoảng cách từ nhân vật đến kiếm
-    if (playerVel->vx > 0)  // Sang phải
-    {
-        transform->x = playerTransform->x + offsetX;
-        vel->vx      = 1.0f;  // Lưu hướng sang phải
-    }
-    else if (playerVel->vx < 0)  // Sang trái
-    {
-        transform->x = playerTransform->x - offsetX;
-        vel->vx      = -1.0f;  // Lưu hướng sang trái
-    }
-    else
-    {
-        if (vel->vx == 0.0f)
-        {
-            transform->x = playerTransform->x + offsetX;  // Mặc định bên phải
-        }
-        else
-        {
-            transform->x = (vel->vx > 0) ? (playerTransform->x + offsetX) : (playerTransform->x - offsetX);
-        }
-    }
-
-    transform->y = playerTransform->y;
 }
 
 // Tạo Batch cho các entity

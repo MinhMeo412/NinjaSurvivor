@@ -4,7 +4,7 @@
 #include "HealthSystem.h"
 #include "WeaponSystem.h"
 #include "SystemManager.h"
-
+#include "Utils.h"
 
 CollisionSystem::CollisionSystem(EntityManager& em,
                                  ComponentManager<IdentityComponent>& im,
@@ -70,12 +70,13 @@ void CollisionSystem::update(float dt)
     }
 
     // Kiểm tra va chạm giữa player và các entity khác
-    auto entitiesNearby = spatialGrid.getNearbyEntities(spawnSystem->getPlayerPosition(),1);
+    auto entitiesNearby = spatialGrid.getNearbyEntities(spawnSystem->getPlayerPosition(),1); //Va chạm với boss có hitbox lớn bị miss
     for (Entity entity : entitiesNearby)
     {
         auto entityType = identityMgr.getComponent(entity)->type;
         //Kiểm tra có va chạm không
-        if (entity != player && entityType != "weapon_melee" && checkCollision(player, entity))
+        if (entity != player && Utils::not_in(entityType, "weapon_melee", "weapon_projectile", "item") &&
+            checkCollision(player, entity))
         {
             if (onCollision) // Kiểm tra đã được gán callback hay chưa
                 onCollision(player, entity); // Gọi callback
@@ -83,20 +84,7 @@ void CollisionSystem::update(float dt)
     }
 
     //Kiểm tra va chạm giữa weapon trong pool với enemy/boss
-    auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
-    for (auto& weapon : weaponPool)
-    {
-        auto weaponPos      = ax::Vec2(transformMgr.getComponent(weapon)->x,transformMgr.getComponent(weapon)->y);
-        auto entitiesNearby = spatialGrid.getNearbyEntities(weaponPos,2);
-        for (auto& entity : entitiesNearby)
-        {
-            auto entityType = identityMgr.getComponent(entity)->type;
-            if ((entityType == "enemy" || entityType == "boss") && checkCollision(weapon, entity))
-            {
-                onWeaponCollision(weapon, entity);
-            }
-        }
-    }
+    weaponCollisionCheck();
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -118,7 +106,7 @@ ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
     ax::Vec2 moveStep   = newPos - currentPos;  // Tính bước di chuyển
 
     // Enemy/Boss: Không overlay với enemy/boss, chặn bởi collision tile
-    if (type == "enemy" || type == "boss")
+    if (Utils::in(type, "enemy", "boss"))
     {
         bool collidesWithTile =
             isCollidingWithTileMap(entity, newPos);  // Kiểm tra xem có va chạm với tilemap tại newPos không
@@ -136,7 +124,7 @@ ax::Vec2 CollisionSystem::resolvePosition(Entity entity, const ax::Vec2& newPos)
             {
                 std::string otherType = identityMgr.getComponent(other)->type;
                 // Kiểm tra type nếu là enemy hoặc boss và có va chạm
-                if ((otherType == "enemy" || otherType == "boss") && checkCollision(entity, other))
+                if (Utils::in(otherType, "enemy", "boss") && checkCollision(entity, other))
                 {
                     collidesWithEntity = true;
                     ax::Vec2 otherPos(transformMgr.getComponent(other)->x, transformMgr.getComponent(other)->y);
@@ -381,7 +369,7 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Ve
     int cellX = std::floor(pos.x / cellSize.x);  // Tính vị trí X trong lưới
     int cellY = std::floor(pos.y / cellSize.y);  // Tính vị trí Y trong lưới
 
-    // Duyệt qua 9 ô (ô hiện tại và 8 ô xung quanh) trong lưới
+    // Duyệt qua ô hiện tại và ô xung quanh dựa trên radius trong lưới
     for (int dy = -radius; dy <= radius; dy++)
     {
         for (int dx = -radius; dx <= radius; dx++)
@@ -396,4 +384,43 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Ve
         }
     }
     return nearby;  // Trả về danh sách entity gần vị trí
+}
+
+void CollisionSystem::weaponCollisionCheck()
+{
+    auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
+    for (auto& weapon : weaponPool)
+    {
+        auto weaponPos    = ax::Vec2(transformMgr.getComponent(weapon)->x, transformMgr.getComponent(weapon)->y);
+        auto weaponHitbox = hitboxMgr.getComponent(weapon);
+        int weaponMaxSize = std::max(static_cast<int>(weaponHitbox->defaultSize.width),
+                                     static_cast<int>(weaponHitbox->defaultSize.height));
+
+        // Dùng radius đủ lớn để bao quát cả boss (tối đa của entity là 64)
+        int maxEntitySize = 64;  // Kích thước tối đa của hitbox entity (dành cho boss)
+        int baseRadius = std::max(1, (weaponMaxSize + maxEntitySize) / 2 / 16);  // Tổng bán kính tối đa theo gridSize
+
+        auto entitiesNearby = spatialGrid.getNearbyEntities(weaponPos, baseRadius);
+
+        for (auto& entity : entitiesNearby)
+        {
+            auto entityType = identityMgr.getComponent(entity)->type;
+            if (Utils::in(entityType, "enemy", "boss"))
+            {
+                auto entityPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);
+                auto entityHitbox = hitboxMgr.getComponent(entity);
+                int entityMaxSize = std::max(static_cast<int>(entityHitbox->defaultSize.width),
+                                             static_cast<int>(entityHitbox->defaultSize.height));
+
+                // Tính khoảng cách thực tế giữa hai tâm
+                float distance          = weaponPos.distance(entityPos);
+                float collisionDistance = (weaponMaxSize + entityMaxSize) / 2.0f;  // Tổng bán kính
+
+                if (distance <= collisionDistance && checkCollision(weapon, entity))
+                {
+                    onWeaponCollision(weapon, entity);
+                }
+            }
+        }
+    }
 }

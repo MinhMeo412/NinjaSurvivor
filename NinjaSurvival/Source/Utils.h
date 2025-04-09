@@ -40,8 +40,23 @@ ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
                                           ax::MenuItemSprite*& selectedCharacterItem,
                                           ax::MenuItemSprite* playButton);
 
-//Check null ptr before set visible
+// Check null ptr before set visible
 void setVisibleSafe(ax::Node* node, bool visible);
+
+// Check nếu giá trị không nằm trong chuỗi (cùng kiểu dữ liệu)
+template <typename T, typename... Args>
+bool not_in(const T& value, Args... args)
+{
+    return ((value != args) && ...);
+}
+
+// Check nếu giá trị nằm trong chuỗi (cùng kiểu dữ liệu)
+template <typename T, typename... Args>
+bool in(const T& value, Args... args)
+{
+    return ((value == args) || ...);
+}
+
 }  // namespace Utils
 
 #endif  // __UTILS_H__

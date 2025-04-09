@@ -45,6 +45,7 @@ private:
     std::function<void(Entity, Entity)> onCollision; // Callback khi va chạm xảy ra
     std::function<void(Entity, Entity)> onWeaponCollision;
 
+    void weaponCollisionCheck();
 
     // Kiểm tra va chạm giữa 2 entity
     bool checkCollision(Entity e1, Entity e2);

@@ -4,6 +4,7 @@
 #include "System.h"
 #include "components/ComponentManager.h"
 #include "entities/EntityManager.h"
+#include "WeaponMovementSystem.h"
 
 class MovementSystem : public System
 {
@@ -31,6 +32,10 @@ private:
     ComponentManager<HitboxComponent>& hitboxMgr;
     ComponentManager<SpeedComponent>& speedMgr;
 
+
+    //Chia weapon ra làm system riêng
+    std::unique_ptr<WeaponMovementSystem> weaponMovementSystem;
+
     // Định nghĩa một kiểu hàm MoveFunc nhận Entity và float, trả về void
     // std::function khai báo kiểu hàm với tên bất kỳ có 2 tham số và kiểu trả về là void
     using MoveFunc = std::function<void(Entity, float)>;
@@ -48,7 +53,6 @@ private:
     void moveRangedEnemy(Entity entity, float dt);  // Di chuyển cho ranged enemy
 
     void moveItem(float dt); //Khi item được "nhặt"
-    void moveWeapon(Entity entity, float dt);
     // Thêm các entity khác: moveBossX, moveProjectileY...
 
     //Re position nếu entity ra ngoài view quá xa
