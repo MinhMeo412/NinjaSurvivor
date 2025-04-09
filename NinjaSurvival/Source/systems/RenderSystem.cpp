@@ -9,8 +9,17 @@ RenderSystem::RenderSystem(EntityManager& em,
                            ComponentManager<SpriteComponent>& sm,
                            ComponentManager<TransformComponent>& tm,
                            ComponentManager<AnimationComponent>& am,
-                           ComponentManager<HitboxComponent>& hm)
-    : entityManager(em), identityMgr(im), spriteMgr(sm), transformMgr(tm), animationMgr(am), hitboxMgr(hm)
+                           ComponentManager<HitboxComponent>& hm,
+                           ComponentManager<CooldownComponent>& cdm,
+                           ComponentManager<VelocityComponent>& vm)
+    : entityManager(em)
+    , identityMgr(im)
+    , spriteMgr(sm)
+    , transformMgr(tm)
+    , animationMgr(am)
+    , hitboxMgr(hm)
+    , cooldownMgr(cdm)
+    , velocityMgr(vm)
 {}
 
 void RenderSystem::init()
@@ -32,12 +41,14 @@ void RenderSystem::init()
     enemyBatchNode      = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
     //bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
     itemBatchNode = ax::SpriteBatchNode::create("items.png");
-    //weaponBatchNode = ax::SpriteBatchNode::create("coin.png");
+    weaponBatchNode = ax::SpriteBatchNode::create("weapon.png");
+    numberBatchNode = ax::SpriteBatchNode::create("number.png");
 
     scene->addChild(enemyBatchNode, 3);
     //scene->addChild(bossBatchNode, 4);
-    scene->addChild(itemBatchNode, 2);  // Có lẽ nên chia riêng item với weapon
-    //scene->addChild(weaponBatchNode, 5);
+    scene->addChild(itemBatchNode, 2); 
+    scene->addChild(weaponBatchNode, 5);
+    scene->addChild(numberBatchNode, 6);
 
     debugDrawNode = ax::DrawNode::create();
     scene->addChild(debugDrawNode, 10);
@@ -82,10 +93,10 @@ void RenderSystem::addSpriteToScene(Entity entity)
     {
         sprite->setBatchNode(itemBatchNode);
     }
-    //else if (identity->type == "weapon")
-    //{
-    //    sprite->setBatchNode(weaponBatchNode);
-    //}
+    else if (identity->type == "weapon_melee")
+    {
+        sprite->setBatchNode(weaponBatchNode);
+    }
 
     TransformComponent* transform = transformMgr.getComponent(entity);
     if (transform)
@@ -115,6 +126,9 @@ void RenderSystem::update(float dt)
         updateEntitySprite(entity, dt);
     }
     updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+
+
+
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     //AXLOG("Thời gian thực thi RenderSystem: %ld ms", duration);
@@ -122,10 +136,14 @@ void RenderSystem::update(float dt)
 
 void RenderSystem::updateEntitySprite(Entity entity, float dt)
 {
+    if (identityMgr.getComponent(entity)->type == "weapon_melee")
+    { // Không tự động update weapon
+        return;
+    }
+
     auto sprite         = spriteMgr.getComponent(entity);
     auto transform      = transformMgr.getComponent(entity);
     auto animation      = animationMgr.getComponent(entity);
-
     if (!sprite || !sprite->gameSceneFrame || !transform)
         return;
 
@@ -206,5 +224,40 @@ void RenderSystem::onEntityDestroyed(Entity entity)
     {
         sprite->gameSceneFrame->removeFromParent();
         sprite->gameSceneFrame = nullptr;
+    }
+}
+
+
+void RenderSystem::updateWeaponEntitySprite(Entity entity, float dt)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    // Lật sprite dựa trên hướng vận tốc
+    if (vel->vx > 0)  // Sang phải
+    {
+        sprite->gameSceneFrame->setScaleX(1.0f);  // Không lật
+    }
+    else if (vel->vx < 0)  // Sang trái
+    {
+        sprite->gameSceneFrame->setScaleX(-1.0f);  // Lật ngang
+    }
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+    sprite->gameSceneFrame->setOpacity(255);
+    sprite->gameSceneFrame->runAction(ax::FadeOut::create(0.5f));
+}
+
+
+// Hàm set batch node cho sprite (chỉ dùng cho number)
+void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type)
+{
+    if (!sprite)
+    {
+        AXLOG("Error: Sprite is null in setSpriteBatchNodeForSprite");
+        return;
+    }
+    if (type == "number")
+    {
+        numberBatchNode->addChild(sprite);
     }
 }

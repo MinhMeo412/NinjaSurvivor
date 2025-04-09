@@ -20,6 +20,10 @@ public:
 
     // Hàm xử lý sát thương khi va chạm xảy ra (gọi với callback từ collision system)
     void handleCollision(Entity e1, Entity e2);
+
+    std::unordered_map<Entity, std::vector<Entity>> damagedEnemy;
+    void handleWeaponCollision(std::unordered_map<Entity, std::vector<Entity>> damagedEnemy);
+
     float getPlayerMaxHealth() const;
     float getPlayerCurrentHealth() const;
 

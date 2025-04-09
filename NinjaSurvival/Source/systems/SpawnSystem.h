@@ -20,7 +20,8 @@ public:
                              ComponentManager<HealthComponent>& hem,
                              ComponentManager<AttackComponent>& atm,
                              ComponentManager<CooldownComponent>& cdm,
-                             ComponentManager<SpeedComponent>& spm)
+                             ComponentManager<SpeedComponent>& spm,
+                             ComponentManager<WeaponInventoryComponent>& wim)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -32,6 +33,7 @@ public:
         , attackMgr(atm)
         , cooldownMgr(cdm)
         , speedMgr(spm)
+        , weaponInventoryMgr(wim)
     {}
     
     void init() override;
@@ -60,6 +62,9 @@ private:
     ComponentManager<AttackComponent>& attackMgr;
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<SpeedComponent>& speedMgr;
+    ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
+
+    std::unique_ptr<EntityFactory> factory;
 
     Entity playerEntity = 0;
     float spawnTimer    = 0.0f;

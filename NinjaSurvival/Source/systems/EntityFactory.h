@@ -19,7 +19,8 @@ public:
                   ComponentManager<HealthComponent>& hem,
                   ComponentManager<AttackComponent>& atm,
                   ComponentManager<CooldownComponent>& cdm,
-                  ComponentManager<SpeedComponent>& spm)
+                  ComponentManager<SpeedComponent>& spm,
+                  ComponentManager<WeaponInventoryComponent>& wim)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -31,6 +32,7 @@ public:
         , attackMgr(atm)
         , cooldownMgr(cdm)
         , speedMgr(spm)
+        , weaponInventoryMgr(wim)
     {}
     Entity createEntity(const std::string& type, const std::string& name);
 
@@ -46,6 +48,7 @@ private:
     ComponentManager<AttackComponent>& attackMgr;
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<SpeedComponent>& speedMgr;
+    ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
 };
 
 #endif  // __ENTITY_FACTORY_H__

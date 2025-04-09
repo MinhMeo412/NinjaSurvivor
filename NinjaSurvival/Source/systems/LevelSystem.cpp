@@ -49,7 +49,7 @@ void LevelSystem::increaseXP(float xp)
 {
     currentXP = currentXP + xp; //thêm buff
 
-    AXLOG("Xp hiện tại: + %f = %f", xp, currentXP);
+    //AXLOG("Xp hiện tại: + %f = %f", xp, currentXP);
 }
 
 void LevelSystem::chooseWeapon()

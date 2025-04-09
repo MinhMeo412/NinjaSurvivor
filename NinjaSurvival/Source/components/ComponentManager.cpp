@@ -34,22 +34,22 @@ template class ComponentManager<AttackComponent>;
 template class ComponentManager<CooldownComponent>;
 template class ComponentManager<HealthComponent>;
 template class ComponentManager<SpeedComponent>;
-
+template class ComponentManager<WeaponInventoryComponent>; 
 
 
 // 
-//template class ComponentManager<AttackAreaComponent>;
+//template class ComponentManager<AttackAreaComponent>; bỏ
 
-//template class ComponentManager<AttackSpeedComponent>;
-//template class ComponentManager<CoinComponent>;
+//template class ComponentManager<AttackSpeedComponent>; bỏ
+//template class ComponentManager<CoinComponent>; bỏ
 
 //template class ComponentManager<DropRateComponent>;
 //template class ComponentManager<DurationComponent>;
-//template class ComponentManager<GrowthComponent>;
+//template class ComponentManager<GrowthComponent>; 
 
-//template class ComponentManager<ProjectileNumberComponent>;
+//template class ComponentManager<ProjectileNumberComponent>; bỏ
 //template class ComponentManager<RecoveryComponent>;
  
-//template class ComponentManager<WeaponComponent>;
-//template class ComponentManager<WeaponInventoryComponent>;
-//template class ComponentManager<XPComponent>;
+//template class ComponentManager<WeaponComponent>; bỏ
+
+//template class ComponentManager<XPComponent>; bỏ

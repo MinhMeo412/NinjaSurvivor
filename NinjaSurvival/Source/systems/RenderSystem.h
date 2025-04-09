@@ -14,12 +14,18 @@ public:
                  ComponentManager<SpriteComponent>& sm,
                  ComponentManager<TransformComponent>& tm,
                  ComponentManager<AnimationComponent>& am,
-                 ComponentManager<HitboxComponent>& hm);
+                 ComponentManager<HitboxComponent>& hm,
+                 ComponentManager<CooldownComponent>& cdm,
+                 ComponentManager<VelocityComponent>& vm);
 
     void init() override;
     void update(float dt) override;
 
     void onEntityDestroyed(Entity entity);
+    void updateWeaponEntitySprite(Entity entity, float dt);
+
+    // Hàm để DamageTextSystem gọi
+    void setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type);
 
 private:
     EntityManager& entityManager;
@@ -28,17 +34,22 @@ private:
     ComponentManager<TransformComponent>& transformMgr;
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
+    ComponentManager<CooldownComponent>& cooldownMgr;
+    ComponentManager<VelocityComponent>& velocityMgr;
+    
 
-    ax::Scene* scene                         = nullptr;
-    ax::SpriteBatchNode* enemyBatchNode      = nullptr;
-    //ax::SpriteBatchNode* bossBatchNode       = nullptr;
-    ax::SpriteBatchNode* itemBatchNode = nullptr;
-    //ax::SpriteBatchNode* weaponBatchNode = nullptr;
+    ax::Scene* scene                        = nullptr;
+    ax::SpriteBatchNode* enemyBatchNode     = nullptr;
+    //ax::SpriteBatchNode* bossBatchNode      = nullptr;
+    ax::SpriteBatchNode* itemBatchNode      = nullptr;
+    ax::SpriteBatchNode* weaponBatchNode    = nullptr;
+    ax::SpriteBatchNode* numberBatchNode    = nullptr;
 
     ax::DrawNode* debugDrawNode              = nullptr;
 
     void addSpriteToScene(Entity entity);
     void updateEntitySprite(Entity entity, float dt);
+    
     void updateDebugDraw();
 };
 

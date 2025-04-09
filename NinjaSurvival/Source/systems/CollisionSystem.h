@@ -37,12 +37,15 @@ private:
         void init(const ax::Vec2& worldSize);               // Khởi tạo lưới với kích thước tổng của map
         void clear();                                       // Xóa toàn bộ entity trong lưới
         void insert(Entity entity, const ax::Vec2& pos);    // Thêm entity vào ô tương ứng
-        std::vector<Entity> getNearbyEntities(const ax::Vec2& pos); // Lấy các entity gần vị trí
+        std::vector<Entity> getNearbyEntities(const ax::Vec2& pos, int radius);  // Lấy các entity gần vị trí
     };
 
     SpatialGrid spatialGrid; // Khởi tạo lưới
 
     std::function<void(Entity, Entity)> onCollision; // Callback khi va chạm xảy ra
+    std::function<void(Entity, Entity)> onWeaponCollision;
+
+    void weaponCollisionCheck();
 
     // Kiểm tra va chạm giữa 2 entity
     bool checkCollision(Entity e1, Entity e2);

@@ -6,9 +6,10 @@
 struct HitboxComponent
 {
     ax::Size size = ax::Size(0,0);
+    ax::Size defaultSize = ax::Size(0, 0);
 
     HitboxComponent() = default;
-    HitboxComponent(float width = 16.0f, float height = 16.0f) : size(width, height) {}
+    HitboxComponent(float width = 0.0f, float height = 0.0f) : size(width, height), defaultSize(width, height) {}
 };
 
 #endif  // __HITBOX_COMPONENT_H__

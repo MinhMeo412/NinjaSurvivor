@@ -44,6 +44,7 @@ struct EntityTemplate
     std::optional<HealthComponent> health;  
     std::optional<AttackComponent> attack;  
     std::optional<CooldownComponent> cooldown;
+    std::optional<WeaponInventoryComponent> weaponInventory;
 
     EntityTemplate() : available(false) {};
 };
@@ -67,6 +68,7 @@ private:
     bool loadMapData(const std::string& jsonString);
     bool loadEntityData(const std::string& jsonString);
     std::string readFileContent(const std::string& filename);
+
 public:
     ~GameData();
     static GameData* getInstance();
@@ -86,6 +88,11 @@ public:
     std::string getSelectedCharacter() const;
     void setSelectedMap(const std::string& mapName);
     std::string getSelectedMap() const;
+
+    
+    std::string findTypeByName(
+        const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& entityTemplates,
+        const std::string& name);
 };
 
 #endif  // __GAMEDATA_H__

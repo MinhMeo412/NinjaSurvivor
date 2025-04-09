@@ -12,7 +12,7 @@ void ItemSystem::init()
 {
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
-                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr);
+                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr);
 
     int num = 1000;
     for (int i = 0; i < num; i++)
@@ -83,15 +83,15 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
     if (isBoss)
     {
         // Boss: Nhiều XP gem, Coin, và 1 Chest
-        spawnMultipleItems(position, "xp_gem", 3, 6, 0.8f);  // 3-6 XP gem, 80%
+        //spawnMultipleItems(position, "xp_gem", 3, 6, 0.8f);  // 3-6 XP gem, 80%
         spawnMultipleItems(position, "coin", 2, 5, 0.7f);    // 2-5 Coin, 70%
         spawnSingleItem(position, "chest", 1.0f);            // 100% Chest
     }
     else
     {
         // Enemy thường: XP gem, Coin, Heart
-        spawnSingleItem(position, "xp_gem", 0.9f);  // 90%
-        spawnSingleItem(position, "coin", 0.05f);    // 5%
+        //spawnSingleItem(position, "xp_gem", 0.9f);  // 90%
+        spawnSingleItem(position, "coin", 1.0f);    // 5%
         spawnSingleItem(position, "heart", 0.01f);   // 1%
     }
 }

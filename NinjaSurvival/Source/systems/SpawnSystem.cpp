@@ -11,6 +11,10 @@
 
 void SpawnSystem::init()
 {
+    // Khởi tạo entity factory
+    factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
+                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr);
+
     std::string characterName = GameData::getInstance()->getSelectedCharacter();
     if (characterName.empty())
     {
@@ -18,16 +22,14 @@ void SpawnSystem::init()
         return;
     }
 
-    EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr,
-                          healthMgr, attackMgr, cooldownMgr, speedMgr);
-    playerEntity = factory.createEntity("player", characterName);
+    playerEntity = factory->createEntity("player", characterName);
 
     AXLOG("SpawnSystem: Created player %s with ID %u", characterName.c_str(), playerEntity);
 
     if (auto spriteComp = spriteMgr.getComponent(playerEntity))
-        {
-            spriteComp->initializeSprite();
-        }
+    {
+        spriteComp->initializeSprite();
+    }
 
     if (auto animationComp = animationMgr.getComponent(playerEntity))
     {
@@ -41,6 +43,32 @@ void SpawnSystem::init()
         if (livingEnemyCount < 0)
             livingEnemyCount = 0;
     };
+
+
+    //Test
+    int gridSize = 2;
+    int spacing  = 16;
+    for (int i = 0; i < 4; i++)
+    {
+        Entity entity = factory->createEntity("enemy", "Slime");
+        ax::Vec2 spawnPos(800,1000);
+        if (auto transform = transformMgr.getComponent(entity))
+        {
+            int row      = i / gridSize;  // chỉ số hàng
+            int col      = i % gridSize;  // chỉ số cột
+            transform->x = spawnPos.x + (col * spacing);
+            transform->y = spawnPos.y + (row * spacing);
+        }
+        if (auto spriteComp = spriteMgr.getComponent(entity))
+        {
+            spriteComp->initializeSprite();
+        }
+        if (auto animationComp = animationMgr.getComponent(entity))
+        {
+            animationComp->initializeAnimations();
+            animationComp->currentState = "idle";
+        }
+    }
 }
 
 
@@ -187,9 +215,7 @@ void SpawnSystem::adjustEnemySpawnDuringBoss(bool isBossActive)
 
 Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& position)
 {
-    EntityFactory factory(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr, velocityMgr, hitboxMgr,
-                          healthMgr, attackMgr, cooldownMgr, speedMgr);
-    Entity entity = factory.createEntity(type, name);
+    Entity entity = factory->createEntity(type, name);
     ax::Vec2 spawnPos(getRandomSpawnPosition(entity, position));
     if (entity)
     {
@@ -322,5 +348,5 @@ ax::Vec2 SpawnSystem::getPlayerPosition() const
     {
         return ax::Vec2(transform->x, transform->y);
     }
-    return ax::Vec2::ZERO;  // Trả về (0, 0) nếu không có player
+    return ax::Vec2::ZERO;
 }

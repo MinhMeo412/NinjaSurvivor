@@ -3,6 +3,8 @@
 #include "CameraSystem.h"
 #include "SpawnSystem.h"
 #include "ItemSystem.h"
+#include "DamageTextSystem.h"
+#include "CleanupSystem.h"
 #include "gameUI/GameOverGamePauseLayer.h"
 #include "scenes/GameScene.h"
 
@@ -62,28 +64,11 @@ void HealthSystem::handleCollision(Entity e1, Entity e2)
     auto id2 = identityMgr.getComponent(e2);
     if (!id1 || !id2)
         return;
-    std::string type1 = id1->type;
+    std::string type1 = id1->type; //Type1 luôn là player
     std::string type2 = id2->type;
 
     // Xử lý va chạm giữa enemy/enemy_projectile/boss với player
-    if ((type1 == "enemy" || type1 == "enemy_projectile" || type1 == "boss") && type2 == "player")
-    {
-        if (auto attack = attackMgr.getComponent(e1))
-        {
-            if (canDealDamage(e1))
-            {
-                if (auto health = healthMgr.getComponent(e2))
-                {
-                    float damage = calculateDamage(attack);
-                    applyDamage(e2, damage);
-                    resetCooldown(e1);
-                    AXLOG("Player %u took %f damage from %s %u. HP left: %f", e2, damage, type1.c_str(), e1,
-                          health->currentHealth);
-                }
-            }
-        }
-    }
-    else if ((type2 == "enemy" || type2 == "enemy_projectile" || type2 == "boss") && type1 == "player")
+    if (type1 == "player" && (type2 == "enemy" || type2 == "enemy_projectile" || type2 == "boss"))
     {
         if (auto attack = attackMgr.getComponent(e2))
         {
@@ -100,42 +85,39 @@ void HealthSystem::handleCollision(Entity e1, Entity e2)
             }
         }
     }
+}
 
-    // Xử lý va chạm giữa weapon_melee/weapon_projectile với enemy/boss
-    if ((type1 == "weapon_melee" || type1 == "weapon_projectile") && (type2 == "enemy" || type2 == "boss"))
+void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<Entity>> damagedEnemy)
+{
+    AXLOG("handleWeaponCollision call");
+    for (const auto& pair : damagedEnemy)
     {
-        if (auto attack = attackMgr.getComponent(e1))
+        std::string type1        = identityMgr.getComponent(pair.first)->type;
+        std::vector<Entity> list = pair.second;
+
+        AXLOG("handleWeaponCollision call type: %s", type1.c_str());
+        for (const Entity& e : list)
         {
-            if (canDealDamage(e1))
+            std::string type2 = identityMgr.getComponent(e)->type;
+
+            if ((type1 == "weapon_melee" || type1 == "weapon_projectile") && (type2 == "enemy" || type2 == "boss"))
             {
-                if (auto health = healthMgr.getComponent(e2))
+                if (auto attack = attackMgr.getComponent(pair.first))
                 {
-                    float damage = calculateDamage(attack);
-                    applyDamage(e2, damage);
-                    resetCooldown(e1);
-                    AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e2, damage, e1,
-                          health->currentHealth);
+                    if (auto health = healthMgr.getComponent(e))
+                    {
+                        float damage = calculateDamage(attack);
+                        applyDamage(e, damage);
+                        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
+                        AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
+                                pair.first, health->currentHealth);
+                    }
                 }
             }
         }
     }
-    else if ((type2 == "weapon_melee" || type2 == "weapon_projectile") && (type1 == "enemy" || type1 == "boss"))
-    {
-        if (auto attack = attackMgr.getComponent(e2))
-        {
-            if (canDealDamage(e2))
-            {
-                if (auto health = healthMgr.getComponent(e1))
-                {
-                    float damage = calculateDamage(attack);
-                    applyDamage(e1, damage);
-                    resetCooldown(e2);
-                    AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type1.c_str(), e1, damage, e2,
-                          health->currentHealth);
-                }
-            }
-        }
-    }
+    // Xóa danh sách damagedEnemy sau khi xử lý để tránh tính sát thương lặp lại
+    this->damagedEnemy.clear();
 }
 
 //Công thức tính dame
@@ -152,14 +134,9 @@ void HealthSystem::applyDamage(Entity target, float damage)
         AXLOG("%d : %f", target, health->currentHealth);
         if (health->currentHealth <= 0.0f)
         {
-            health->currentHealth = 0.0f;
-            entityManager.destroyEntity(target);  // Hủy entity nếu hết máu
-            AXLOG("Entity %u destroyed due to zero health", target);
-
             // Gọi callback nếu entity là player hoặc enemy
             if (auto id = identityMgr.getComponent(target))
             {
-                
                 auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
                 if (id->type == "enemy" && spawnSystem->onEnemyDeath)
                 {
@@ -172,6 +149,8 @@ void HealthSystem::applyDamage(Entity target, float damage)
                     onPlayerOutOfHealth();
                 }
             }
+            SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(target);  // Hủy entity nếu hết máu
+            AXLOG("Entity %u destroyed due to zero health", target);
         }
     }
 }

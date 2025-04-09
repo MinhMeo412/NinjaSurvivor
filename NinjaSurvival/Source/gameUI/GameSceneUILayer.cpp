@@ -101,7 +101,7 @@ void GameSceneUILayer::update(float dt)
 void GameSceneUILayer::increaseCoin(float coin)
 {
     collectedCoin = collectedCoin + coin;
-    AXLOG("%f", collectedCoin);
+    //AXLOG("%f", collectedCoin);
 }
 
 void GameSceneUILayer::updateCoinLabel()

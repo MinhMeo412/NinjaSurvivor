@@ -36,15 +36,15 @@ bool AppDelegate::applicationDidFinishLaunching()
     {
 #if (AX_TARGET_PLATFORM == AX_PLATFORM_WIN32) || (AX_TARGET_PLATFORM == AX_PLATFORM_MAC) || \
     (AX_TARGET_PLATFORM == AX_PLATFORM_LINUX)
-        glView = GLViewImpl::createWithRect("ECSTest",
+        glView = GLViewImpl::createWithRect("Ninja Survivor",
                                             ax::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
 #else
-        glView = GLViewImpl::create("ECSTest");
+        glView = GLViewImpl::create("Ninja Survivor");
 #endif
         director->setGLView(glView);
     }
 
-     // **Đảm bảo không clear toàn bộ buffer**
+    // **Đảm bảo không clear toàn bộ buffer**
     director->setClearColor(Color4F(0, 0, 0, 0));
 
     // turn on display FPS
