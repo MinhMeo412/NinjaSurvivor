@@ -72,22 +72,25 @@ ax::MenuItemImage* createMenuItem(std::string normalImage,
 
 // Character button in CharacterChooseScene
 ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
-                                    const std::string& buttonName,
-                                    bool available,
-                                    std::string& selectedCharacterName,
-                                    ax::MenuItemSprite*& selectedCharacterItem,
-                                    ax::MenuItemSprite* playButton)
+                                          const std::string& buttonName,
+                                          bool available,
+                                          std::string& selectedCharacterName,
+                                          ax::MenuItemSprite*& selectedCharacterItem,
+                                          ax::MenuItemSprite* playButton)
 {
     auto normalSprite   = ax::Sprite::create(spritePath);
     auto selectedSprite = ax::Sprite::create(spritePath);
 
     auto characterItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
 
-    std::string displayName = available ? buttonName : "Locked";
-    auto characterLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 24);
-    characterLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height / 2);
-    characterLabel->setVisible(false);
-    characterItem->addChild(characterLabel, 3, "label");
+    // std::string displayName = available ? buttonName : "Locked";
+    // auto characterLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 24);
+    // ax::Vec2 itemPos        = characterItem->getPosition();  // Vị trí của characterItem trên màn hình
+    // ax::Vec2 relativePos    = namePos - itemPos;
+    // characterLabel->setPosition(relativePos);
+    // characterLabel->setVisible(false);
+
+    // characterItem->addChild(characterLabel, 6, "label");
 
     auto drawNode = ax::DrawNode::create();
     drawNode->drawRect(ax::Vec2(0, 0),
@@ -101,14 +104,22 @@ ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
         if (selectedCharacterItem && selectedCharacterItem != characterItem)
         {
             setVisibleSafe(selectedCharacterItem->getChildByName("border"), false);
-            setVisibleSafe(selectedCharacterItem->getChildByName("label"), false);
+            if (selectedCharacterItem->getUserData())
+            {
+                auto oldLabel = static_cast<ax::Label*>(selectedCharacterItem->getUserData());
+                setVisibleSafe(oldLabel, false);
+            }
         }
 
         selectedCharacterItem = characterItem;
 
         setVisibleSafe(characterItem->getChildByName("border"), true);
-        setVisibleSafe(characterItem->getChildByName("label"), true);
 
+        if (characterItem->getUserData())
+        {
+            auto label = static_cast<ax::Label*>(characterItem->getUserData());
+            setVisibleSafe(label, true);
+        }
         selectedCharacterName = buttonName;
 
         if (playButton)
@@ -139,8 +150,9 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
     auto mapItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
 
     std::string displayName = available ? buttonName : "Locked";
-    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 24);
+    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 50);
     mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height / 2);
+    // mapLabel->setScale(3);
     mapLabel->setVisible(false);
     mapItem->addChild(mapLabel, 3, "label");
 
@@ -177,6 +189,54 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
     }
 
     return mapItem;
+}
+ax::MenuItemSprite* Utils::createStatButton(const std::string& spritePath, const std::string& statValue)
+{
+    auto normalSprite = ax::Sprite::create(spritePath);
+    if (!normalSprite)
+    {
+        AXLOG("Failed to load sprite: %s, using default", spritePath.c_str());
+        normalSprite = ax::Sprite::create("CloseNormal.png");
+    }
+    auto selectedSprite = ax::Sprite::create(spritePath);
+    if (!selectedSprite)
+        selectedSprite = ax::Sprite::create("CloseNormal.png");
+
+    auto statItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
+
+    // auto statLabel = ax::Label::createWithTTF(statValue, "fonts/Marker Felt.ttf", 24);
+    // if (statLabel)
+    //{
+    //     statLabel->setPosition(normalSprite->getContentSize() * 0.5f);
+    //     statLabel->setVisible(false);  // Ẩn nhãn ban đầu
+    //     statItem->addChild(statLabel, 3, "label");
+    // }
+    // else
+    //{
+    //     AXLOG("Failed to create label for stat: %s", statValue.c_str());
+    // }
+
+    return statItem;
+}
+
+ax::MenuItemSprite* createButton(const std::string& spritePath,
+                                 const ax::ccMenuCallback& callback,
+                                 const ax::Vec2& pos,
+                                 float scale,
+                                 bool visible)
+{
+    auto sprite         = ax::Sprite::create(spritePath);
+    auto selectedSprite = ax::Sprite::create(spritePath);
+    auto button         = ax::MenuItemSprite::create(sprite, selectedSprite, nullptr, callback);
+    button->setPosition(pos);
+    button->setScale(scale);
+    button->setVisible(visible);
+    return button;
+}
+
+void Utils::updateItemUI(ax::MenuItemSprite* item, ax::Node* panel, bool isAvailable)
+{
+    item->setOpacity(isAvailable ? 255 : 128);
 }
 
 // Check null ptr before set visible

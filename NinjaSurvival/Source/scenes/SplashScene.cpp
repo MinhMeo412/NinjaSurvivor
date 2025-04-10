@@ -21,7 +21,7 @@ bool SplashScene::init()
     this->addChild(background, 0);
 
     auto titleSprite = Sprite::create("UI/NeoTitle1.png");
-    titleSprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height * 2 / 3));
+    titleSprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height /2));
     this->addChild(titleSprite, 1);
 
     this->scheduleOnce(AX_SCHEDULE_SELECTOR(SplashScene::goToLoadingScene), DISPLAY_TIME_SPLASH_SCENE);

@@ -43,39 +43,58 @@ void GameOverGamePauseLayer::createUI()
 {
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
-    // Label thông báo
-    std::string message = isPlayerDead ? "Game Over" : "Paused";
-    auto label          = Label::createWithTTF(message, "fonts/Marker Felt.ttf", 48);
-    label->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-    this->addChild(label, 2);
+    // Tạo panel sprite tương ứng với trạng thái (Game Over hoặc Paused)
+    std::string panelSprite =
+        isPlayerDead ? "UI/GameOver.png" : "UI/Pause.png";  // Thay bằng tên sprite của bạn
+    auto panel = Sprite::create(panelSprite);
+    if (!panel)
+    {
+        AXLOG("Failed to create panel sprite: %s", panelSprite.c_str());
+        return;
+    }
+    panel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    this->addChild(panel, 20);  // z-order 1
 
-    // Nút Quit Game (luôn hiển thị)
-    quitButton  = Utils::createMenuItem("CloseNormal.png", "CloseSelected.png",
-                                        AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this),
-                                        Vec2(visibleSize.width / 2, visibleSize.height / 2 - 250));
-    auto label1 = Label::createWithTTF("Quit button", "fonts/Marker Felt.ttf", 24);
-    label1->setPosition(quitButton->getPosition() + Vec2(100, 0));
-    this->addChild(label1, 1);
+    // Tạo vector chứa các menu item
+    Vector<MenuItem*> menuItems;
 
-    // Nút Return Game (chỉ hiển thị nếu player còn sống)
+    // Tạo nút Quit (luôn hiển thị)
+    quitButton = Utils::createMenuItem(
+        "UI/buttonQuit.png", "UI/buttonQuit.png", AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this),
+                                     Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 2/9));
+    if (quitButton)
+    {
+        menuItems.pushBack(quitButton);
+    }
+    else
+    {
+        AXLOG("Failed to create quitButton");
+    }
+
+    // Tạo nút Return (chỉ hiển thị nếu player còn sống)
     if (!isPlayerDead)
     {
-        returnButton = Utils::createMenuItem("CloseNormal.png", "CloseSelected.png",
-                                             AX_CALLBACK_1(GameOverGamePauseLayer::onReturnGame, this),
-                                             Vec2(visibleSize.width / 2, visibleSize.height / 2 - 200));
-        auto label2  = Label::createWithTTF("Return button", "fonts/Marker Felt.ttf", 24);
-        label2->setPosition(returnButton->getPosition() + Vec2(100, 0));
-        this->addChild(label2, 1);
+        returnButton = Utils::createMenuItem(
+            "UI/buttonReturn.png", "UI/buttonReturn.png", AX_CALLBACK_1(GameOverGamePauseLayer::onReturnGame, this),
+            Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 5.5/9));
+        if (returnButton)
+        {
+            menuItems.pushBack(returnButton);
+        }
+        else
+        {
+            AXLOG("Failed to create returnButton");
+        }
     }
     else
     {
         returnButton = nullptr;
     }
 
-    // Tạo menu với các button hợp lệ
-    auto menu = isPlayerDead ? Menu::create(quitButton, nullptr) : Menu::create(quitButton, returnButton, nullptr);
+    // Tạo menu từ danh sách menu items và thêm vào panel
+    auto menu = Menu::createWithArray(menuItems);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
+    panel->addChild(menu, 2);  // z-order 2, đè lên panel
 }
 
 void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)

@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "MainScene.h"
 #include "CharacterChooseScene.h"
+#include "ShopScene.h"
 
 using namespace ax;
 
@@ -38,6 +39,9 @@ bool MainScene::init()
                                      AX_CALLBACK_1(MainScene::menuPlayCallback, this),
                                      Vec2(origin.x + visibleSize.width / 2, startY));
 
+    shopItem = Utils::createMenuItem("UI/buttonShop.png", "UI/buttonShop.png",
+                                     AX_CALLBACK_1(MainScene::menuShopCallback, this),
+                                     Vec2(origin.x + visibleSize.width / 2, startY - 100));
     /*
     Chưa có scene shop vs archive thì chưa cần đến
     auto shopButton =
@@ -45,14 +49,14 @@ bool MainScene::init()
     shopButton->setPosition(
         Vec2(origin.x + visibleSize.width / 2, startY - buttonSpacing - shopButton->getContentSize().height));
 
-
+    /*
     auto achieveButton = MenuItemImage::create("UI/buttonArchive.png", "UI/buttonArchive.png",
                                                AX_CALLBACK_1(MainScene::achieveCallback, this));
     achieveButton->setPosition(Vec2(
         origin.x + visibleSize.width / 2,
        startY - 2 * buttonSpacing - shopButton->getContentSize().height - achieveButton->getContentSize().height));
     */
-    auto menu = Menu::create(playItem, NULL);
+    auto menu = Menu::create(playItem, shopItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
@@ -75,6 +79,13 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
     auto scene = utils::createInstance<CharacterChooseScene>();
+
+    _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
+}
+
+void MainScene::menuShopCallback(ax::Object* sender)
+{
+    auto scene = utils::createInstance<ShopScene>();
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }

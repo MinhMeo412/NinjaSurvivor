@@ -1,4 +1,5 @@
 #include "GameData.h"
+#include "ShopSystem.h"
 #include "rapidjson/document.h"
 
 
@@ -19,6 +20,24 @@ GameData* GameData::getInstance()
     {
         AXLOG("Creating GameData instance");
         instance.reset(createInstance());
+
+        // Tải dữ liệu mặc định từ file JSON
+        instance->loadMapDataFromFile("maps.json");
+        instance->loadEntityDataFromFile("entities.json");
+
+        // Sau khi tải dữ liệu mặc định, đồng bộ với savegame.json (nếu có)
+        auto shopData = ShopSystem::getInstance();
+        if (shopData->loadSaveGame())
+        {
+            AXLOG("Successfully loaded savegame.json in GameData::getInstance()");
+            // Đồng bộ dữ liệu từ ShopSystem vào GameData
+            shopData->syncCharactersWithGameData();
+            shopData->syncMapsWithGameData();
+        }
+        else
+        {
+            AXLOG("No savegame.json found or failed to load, using default data");
+        }
     }
     else
     {
@@ -367,6 +386,18 @@ void GameData::setMapAvailable(const std::string& name, bool available)
     }
 }
 
+void GameData::setCharacterAvailable(const std::string& name, bool available)
+{
+    if (entityTemplates.find("player") != entityTemplates.end())
+    {
+        auto& playerTemplates = entityTemplates["player"];
+        if (playerTemplates.find(name) != playerTemplates.end())
+        {
+            playerTemplates[name].available = available;
+            AXLOG("Set character %s available=%d in GameData", name.c_str(), available);
+        }
+    }
+}
 void GameData::setSelectedCharacter(const std::string& characterName)
 {
     selectedCharacterName = characterName;

@@ -84,6 +84,8 @@ public:
     // Sửa dữ liệu (chưa dùng)
     void setMapAvailable(const std::string& name, bool available);
 
+    void setCharacterAvailable(const std::string& name, bool available);
+
     void setSelectedCharacter(const std::string& characterName);
     std::string getSelectedCharacter() const;
     void setSelectedMap(const std::string& mapName);

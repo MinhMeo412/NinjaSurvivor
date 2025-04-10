@@ -2,6 +2,7 @@
 #include "LoadingScene.h"
 #include "MainScene.h"
 #include "systems/GameData.h"
+#include "systems/ShopSystem.h"
 
 using namespace ax;
 
@@ -28,6 +29,19 @@ bool LoadingScene::init()
     {
         AXLOG("Failed to load entity data");
         return false;
+    }
+
+    // Load shop data
+    auto shopData = ShopSystem::getInstance();
+    if (shopData->isSaveGameExist())
+    {
+        if (!shopData->loadSaveGame())
+            return false;
+    }
+    else
+    {
+        if (!shopData->createSaveGame())
+            return false;
     }
 
     // Border

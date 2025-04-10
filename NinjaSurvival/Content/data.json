@@ -1,0 +1,11 @@
+{
+    "data": [
+        {
+            "coin": 0,
+            "health": {
+                "value": 100,
+                "profileImage": "health.png"
+            }
+        }
+    ]
+}

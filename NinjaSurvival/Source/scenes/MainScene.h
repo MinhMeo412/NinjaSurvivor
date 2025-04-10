@@ -15,9 +15,11 @@ public:
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
     void menuPlayCallback(ax::Object* sender);
+    void menuShopCallback(ax::Object* sender);
 
 private:
     ax::MenuItemImage* playItem;
+    ax::MenuItemImage* shopItem;
     ax::MenuItemImage* closeItem;
 };
 

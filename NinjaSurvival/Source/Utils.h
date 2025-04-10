@@ -40,6 +40,15 @@ ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
                                           ax::MenuItemSprite*& selectedCharacterItem,
                                           ax::MenuItemSprite* playButton);
 
+ax::MenuItemSprite* createButton(const std::string& spritePath,
+                                 const ax::ccMenuCallback& callback,
+                                 const ax::Vec2& position,
+                                 float scale,
+                                 bool visible);
+
+ax::MenuItemSprite* createStatButton(const std::string& spritePath, const std::string& statValue);
+
+void updateItemUI(ax::MenuItemSprite* item, ax::Node* panel, bool isAvailable);
 // Check null ptr before set visible
 void setVisibleSafe(ax::Node* node, bool visible);
 
