@@ -14,8 +14,9 @@ HealthSystem::HealthSystem(EntityManager& em,
                            ComponentManager<IdentityComponent>& im,
                            ComponentManager<HealthComponent>& hm,
                            ComponentManager<AttackComponent>& am,
-                           ComponentManager<CooldownComponent>& cm)
-    : entityManager(em), identityMgr(im), healthMgr(hm), attackMgr(am), cooldownMgr(cm)
+                           ComponentManager<CooldownComponent>& cm,
+                           ComponentManager<DurationComponent>& drm)
+    : entityManager(em), identityMgr(im), healthMgr(hm), attackMgr(am), cooldownMgr(cm), durationMgr(drm)
 {}
 
 void HealthSystem::init()
@@ -89,13 +90,11 @@ void HealthSystem::handleCollision(Entity e1, Entity e2)
 
 void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<Entity>> damagedEnemy)
 {
-    AXLOG("handleWeaponCollision call");
     for (const auto& pair : damagedEnemy)
     {
         std::string type1        = identityMgr.getComponent(pair.first)->type;
         std::vector<Entity> list = pair.second;
 
-        AXLOG("handleWeaponCollision call type: %s", type1.c_str());
         for (const Entity& e : list)
         {
             std::string type2 = identityMgr.getComponent(e)->type;
@@ -106,11 +105,19 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
                 {
                     if (auto health = healthMgr.getComponent(e))
                     {
-                        float damage = calculateDamage(attack);
-                        applyDamage(e, damage);
-                        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
-                        AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
-                                pair.first, health->currentHealth);
+                        if (canWeaponDealDame(pair.first, e))
+                        {
+                            float damage = calculateDamage(attack);
+                            applyDamage(e, damage);
+                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
+                            AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
+                                    pair.first, health->currentHealth);
+
+                            if (durationMgr.getComponent(pair.first))
+                            {
+                                durationMgr.getComponent(pair.first)->timer[e] = 1.0f;  // Thêm vào map tgian chờ gây dame lần tiếp theo là 1s
+                            }
+                        }
                     }
                 }
             }
@@ -150,7 +157,7 @@ void HealthSystem::applyDamage(Entity target, float damage)
                 }
             }
             SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(target);  // Hủy entity nếu hết máu
-            AXLOG("Entity %u destroyed due to zero health", target);
+            //AXLOG("Entity %u destroyed due to zero health", target);
         }
     }
 }
@@ -163,6 +170,15 @@ bool HealthSystem::canDealDamage(Entity attacker)
         return cooldown->cooldownTimer <= 0.0f;
     }
     return true;  // Nếu không có CooldownComponent, mặc định cho phép gây sát thương
+}
+
+bool HealthSystem::canWeaponDealDame(Entity weapon, Entity target)
+{
+    if (auto duration = durationMgr.getComponent(weapon))
+    {
+        return duration->timer.find(target) == duration->timer.end();
+    }
+    return true;  // Nếu không có DurationComponent, mặc định cho phép gây sát thương
 }
 
 //Vào trạng thái cooldown

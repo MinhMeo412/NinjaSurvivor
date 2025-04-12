@@ -43,6 +43,11 @@ private:
     void moveSwordWeapon(Entity entity, float dt);
     int swordCountInFrame = 0; //Biến tạm để xử lý hướng sword
 
+    void moveShurikenWeapon(Entity entity, float dt);
+    int shurikenCountInFrame = 0; //Biến tạm để xử lý vị trí shuriken
+
+    void moveKunaiWeapon(Entity entity, float dt);
+
 
 };
 

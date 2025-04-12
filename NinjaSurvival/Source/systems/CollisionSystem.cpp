@@ -3,7 +3,9 @@
 #include "MapSystem.h"
 #include "HealthSystem.h"
 #include "WeaponSystem.h"
+#include "CleanupSystem.h"
 #include "SystemManager.h"
+
 #include "Utils.h"
 
 CollisionSystem::CollisionSystem(EntityManager& em,
@@ -36,7 +38,7 @@ void CollisionSystem::init()
         AXLOG("Collision between %u and %u", e1, e2);
         // Xử lý logic va chạm
         auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
-
+        
         healthSystem->damagedEnemy[e1].push_back(e2);
         healthSystem->handleWeaponCollision(healthSystem->damagedEnemy);
         for (const auto& [attacker, targets] : healthSystem->damagedEnemy)
@@ -417,6 +419,31 @@ void CollisionSystem::weaponCollisionCheck()
                 float collisionDistance = (weaponMaxSize + entityMaxSize) / 2.0f;  // Tổng bán kính
 
                 if (distance <= collisionDistance && checkCollision(weapon, entity))
+                {
+                    onWeaponCollision(weapon, entity);
+                }
+            }
+        }
+    }
+
+    auto tempWeponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getTempWeaponEntities();
+    for (auto& weapon : tempWeponPool)
+    {
+        auto weaponPos    = ax::Vec2(transformMgr.getComponent(weapon)->x, transformMgr.getComponent(weapon)->y);
+        auto entitiesNearby = spatialGrid.getNearbyEntities(weaponPos, 1);
+
+        for (auto& entity : entitiesNearby)
+        {
+            auto entityType = identityMgr.getComponent(entity)->type;
+            if (Utils::in(entityType, "enemy", "boss") && checkCollision(weapon, entity))
+            {
+                if (identityMgr.getComponent(weapon)->name == "kunai")
+                {
+                    onWeaponCollision(weapon, entity);
+                    SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(weapon);
+                    break;
+                }
+                else
                 {
                     onWeaponCollision(weapon, entity);
                 }

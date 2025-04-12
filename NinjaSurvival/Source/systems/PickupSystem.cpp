@@ -11,7 +11,7 @@ PickupSystem::PickupSystem(EntityManager& em, ComponentManager<IdentityComponent
 
 void PickupSystem::init()
 {
-    PICKUP_RANGE = 100.0f; //+buff
+    PICKUP_RANGE = 50.0f; //+buff
     TOUCH_RANGE  = 10.0f;
 
     pickupItems = {"greenGem", "blueGem", "redGem", "coin", "heart"};

@@ -33,6 +33,8 @@ Entity EntityFactory::createEntity(const std::string& type, const std::string& n
         speedMgr.addComponent(entity, *templ.speed);
     if (templ.weaponInventory)
         weaponInventoryMgr.addComponent(entity, *templ.weaponInventory);
+    if (templ.duration)
+        durationMgr.addComponent(entity, *templ.duration);
 
     // thêm if cho các component khác
     return entity;

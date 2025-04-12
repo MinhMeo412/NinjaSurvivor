@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 #include "SpawnSystem.h"
+#include "CleanupSystem.h"
 
 
 #include "SystemManager.h"
@@ -97,6 +98,11 @@ void RenderSystem::addSpriteToScene(Entity entity)
     {
         sprite->setBatchNode(weaponBatchNode);
     }
+    else if (identity->type == "weapon_projectile")
+    {
+        sprite->setBatchNode(weaponBatchNode);
+    }
+
 
     TransformComponent* transform = transformMgr.getComponent(entity);
     if (transform)
@@ -123,11 +129,32 @@ void RenderSystem::update(float dt)
             continue;
         }
 
+        if (identityMgr.getComponent(entity)->name == "sword")
+        {  // Không tự động update sword
+            continue;
+        }
+
+        if (identityMgr.getComponent(entity)->name == "shuriken")
+        {
+            updateShurikenEntitySprite(entity);
+            continue;
+        }
+
+        if (identityMgr.getComponent(entity)->name == "kunai")
+        {
+            updateKunaiEntitySprite(entity);
+            continue;
+        }
+  
+
+
         updateEntitySprite(entity, dt);
     }
+
+
+
+
     updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
-
-
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -136,11 +163,6 @@ void RenderSystem::update(float dt)
 
 void RenderSystem::updateEntitySprite(Entity entity, float dt)
 {
-    if (identityMgr.getComponent(entity)->type == "weapon_melee")
-    { // Không tự động update weapon
-        return;
-    }
-
     auto sprite         = spriteMgr.getComponent(entity);
     auto transform      = transformMgr.getComponent(entity);
     auto animation      = animationMgr.getComponent(entity);
@@ -228,7 +250,22 @@ void RenderSystem::onEntityDestroyed(Entity entity)
 }
 
 
-void RenderSystem::updateWeaponEntitySprite(Entity entity, float dt)
+// Hàm set batch node cho sprite (chỉ dùng cho number)
+void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type)
+{
+    if (!sprite)
+    {
+        AXLOG("Error: Sprite is null in setSpriteBatchNodeForSprite");
+        return;
+    }
+    if (type == "number")
+    {
+        numberBatchNode->addChild(sprite);
+    }
+}
+
+// Hình ảnh weapon sword (kiểu OneShot)
+void RenderSystem::updateSwordEntitySprite(Entity entity)
 {
     auto sprite    = spriteMgr.getComponent(entity);
     auto transform = transformMgr.getComponent(entity);
@@ -247,17 +284,65 @@ void RenderSystem::updateWeaponEntitySprite(Entity entity, float dt)
     sprite->gameSceneFrame->runAction(ax::FadeOut::create(0.5f));
 }
 
-
-// Hàm set batch node cho sprite (chỉ dùng cho number)
-void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type)
+// Hình ảnh weapon shuriken (kiểu Conditional)
+void RenderSystem::updateShurikenEntitySprite(Entity entity)
 {
-    if (!sprite)
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+    // Định nghĩa tag cho hành động xoay
+    const int ROTATE_ACTION_TAG = 1001;
+
+    // Kiểm tra cooldown để quyết định hiển thị hay ẩn
+    if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
     {
-        AXLOG("Error: Sprite is null in setSpriteBatchNodeForSprite");
-        return;
+        sprite->gameSceneFrame->setOpacity(0);
+        sprite->gameSceneFrame->stopActionByTag(ROTATE_ACTION_TAG);  // Chỉ dừng hành động xoay
     }
-    if (type == "number")
+    else
     {
-        numberBatchNode->addChild(sprite);
+        sprite->gameSceneFrame->setOpacity(255);
+
+        // Kiểm tra xem hành động xoay đã chạy chưa
+        if (!sprite->gameSceneFrame->getActionByTag(ROTATE_ACTION_TAG))
+        {
+            auto rotateAction = ax::RepeatForever::create(ax::RotateBy::create(0.5f, 360));
+            rotateAction->setTag(ROTATE_ACTION_TAG);
+            sprite->gameSceneFrame->runAction(rotateAction);
+        }
+    }
+}
+
+// Hình ảnh weapon kunai (kiểu Conditional)
+void RenderSystem::updateKunaiEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+    auto angleRadians = std::atan2(vel->vy, -vel->vx);
+    // Chuyển sang độ và điều chỉnh
+    float angleDegrees = angleRadians * 180.0f / M_PI - 90.0f;
+
+    // Đảm bảo góc nằm trong khoảng [0, 360)
+    if (angleDegrees >= 360.0f)
+    {
+        angleDegrees -= 360.0f;
+    }
+    else if (angleDegrees < 0.0f)
+    {
+        angleDegrees += 360.0f;
+    }
+    sprite->gameSceneFrame->setRotation(angleDegrees);
+
+    if (cooldown->cooldownTimer <= 0)
+    {
+        SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(entity);
     }
 }

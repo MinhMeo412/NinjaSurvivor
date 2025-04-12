@@ -21,7 +21,8 @@ public:
                              ComponentManager<AttackComponent>& atm,
                              ComponentManager<CooldownComponent>& cdm,
                              ComponentManager<SpeedComponent>& spm,
-                             ComponentManager<WeaponInventoryComponent>& wim)
+                             ComponentManager<WeaponInventoryComponent>& wim,
+                             ComponentManager<DurationComponent>& drm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -34,6 +35,7 @@ public:
         , cooldownMgr(cdm)
         , speedMgr(spm)
         , weaponInventoryMgr(wim)
+        , durationMgr(drm)
     {}
     
     void init() override;
@@ -63,6 +65,8 @@ private:
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<SpeedComponent>& speedMgr;
     ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
+    ComponentManager<DurationComponent>& durationMgr;
+
 
     std::unique_ptr<EntityFactory> factory;
 

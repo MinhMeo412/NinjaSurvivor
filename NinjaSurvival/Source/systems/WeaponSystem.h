@@ -11,17 +11,18 @@ class WeaponSystem : public System
 {
 public:
     WeaponSystem(EntityManager& em,
-               ComponentManager<IdentityComponent>& im,
-               ComponentManager<TransformComponent>& tm,
-               ComponentManager<SpriteComponent>& sm,
-               ComponentManager<AnimationComponent>& am,
-               ComponentManager<VelocityComponent>& vm,
-               ComponentManager<HitboxComponent>& hm,
-               ComponentManager<HealthComponent>& hem,
-               ComponentManager<AttackComponent>& atm,
-               ComponentManager<CooldownComponent>& cdm,
-               ComponentManager<SpeedComponent>& spm,
-               ComponentManager<WeaponInventoryComponent>& wim)
+                 ComponentManager<IdentityComponent>& im,
+                 ComponentManager<TransformComponent>& tm,
+                 ComponentManager<SpriteComponent>& sm,
+                 ComponentManager<AnimationComponent>& am,
+                 ComponentManager<VelocityComponent>& vm,
+                 ComponentManager<HitboxComponent>& hm,
+                 ComponentManager<HealthComponent>& hem,
+                 ComponentManager<AttackComponent>& atm,
+                 ComponentManager<CooldownComponent>& cdm,
+                 ComponentManager<SpeedComponent>& spm,
+                 ComponentManager<WeaponInventoryComponent>& wim,
+                 ComponentManager<DurationComponent>& drm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -34,6 +35,7 @@ public:
         , cooldownMgr(cdm)
         , speedMgr(spm)
         , weaponInventoryMgr(wim)
+        , durationMgr(drm)
     {}
 
     void init() override;
@@ -43,6 +45,7 @@ public:
 
     // Lấy danh sách entity vũ khí (moveSystem truy cập để xử lý vị trí)
     const std::vector<Entity>& getWeaponEntities() const { return weaponPool; }
+    const std::vector<Entity>& getTempWeaponEntities() const { return tempWeaponPool; }
 
 private:
     EntityManager& entityManager;
@@ -57,20 +60,38 @@ private:
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<SpeedComponent>& speedMgr;
     ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
+    ComponentManager<DurationComponent>& durationMgr;
 
     std::unique_ptr<EntityFactory> factory;
 
-    // Định nghĩa một kiểu hàm CreateFunc nhận Entity và float, trả về void
-    // std::function khai báo kiểu hàm với tên bất kỳ có tham số là string và kiểu trả về là void
     using CreateFunc = std::function<Entity(std::string)>;
-    // Một map lưu cặp key(kiểu string weapon name) và value(kiểu CreateFunc)
     std::unordered_map<std::string, CreateFunc> createWeapon;
 
-    Entity playerEntity = 0;          // Entity của player để gắn vị trí vũ khí
-    std::vector<Entity> weaponPool;   // Pool chứa các entity vũ khí
+    using UpdateFunc = std::function<void(Entity,float)>;
+    std::unordered_map<std::string, UpdateFunc> updateWeapon;
 
-    Entity createSwordEntity(std::string weaponName);  // Tạo entity weapon
-    Entity createShurikenEntity(std::string weaponName);
+    using UpgradeFunc = std::function<void(std::string,int)>;
+    std::unordered_map<std::string, UpgradeFunc> upgradeWeaponzxcv;
+
+    Entity playerEntity = 0;          // Entity của player để gắn vị trí vũ khí
+    std::vector<Entity> weaponPool;   // Pool chứa các entity vũ khí tái sử dụng
+    std::vector<Entity> tempWeaponPool;   // Pool chứa các entity vũ khí không tái sử dụng
+
+    // Tạo entity weapon
+    Entity createSword(std::string weaponName);  
+    Entity createShuriken(std::string weaponName);
+    Entity createKunai(std::string weaponName);
+
+    //Update weapon mỗi frame
+    void updateSword(Entity weapon,float dt);
+    void updateShuriken(Entity weapon,float dt);
+    void updateKunai(Entity weapon,float dt);
+    Entity kunaiEntity;
+
+    //Tạo các tempEntityWeapon
+    Entity createTempKunai(std::string weaponName);
+
+    //Upgrade weapon
 
     // Khởi tạo vũ khí cho player
     void initializePlayerWeapon(Entity player);

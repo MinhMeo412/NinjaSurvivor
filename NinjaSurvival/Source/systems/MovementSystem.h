@@ -20,7 +20,11 @@ public:
     void update(float dt) override;
     void init() override;
 
-    bool isAnimating(Entity item) const { return lootedItems.find(item) != lootedItems.end(); }
+    bool isAnimating(Entity item) const
+    {
+        AXLOG("Kiem tra item %d", item);
+        return lootedItems.find(item) != lootedItems.end();
+    }
     void moveItemToPlayer(Entity item);
 
 private:

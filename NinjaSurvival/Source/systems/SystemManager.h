@@ -2,9 +2,8 @@
 #define __SYSTEM_MANAGER_H__
 
 #include "System.h"
-#include "GameWorld.h"
 #include "axmol.h"
-
+#include "GameWorld.h"
 
 class SystemManager
 {

@@ -10,25 +10,49 @@ class CleanupSystem : public System
 {
 public:
     CleanupSystem(EntityManager& em,
-                  ComponentManager<SpriteComponent>& sm)
-        : entityManager(em), spriteMgr(sm)
+                  ComponentManager<SpriteComponent>& sm,
+        ComponentManager<HitboxComponent>& hm)
+        : entityManager(em), spriteMgr(sm), hitboxMgr(hm)
     {}
 
     void destroyEntity(Entity entity)
     {
-        // Xóa sprite khỏi scene
+        auto sprite = spriteMgr.getComponent(entity);
+        if (sprite && sprite->gameSceneFrame)
+        {
+            // Đánh dấu entity inactive
+            entityManager.destroyEntity(entity);
+            // Fade out rồi xóa khỏi scene
+            sprite->gameSceneFrame->runAction(ax::Sequence::create(ax::FadeOut::create(0.3f),
+                                                                   ax::CallFunc::create([=]() {
+                sprite->gameSceneFrame->removeFromParent();
+                sprite->gameSceneFrame = nullptr;
+
+                // Xóa component sau khi sprite đã biến mất
+                spriteMgr.removeComponent(entity);
+
+            }), nullptr));
+
+            return;
+        }
+    }
+
+    void destroyItem(Entity entity)
+    {
+        entityManager.destroyEntity(entity);
         auto sprite = spriteMgr.getComponent(entity);
         if (sprite && sprite->gameSceneFrame)
         {
             sprite->gameSceneFrame->removeFromParent();
             sprite->gameSceneFrame = nullptr;
+
+            // Xóa component sau khi sprite đã biến mất
+            spriteMgr.removeComponent(entity);
         }
-
-        // Xóa component
-        spriteMgr.removeComponent(entity);
-
-        // Đánh dấu entity inactive
-        entityManager.destroyEntity(entity);
+        if (auto hitbox = hitboxMgr.getComponent(entity))
+        {
+            hitboxMgr.removeComponent(entity);
+        }
     }
 
     void init() override {}
@@ -41,6 +65,7 @@ public:
 private:
     EntityManager& entityManager;
     ComponentManager<SpriteComponent>& spriteMgr;
+    ComponentManager<HitboxComponent>& hitboxMgr;
 };
 
 #endif  // __CLEANUP_SYSTEM_H__
