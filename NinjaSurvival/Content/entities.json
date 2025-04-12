@@ -523,7 +523,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 100.0,
+                "speed": 200.0,
                 "sprite": {
                     "plist": "weapon.plist",
                     "gameSceneFrame": "./kunai"
@@ -537,7 +537,7 @@
                     "flatBonus": 1.0,
                     "damageMultiplier": 0.1
                 },
-                "cooldown": 1.0,
+                "cooldown": 0.5,
                 "duration": 2.0
             }
         }
