@@ -11,17 +11,18 @@ class ItemSystem : public System
 {
 public:
     ItemSystem(EntityManager& em,
-                ComponentManager<IdentityComponent>& im,
-                ComponentManager<TransformComponent>& tm,
-                ComponentManager<SpriteComponent>& sm,
-                ComponentManager<AnimationComponent>& am,
-                ComponentManager<VelocityComponent>& vm,
-                ComponentManager<HitboxComponent>& hm,
-                ComponentManager<HealthComponent>& hem,
-                ComponentManager<AttackComponent>& atm,
-                ComponentManager<CooldownComponent>& cdm,
-                ComponentManager<SpeedComponent>& spm,
-                ComponentManager<WeaponInventoryComponent>& wim)
+               ComponentManager<IdentityComponent>& im,
+               ComponentManager<TransformComponent>& tm,
+               ComponentManager<SpriteComponent>& sm,
+               ComponentManager<AnimationComponent>& am,
+               ComponentManager<VelocityComponent>& vm,
+               ComponentManager<HitboxComponent>& hm,
+               ComponentManager<HealthComponent>& hem,
+               ComponentManager<AttackComponent>& atm,
+               ComponentManager<CooldownComponent>& cdm,
+               ComponentManager<SpeedComponent>& spm,
+               ComponentManager<WeaponInventoryComponent>& wim,
+               ComponentManager<DurationComponent>& drm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -34,6 +35,7 @@ public:
         , cooldownMgr(cdm)
         , speedMgr(spm)
         , weaponInventoryMgr(wim)
+        , durationMgr(drm)
     {}
     
     void init() override;
@@ -54,6 +56,7 @@ private:
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<SpeedComponent>& speedMgr;
     ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
+    ComponentManager<DurationComponent>& durationMgr;
 
     std::unique_ptr<EntityFactory> factory;
     void spawnSingleItem(const ax::Vec2& position, const std::string& name, float chance);

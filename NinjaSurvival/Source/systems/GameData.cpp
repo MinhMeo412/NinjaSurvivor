@@ -289,13 +289,9 @@ bool GameData::loadEntityData(const std::string& jsonString)
             }
 
             // Cooldown
-            if (components.HasMember("cooldown") && components["cooldown"].IsObject())
+            if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
             {
-                const auto& cooldown = components["cooldown"];
-                if (cooldown.HasMember("cooldownDuration") && cooldown["cooldownDuration"].IsFloat())
-                {
-                    templ.cooldown = CooldownComponent{cooldown["cooldownDuration"].GetFloat()};
-                }
+                templ.cooldown = CooldownComponent{components["cooldown"].GetFloat()};
             }
 
             //Speed
@@ -308,6 +304,12 @@ bool GameData::loadEntityData(const std::string& jsonString)
             if (components.HasMember("weapon") && components["weapon"].IsString())
             {
                 templ.weaponInventory = WeaponInventoryComponent{components["weapon"].GetString()};
+            }
+
+            //Duration
+            if (components.HasMember("duration") && components["duration"].IsFloat())
+            {
+                templ.duration = DurationComponent{components["duration"].GetFloat()};
             }
         }
         entityTemplates[templ.type][templ.name] = templ;

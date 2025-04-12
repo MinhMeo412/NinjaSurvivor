@@ -22,7 +22,9 @@ public:
     void update(float dt) override;
 
     void onEntityDestroyed(Entity entity);
-    void updateWeaponEntitySprite(Entity entity, float dt);
+    void updateSwordEntitySprite(Entity entity);
+    void updateShurikenEntitySprite(Entity entity);
+    void updateKunaiEntitySprite(Entity entity);
 
     // Hàm để DamageTextSystem gọi
     void setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type);

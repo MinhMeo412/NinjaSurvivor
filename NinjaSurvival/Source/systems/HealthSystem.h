@@ -13,7 +13,8 @@ public:
                  ComponentManager<IdentityComponent>& im,
                  ComponentManager<HealthComponent>& hm,
                  ComponentManager<AttackComponent>& am,
-                 ComponentManager<CooldownComponent>& cm);
+                 ComponentManager<CooldownComponent>& cm,
+                 ComponentManager<DurationComponent>& drm);
 
     void init() override;
     void update(float dt) override;
@@ -33,6 +34,7 @@ private:
     ComponentManager<HealthComponent>& healthMgr;
     ComponentManager<AttackComponent>& attackMgr;
     ComponentManager<CooldownComponent>& cooldownMgr;
+    ComponentManager<DurationComponent>& durationMgr;
 
     // Công thức tính dame
     float calculateDamage(const AttackComponent* attack) const;
@@ -41,8 +43,11 @@ private:
     void applyDamage(Entity target, float damage);
 
     // Kiểm tra và cập nhật cooldown
+    bool canWeaponDealDame(Entity weapon, Entity target);
     bool canDealDamage(Entity attacker);
     void resetCooldown(Entity attacker);
+
+
 
     // Callback khi player hết máu
     std::function<void()> onPlayerOutOfHealth;  

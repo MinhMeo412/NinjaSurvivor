@@ -12,7 +12,7 @@ void ItemSystem::init()
 {
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
-                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr);
+                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr, durationMgr);
 
     int num = 1000;
     for (int i = 0; i < num; i++)

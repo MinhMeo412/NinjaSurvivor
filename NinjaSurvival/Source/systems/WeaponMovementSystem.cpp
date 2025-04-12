@@ -1,9 +1,7 @@
 #include "WeaponMovementSystem.h"
 
 #include "SpawnSystem.h"
-#include "MapSystem.h"
 #include "CollisionSystem.h"
-#include "PickupSystem.h"
 #include "CleanupSystem.h"
 #include "WeaponSystem.h"
 #include "SystemManager.h"
@@ -19,6 +17,8 @@ WeaponMovementSystem::WeaponMovementSystem(EntityManager& em,
 {
     // Khai báo các kiểu di chuyển
     movementStrategies["weapon_melee_sword"]  = [this](Entity e, float dt) { moveSwordWeapon(e, dt); };
+    movementStrategies["weapon_melee_shuriken"]  = [this](Entity e, float dt) { moveShurikenWeapon(e, dt); };
+    movementStrategies["weapon_projectile_kunai"]  = [this](Entity e, float dt) { moveKunaiWeapon(e, dt); };
 
 
 }
@@ -36,13 +36,23 @@ void WeaponMovementSystem::update(float dt)
 
     // Reset biến đếm kiếm mỗi frame
     swordCountInFrame = 0;
+    shurikenCountInFrame = 0;
 
     // Xử lý move của weapon
     auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
     for (auto& weapon : weaponPool)
     {
+        if (identityMgr.getComponent(weapon)->name != "kunai")
+        {
+            updateEntityMovement(weapon, dt);
+        }
+    }
+    auto tempWeaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getTempWeaponEntities();
+    for (auto& weapon : tempWeaponPool)
+    {
         updateEntityMovement(weapon, dt);
     }
+
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -68,7 +78,6 @@ void WeaponMovementSystem::updateEntityMovement(Entity entity, float dt)
             // Gọi hàm di chuyển tương ứng
             it->second(entity, dt);
         }
-        
     }
 }
 
@@ -133,7 +142,7 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
         return;
 
 
-    AXLOG("Size: %f,%f", hitbox->defaultSize.width, hitbox->defaultSize.height);
+    //AXLOG("Size: %f,%f", hitbox->defaultSize.width, hitbox->defaultSize.height);
 
     auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
     if (!spawnSystem)
@@ -148,7 +157,7 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
 
     swordCountInFrame++;
     float offsetX = 8.0 + hitbox->defaultSize.width/2;  // Khoảng cách từ nhân vật đến kiếm
-        AXLOG("OffsetX: %f", offsetX);
+        //AXLOG("OffsetX: %f", offsetX);
 
     if (swordCountInFrame == 1) //Nhát chém thứ 1
     {
@@ -201,4 +210,76 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
     }
 
     transform->y = playerTransform->y;
+}
+
+void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
+{
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto hitbox    = hitboxMgr.getComponent(entity);
+    if (!transform || !vel || !hitbox)
+        return;
+
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    if (!spawnSystem)
+        return;
+    // Lấy vị trí player
+    Entity player        = spawnSystem->getPlayerEntity();
+    auto playerTransform = transformMgr.getComponent(player);
+    if (!playerTransform)
+        return;
+
+    // Đếm số shuriken trong weaponPool có type là shuriken
+    auto weaponPool   = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
+    int shurikenCount = 0;
+    for (size_t i = 0; i < weaponPool.size(); ++i)
+    {
+        auto identity = identityMgr.getComponent(weaponPool[i]);
+        if (identity && identity->name == "shuriken")
+        {
+            shurikenCount++;
+        }
+    }
+
+    shurikenCountInFrame++;
+
+    // Các thông số cho chuyển động tròn 
+    float radius       = 32.0f; // Bán kính quỹ đạo
+    const float angularSpeed = 0.67f * 3.14159f; // Tốc độ góc (1 vòng/giây)
+
+    // Khởi tạo góc nếu chưa có
+    if (vel->vx == 0.0f && vel->vy == 0.0f && shurikenCount > 0)
+    {
+        // Phân bổ góc đều dựa trên thứ tự shuriken trong frame
+        vel->vx = (shurikenCountInFrame - 1) * (2.0f * 3.14159f / shurikenCount);
+    }
+
+    // Cập nhật góc
+    vel->vx += angularSpeed * dt;
+    if (vel->vx > 2.0f * 3.14159f)
+    {
+        vel->vx -= 2.0f * 3.14159f;  // Giữ góc trong khoảng [0, 2π]
+    }
+
+    // Tính toán vị trí mới
+    float newX = playerTransform->x + radius * cos(vel->vx);
+    float newY = playerTransform->y + radius * sin(vel->vx);
+
+    // Cập nhật vị trí
+    transform->x = newX;
+    transform->y = newY;
+}
+
+void WeaponMovementSystem::moveKunaiWeapon(Entity entity, float dt)
+{
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto speed     = speedMgr.getComponent(entity);
+    if (!transform || !vel || !speed)
+    {
+        return;
+    }
+
+    transform->x += vel->vx * speed->speed * dt;
+    transform->y += vel->vy * speed->speed * dt;
 }

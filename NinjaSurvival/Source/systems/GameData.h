@@ -45,6 +45,7 @@ struct EntityTemplate
     std::optional<AttackComponent> attack;  
     std::optional<CooldownComponent> cooldown;
     std::optional<WeaponInventoryComponent> weaponInventory;
+    std::optional<DurationComponent> duration;
 
     EntityTemplate() : available(false) {};
 };

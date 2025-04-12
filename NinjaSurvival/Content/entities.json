@@ -48,13 +48,14 @@
                         ]
                     },
                     "frameDuration": 0.2
-                }
+                },
+                "weapon": "sword"
             }
         },
         {
             "type": "player",
             "name": "Master",
-            "available": false,
+            "available": true,
             "profileImage": "Entity/Character/Faceset1.png",
             "components": {
                 "transform": {
@@ -71,7 +72,7 @@
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 1000.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/master.plist",
@@ -96,7 +97,8 @@
                         ]
                     },
                     "frameDuration": 0.2
-                }
+                },
+                "weapon": "kunai"
             }
         },
         {
@@ -125,9 +127,7 @@
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
-                "cooldown": {
-                    "cooldownDuration": 1.0
-                },
+                "cooldown": 1.0,
                 "sprite": {
                     "plist": "Entity/Enemy/enemy.plist",
                     "gameSceneFrame": "./slime_down0"
@@ -186,9 +186,7 @@
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
-                "cooldown": {
-                    "cooldownDuration": 1.0
-                },
+                "cooldown": 1.0,
                 "sprite": {
                     "plist": "Entity/Enemy/enemy.plist",
                     "gameSceneFrame": "./bear_down0"
@@ -244,9 +242,7 @@
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
-                "cooldown": {
-                    "cooldownDuration": 1.0
-                },
+                "cooldown": 1.0,
                 "sprite": {
                     "plist": "Entity/Enemy/enemy.plist",
                     "gameSceneFrame": "./snake_down0"
@@ -305,9 +301,7 @@
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
-                "cooldown": {
-                    "cooldownDuration": 1.0
-                },
+                "cooldown": 1.0,
                 "sprite": {
                     "plist": "Entity/Enemy/enemy.plist",
                     "gameSceneFrame": "./octopus_down0"
@@ -455,6 +449,96 @@
                     "plist": "items.plist",
                     "gameSceneFrame": "./chest"
                 }
+            }
+        },
+        {
+            "type": "weapon_melee",
+            "name": "sword",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "sprite": {
+                    "plist": "weapon.plist",
+                    "gameSceneFrame": "./sword"
+                },
+                "hitbox": {
+                    "width": 40.0,
+                    "height": 20.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": 2.0
+            }
+        },
+        {
+            "type": "weapon_melee",
+            "name": "shuriken",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "sprite": {
+                    "plist": "weapon.plist",
+                    "gameSceneFrame": "./shuriken"
+                },
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "flatBonus": 2.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": 4.0,
+                "duration": 4.0
+            }
+        },
+        {
+            "type": "weapon_projectile",
+            "name": "kunai",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 1.0,
+                    "vy": 0.0
+                },
+                "speed": 200.0,
+                "sprite": {
+                    "plist": "weapon.plist",
+                    "gameSceneFrame": "./kunai"
+                },
+                "hitbox": {
+                    "width": 5.0,
+                    "height": 5.0
+                },
+                "attack": {
+                    "baseDamage": 5.0,
+                    "flatBonus": 1.0,
+                    "damageMultiplier": 0.1
+                },
+                "cooldown": 0.5,
+                "duration": 2.0
             }
         }
     ]
