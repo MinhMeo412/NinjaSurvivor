@@ -150,8 +150,8 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
     auto mapItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
 
     std::string displayName = available ? buttonName : "Locked";
-    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 50);
-    mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height / 2);
+    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 35);
+    mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height *2/3);
     // mapLabel->setScale(3);
     mapLabel->setVisible(false);
     mapItem->addChild(mapLabel, 3, "label");

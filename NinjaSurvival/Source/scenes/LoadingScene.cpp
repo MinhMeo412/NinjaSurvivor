@@ -17,7 +17,7 @@ bool LoadingScene::init()
 
     createLoadingLabel();
 
-    //Load game map data
+    // Load game map data
     auto gameData = GameData::getInstance();
     if (!gameData->loadMapDataFromFile("maps.json"))
     {
@@ -33,10 +33,12 @@ bool LoadingScene::init()
 
     // Load shop data
     auto shopData = ShopSystem::getInstance();
-    if (shopData->isSaveGameExist())
+    if (shopData->loadSaveGame())
     {
-        if (!shopData->loadSaveGame())
-            return false;
+        AXLOG("Successfully loaded savegame.json in GameData::getInstance()");
+        // Đồng bộ dữ liệu từ ShopSystem vào GameData
+        shopData->syncCharactersWithGameData();
+        shopData->syncMapsWithGameData();
     }
     else
     {

@@ -70,6 +70,8 @@ private:
     bool loadEntityData(const std::string& jsonString);
     std::string readFileContent(const std::string& filename);
 
+    int lastShopSyncVersion = 0;
+
 public:
     ~GameData();
     static GameData* getInstance();
@@ -92,6 +94,7 @@ public:
     void setSelectedMap(const std::string& mapName);
     std::string getSelectedMap() const;
 
+    void syncStatsWithShopSystem();
     
     std::string findTypeByName(
         const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& entityTemplates,

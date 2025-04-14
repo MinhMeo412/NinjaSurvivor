@@ -44,24 +44,33 @@ void GameOverGamePauseLayer::createUI()
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // Tạo panel sprite tương ứng với trạng thái (Game Over hoặc Paused)
-    std::string panelSprite =
-        isPlayerDead ? "UI/GameOver.png" : "UI/Pause.png";  // Thay bằng tên sprite của bạn
-    auto panel = Sprite::create(panelSprite);
+    std::string panelSprite = isPlayerDead ? "UI/GameOver.png" : "UI/Pause.png";  // Thay bằng tên sprite của bạn
+    auto panel              = Sprite::create(panelSprite);
     if (!panel)
     {
         AXLOG("Failed to create panel sprite: %s", panelSprite.c_str());
         return;
     }
     panel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-    this->addChild(panel, 20);  // z-order 1
+    this->addChild(panel, 20);  // z-order 20
 
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
 
     // Tạo nút Quit (luôn hiển thị)
-    quitButton = Utils::createMenuItem(
-        "UI/buttonQuit.png", "UI/buttonQuit.png", AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this),
-                                     Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 2/9));
+    Vec2 quitPos;
+    if (isPlayerDead)
+    {
+        // Khi player chết: đặt quitButton ở giữa panel
+        quitPos = Vec2(panel->getContentSize().width / 2, panel->getContentSize().height / 2);
+    }
+    else
+    {
+        // Khi pause: giữ vị trí hiện tại
+        quitPos = Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 2 / 9);
+    }
+    quitButton = Utils::createMenuItem("UI/buttonQuit.png", "UI/buttonQuit.png",
+                                       AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this), quitPos);
     if (quitButton)
     {
         menuItems.pushBack(quitButton);
@@ -76,7 +85,7 @@ void GameOverGamePauseLayer::createUI()
     {
         returnButton = Utils::createMenuItem(
             "UI/buttonReturn.png", "UI/buttonReturn.png", AX_CALLBACK_1(GameOverGamePauseLayer::onReturnGame, this),
-            Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 5.5/9));
+            Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 5.5 / 9));
         if (returnButton)
         {
             menuItems.pushBack(returnButton);

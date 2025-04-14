@@ -12,6 +12,8 @@ public:
     void update(float dt) override;
 
     void increaseCoin(float coin);
+    void increaseKill(float kill);
+
 private:
     ax::MenuItemImage* pauseButton;
 
@@ -22,11 +24,14 @@ private:
     ax::Sprite* xpBarUnder;
 
     ax::Label* coinLabel = nullptr;
+    ax::Label* killLabel = nullptr;
     float collectedCoin;
+    float collectedKill;
 
     void updateHPBar();
     void updateXPBar();
     void updateCoinLabel();
+    void updateKillLabel();
     void gamePauseCallback(ax::Object* sender);
 };
 
