@@ -2,6 +2,7 @@
 #include "GameOverGamePauseLayer.h"
 #include "scenes/MainScene.h"
 #include "scenes/GameScene.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -111,6 +112,9 @@ void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
     auto gameScene = this->getParent();
     if (gameScene)
     {
+        // music click
+        AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+
         gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
     }
     this->removeFromParentAndCleanup(true);  // Xóa layer
@@ -119,6 +123,11 @@ void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
 void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
 {
     this->removeFromParentAndCleanup(true);  // Xóa layer
+
+    // music click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("gamebackground");  // dừng âm thanh của game
+
     auto scene = utils::createInstance<MainScene>();
     Director::getInstance()->replaceScene(scene);  // Chuyển về MainScene
 }

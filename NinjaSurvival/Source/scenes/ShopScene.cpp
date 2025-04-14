@@ -3,6 +3,7 @@
 #include "MainScene.h"
 #include "systems/ShopSystem.h"
 #include "systems/GameData.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -150,6 +151,10 @@ void ShopScene::menuUISetup()
 
 void ShopScene::menuReturnCallback(Object* sender)
 {
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("background");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MainScene>()));
 }
 

@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "GameScene.h"
 #include "gameUI/GameSceneUILayer.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -12,6 +13,9 @@ bool GameScene::init()
     {
         return false;
     }
+
+    // Khởi tạo nhạc nền cho game
+    AudioManager::getInstance()->playSound("gamebackground_music", true, 0.5f, "gamebackground");
 
     uiLayer = GameSceneUILayer::create();
     this->addChild(uiLayer, 10);

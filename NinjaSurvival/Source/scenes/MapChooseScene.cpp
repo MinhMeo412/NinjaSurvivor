@@ -6,6 +6,7 @@
 #include "systems/GameData.h"
 #include "systems/ShopSystem.h"
 #include "systems/SystemManager.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -29,6 +30,10 @@ void MapChooseScene::update(float dt) {}
 // Chuyển về MainScene khi nhấn nút Close
 void MapChooseScene::menuCloseCallback(Object* sender)
 {
+    // tắt nhạc nền
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("background");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MainScene>()));
 }
 
@@ -48,6 +53,10 @@ void MapChooseScene::menuPlayCallback(Object* sender)
     auto loadingScene = GameLoadingScene::create();
 
     loadingScene->setNextScene(gameScene);
+
+    // Dừng nhạc nền
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("background");
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, loadingScene));
     this->scheduleOnce([this](float) { _director->getEventDispatcher()->setEnabled(true); }, TRANSITION_TIME,

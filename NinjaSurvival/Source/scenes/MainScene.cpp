@@ -2,6 +2,7 @@
 #include "MainScene.h"
 #include "CharacterChooseScene.h"
 #include "ShopScene.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -13,6 +14,9 @@ bool MainScene::init()
     {
         return false;
     }
+
+    // Backgound music
+    AudioManager::getInstance()->playSound("background_music", true, 0.5f, "background");
 
     float itemSpacing = 50.0;
     int itemOrderNum  = 0;
@@ -73,11 +77,17 @@ void MainScene::update(float dt) {}
 
 void MainScene::menuCloseCallback(ax::Object* sender)
 {
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+
     _director->end();
 }
 
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+
     auto scene = utils::createInstance<CharacterChooseScene>();
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
@@ -85,6 +95,9 @@ void MainScene::menuPlayCallback(ax::Object* sender)
 
 void MainScene::menuShopCallback(ax::Object* sender)
 {
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+
     auto scene = utils::createInstance<ShopScene>();
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));

@@ -4,6 +4,7 @@
 #include "LevelSystem.h"
 #include "gameUI/GameSceneUILayer.h"
 #include "SystemManager.h"
+#include "AudioManager.h"
 
 PickupSystem::PickupSystem(EntityManager& em, ComponentManager<IdentityComponent>& im, ComponentManager<TransformComponent>& tm)
     : entityManager(em), identityMgr(im), transformMgr(tm)
@@ -69,12 +70,14 @@ void PickupSystem::applyPickupEffect(std::string& itemName)
 {
     if (itemName == "greenGem" || itemName == "blueGem" || itemName == "redGem")
     {
+        AudioManager::getInstance()->playSound("exp", false, 1.0f, "exp");
         applyXPGem(itemName);
         return;
     }
 
     if (itemName == "coin")
     {
+        AudioManager::getInstance()->playSound("coin", false, 1.0f, "coin");
         applyCoin();
         return;
     }
