@@ -172,7 +172,7 @@ void SystemManager::registerSystem(const std::string& systemType)
 
     // Thêm LevelSystem
     else if (systemType == "LevelSystem")
-        addSystem(std::make_unique<LevelSystem>());
+        addSystem(std::make_unique<LevelSystem>(gameWorld->getEntityManager(), gameWorld->getWeaponInventoryManager()));
 
     // Thêm DamageTextSystem
     else if (systemType == "DamageTextSystem")
