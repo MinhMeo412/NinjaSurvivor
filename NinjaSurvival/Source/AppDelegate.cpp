@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "scenes/SplashScene.h"
+#include "AudioManager.h"
 
 #define USE_AUDIO_ENGINE 1
 
@@ -29,6 +30,9 @@ void AppDelegate::initGLContextAttrs()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+    // Khởi tạo âm thanh
+    AudioManager::getInstance()->init();
+
     // initialize director
     auto director = Director::getInstance();
     auto glView   = director->getGLView();

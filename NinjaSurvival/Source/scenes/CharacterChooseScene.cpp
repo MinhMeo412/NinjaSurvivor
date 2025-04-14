@@ -4,6 +4,7 @@
 #include "MainScene.h"
 #include "systems/GameData.h"
 #include "systems/ShopSystem.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -30,6 +31,10 @@ void CharacterChooseScene::update(float dt)
 
 void CharacterChooseScene::menuReturnCallback(Object* sender)
 {
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("background");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MainScene>()));
 }
 
@@ -42,6 +47,10 @@ void CharacterChooseScene::menuNextCallback(Object* sender)
     }
     _director->getEventDispatcher()->setEnabled(false);
     GameData::getInstance()->setSelectedCharacter(selectedCharacterName);
+
+    // âm thanh click
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MapChooseScene>()));
     this->scheduleOnce([this](float) { _director->getEventDispatcher()->setEnabled(true); }, TRANSITION_TIME,
                        "enableInput");
