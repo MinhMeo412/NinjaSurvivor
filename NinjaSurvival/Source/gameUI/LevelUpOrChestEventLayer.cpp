@@ -54,7 +54,29 @@ void LevelUpOrChestEventLayer::createUI()
     auto origin      = Director::getInstance()->getVisibleOrigin();
 
     // Tạo panel
+    // Create panelLevelUp
+    auto panelLevelUp = Sprite::create("UI/panelLevelUp.png");
+    if (panelLevelUp)
+    {
+        panelLevelUp->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+        this->addChild(panelLevelUp, 1);
+    }
+    else
+    {
+        AXLOG("Error: Failed to load panelLevelUp.png");
+    }
 
+    // Create panelChooseUp
+    auto panelChooseUp = Sprite::create("UI/panelChooseUp.png");
+    if (panelChooseUp)
+    {
+        panelChooseUp->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+        this->addChild(panelChooseUp, 2);
+    }
+    else
+    {
+        AXLOG("Error: Failed to load panelChooseUp.png");
+    }
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
 
@@ -80,10 +102,11 @@ void LevelUpOrChestEventLayer::createUI()
         }
         displayText += "\n" + WeaponUpgradeUtils::getDescription(upgradeList[i].first, upgradeList[i].second);
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Marker Felt.ttf", 24);
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 24);
         itemLabel->setDimensions(300, 0);               // Giới hạn chiều rộng, cho phép xuống dòng
         itemLabel->setAlignment(TextHAlignment::LEFT);  // Căn trái văn bản
-
+        itemLabel->setAnchorPoint(Vec2(0, 0.5));
+        
         auto menuItem = MenuItemLabel::create(itemLabel, [=](Object* sender) {
             if (isLevelUp)
             {
@@ -94,7 +117,16 @@ void LevelUpOrChestEventLayer::createUI()
                 }
             }
         });
-        menuItem->setPosition(Vec2(0, 50 - i * itemHeight));
+
+            float panelWidth  = panelChooseUp->getContentSize().width;
+            float panelHeight = panelChooseUp->getContentSize().height;
+
+            float startY = (maxDisplay - 1) * itemHeight / 2;  // Tính offset để căn giữa danh sách
+          
+            menuItem->setPosition(Vec2(panelWidth * 2 / 15, startY - i * itemHeight));
+
+
+        
         if (!isLevelUp)
         {
             // Vô hiệu hóa tương tác nhưng giữ màu bình thường
@@ -113,6 +145,8 @@ void LevelUpOrChestEventLayer::createUI()
     selectionMenu = Menu::createWithArray(selectionItems);
     selectionMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(selectionMenu, 2);
+   
+    
 
     // Tạo nút Confirm
     confirmButton = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
