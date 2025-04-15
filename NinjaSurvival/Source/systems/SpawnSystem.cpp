@@ -86,17 +86,17 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    //if (spawnTimer >= spawnInterval)
-    //{
-    //    spawnEnemies(elapsedTime);
-    //    spawnBoss(elapsedTime);
-    //    spawnTimer = 0.0f;  // Reset timer
-    //}
+    if (spawnTimer >= spawnInterval)
+    {
+        spawnEnemies(elapsedTime);
+        spawnBoss(elapsedTime);
+        spawnTimer = 0.0f;  // Reset timer
+    }
 }
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-    int maxEnemies = 300;                         // Giới hạn tối đa enemy sống
+    int maxEnemies = 600;                         // Giới hạn tối đa enemy sống
     int numEnemies = 50 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
 
     // Giới hạn spawn khi vượt quá 300 enemy
