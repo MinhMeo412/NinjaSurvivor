@@ -2,6 +2,7 @@
 #include "SystemManager.h"
 #include "CameraSystem.h"
 #include "SpawnSystem.h"
+#include "MovementSystem.h"
 #include "ItemSystem.h"
 #include "DamageTextSystem.h"
 #include "CleanupSystem.h"
@@ -148,10 +149,24 @@ void HealthSystem::applyDamage(Entity target, float damage)
                 if (id->type == "enemy" && spawnSystem->onEnemyDeath)
                 {
                     spawnSystem->onEnemyDeath();
-                    auto itemSystem = SystemManager::getInstance()->getSystem<ItemSystem>();
-                    itemSystem->spawnItemAtDeath(target,false);
+                    SystemManager::getInstance()->getSystem<ItemSystem>()->spawnItemAtDeath(target, false);
+                    // Xóa entity khỏi batch cập nhật di chuyển khi chết
+                    SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(target);
+
+                    // Đếm số kill
+                    auto layer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
+                    layer->increaseEnemyKillCount();
                 }
-                if (id->type == "player" && onPlayerOutOfHealth)
+                else if (id->type == "boss")
+                {
+                    SystemManager::getInstance()->getSystem<ItemSystem>()->spawnItemAtDeath(target, true);
+                    SystemManager::getInstance()->getSystem<SpawnSystem>()->isBossAlive(false);
+
+                    // Đếm số kill
+                    auto layer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
+                    layer->increaseEnemyKillCount();
+                }
+                else if (id->type == "player" && onPlayerOutOfHealth)
                 {
                     onPlayerOutOfHealth();
                 }

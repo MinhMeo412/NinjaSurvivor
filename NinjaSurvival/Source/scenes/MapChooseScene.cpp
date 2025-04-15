@@ -7,12 +7,12 @@
 #include "systems/ShopSystem.h"
 #include "systems/SystemManager.h"
 #include "AudioManager.h"
-#include <algorithm>
 
 using namespace ax;
 
 MapChooseScene::MapChooseScene() : SceneBase("MapChooseScene") {}
 
+// Khởi tạo scene, gọi reset hệ thống và thiết lập giao diện
 bool MapChooseScene::init()
 {
     if (!SceneBase::init())
@@ -24,15 +24,20 @@ bool MapChooseScene::init()
     return true;
 }
 
+// Dự phòng cho cập nhật sau
 void MapChooseScene::update(float dt) {}
 
+// Chuyển về MainScene khi nhấn nút Close
 void MapChooseScene::menuCloseCallback(Object* sender)
 {
+    // tắt nhạc nền
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
     AudioManager::getInstance()->stopSound("background");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MainScene>()));
 }
 
+// Chuyển sang GameLoadingScene với GameScene khi nhấn nút Play
 void MapChooseScene::menuPlayCallback(Object* sender)
 {
     if (selectedMapName.empty())
@@ -41,66 +46,64 @@ void MapChooseScene::menuPlayCallback(Object* sender)
         return;
     }
     _director->getEventDispatcher()->setEnabled(false);
+
     GameData::getInstance()->setSelectedMap(selectedMapName);
+
     auto gameScene    = utils::createInstance<GameScene>();
     auto loadingScene = GameLoadingScene::create();
+
     loadingScene->setNextScene(gameScene);
+
+    // Dừng nhạc nền
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
     AudioManager::getInstance()->stopSound("background");
+
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, loadingScene));
     this->scheduleOnce([this](float) { _director->getEventDispatcher()->setEnabled(true); }, TRANSITION_TIME,
                        "enableInput");
 }
 
+// Thiết lập giao diện: background, panel, coin, nút Close, Play, Buy, và button map
 void MapChooseScene::menuUISetup()
 {
-    const auto& safeOrigin = safeArea.origin;
-    const auto& safeSize   = safeArea.size;
-    float marginX          = safeSize.width * 0.05f;
-    float marginY          = safeSize.height * 0.025f;
+    float marginX = visibleSize.width * 0.05f;
+    float marginY = visibleSize.height * 0.025f;
 
+    // Tạo background
     auto background = Sprite::create("UI/background3.png");
-    if (!background)
-    {
-        AXLOG("Lỗi: Không thể tạo background3.png");
-        return;
-    }
     background->setPosition(origin + visibleSize / 2);
     this->addChild(background, 0);
 
+    // Tạo panel map
     auto panel = Sprite::create("UI/panelMap.png");
-    if (!panel)
-    {
-        AXLOG("Lỗi: Không thể tạo panelMap.png");
-        return;
-    }
-    panel->setPosition(safeOrigin.x + safeSize.width / 2, safeOrigin.y + safeSize.height / 2 - 10);
+    panel->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 10));
     this->addChild(panel, 2);
 
-
+    // Vẽ viền debug
     auto drawNode = DrawNode::create();
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
     this->addChild(drawNode, 0);
 
+    // Hiển thị coin
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =
-        Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 40);
+        Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 20);
     if (!coinLabel)
     {
-        AXLOG("Lỗi: Không thể tạo coinLabel");
+        AXLOG("Không thể tạo coinLabel");
         return;
     }
     auto coinSprite = Sprite::create("coin.png");
     if (!coinSprite)
     {
-        AXLOG("Lỗi: Không thể tạo coinSprite");
+        AXLOG("Không thể tạo coinSprite");
         return;
     }
     float coinLabelWidth  = coinLabel->getContentSize().width;
     float coinSpriteWidth = coinSprite->getContentSize().width;
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
-    float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
-    float posY            = safeOrigin.y + safeSize.height - marginY;
+    float startPosX       = origin.x + visibleSize.width - marginX - totalWidth;
+    float posY            = origin.y + visibleSize.height - marginY;
     coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
     coinLabel->setAlignment(TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
@@ -108,55 +111,53 @@ void MapChooseScene::menuUISetup()
     coinSprite->setScale(3);
     this->addChild(coinSprite, 5, "coinSprite");
 
+    // Khởi tạo menu items
     Vector<MenuItem*> menuItems;
 
+    // Tạo nút Close
     closeItem = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                       AX_CALLBACK_1(MapChooseScene::menuCloseCallback, this),
-                                      Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
-    if (!closeItem)
-    {
-        AXLOG("Lỗi: Không thể tạo closeItem");
-        return;
-    }
+                                      Vec2(origin.x + marginX, origin.y + visibleSize.height - marginY));
     menuItems.pushBack(closeItem);
 
+    // Tính vị trí nút Play/Buy
     float panelRight  = panel->getPositionX() + panel->getContentSize().width / 2;
     float panelBottom = panel->getPositionY() - panel->getContentSize().height / 2;
     auto playSprite   = Sprite::create("UI/buttonPlayGame.png");
-    if (!playSprite)
-    {
-        AXLOG("Lỗi: Không thể tạo buttonPlayGame.png");
-        return;
-    }
     float playX = panelRight - (playSprite->getContentSize().width / 2 * 0.8f) - panel->getContentSize().width * 0.075f;
     float playY =
         panelBottom + (playSprite->getContentSize().height / 2 * 0.8f) + panel->getContentSize().height * 0.03f;
 
+    // Tạo nút Play
     auto playButton = dynamic_cast<MenuItemSprite*>(
         Utils::createButton("UI/buttonPlayGame.png", AX_CALLBACK_1(MapChooseScene::menuPlayCallback, this),
                             Vec2(playX, playY), 0.8f, false));
     if (!playButton)
     {
-        AXLOG("Lỗi: Không thể tạo playButton");
+        AXLOG("Không thể tạo playButton");
         return;
     }
     menuItems.pushBack(playButton);
 
+    // Tạo nút Buy
     auto buyButton = createBuyButton(playButton, panel, playX, playY);
     if (!buyButton)
     {
-        AXLOG("Lỗi: Không thể tạo buyButton");
+        AXLOG("Không thể tạo buyButton");
         return;
     }
     menuItems.pushBack(buyButton);
 
+    // Tạo button map
     setupMapButtons(panel, playButton, buyButton, menuItems);
 
+    // Tạo menu
     auto menu = Menu::createWithArray(menuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 3);
 }
 
+// Tạo nút Buy với logic mua map
 MenuItemSprite* MapChooseScene::createBuyButton(MenuItemSprite* playButton, Node* panel, float x, float y)
 {
     auto button = dynamic_cast<MenuItemSprite*>(
@@ -194,23 +195,21 @@ MenuItemSprite* MapChooseScene::createBuyButton(MenuItemSprite* playButton, Node
         else
         {
             auto errorLabel = Label::createWithTTF("Không đủ coin!", "fonts/Pixelpurl-0vBPP.ttf", 20);
-            if (errorLabel)
-            {
-                errorLabel->setPosition(safeArea.origin + safeArea.size / 2);
-                this->addChild(errorLabel, 20);
-                errorLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-            }
+            errorLabel->setPosition(visibleSize / 2);
+            this->addChild(errorLabel, 20);
+            errorLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
             dynamic_cast<Node*>(sender)->setVisible(false);
         }
     }, Vec2(x, y), 0.8f, false));
     if (!button)
     {
-        AXLOG("Lỗi: Không thể tạo buyButton");
+        AXLOG("Không thể tạo buyButton");
         return nullptr;
     }
     return button;
 }
 
+// Cập nhật giao diện: nhãn map, nút Play/Buy dựa trên trạng thái map
 void MapChooseScene::updateMapUI(MenuItemSprite* item,
                                  const std::string& mapName,
                                  bool isAvailable,
@@ -236,6 +235,7 @@ void MapChooseScene::updateMapUI(MenuItemSprite* item,
     playButton->setVisible(isAvailable);
 }
 
+// Tạo các button map và thiết lập callback
 void MapChooseScene::setupMapButtons(Node* panel,
                                      MenuItemSprite* playButton,
                                      MenuItemSprite* buyButton,
@@ -243,40 +243,25 @@ void MapChooseScene::setupMapButtons(Node* panel,
 {
     auto gameData    = GameData::getInstance();
     const auto& maps = gameData->getMaps();
-    if (maps.empty())
-    {
-        AXLOG("Lỗi: Không có map trong gameData");
-        return;
-    }
+    size_t numMaps   = maps.size();
+    const int cols   = 1;
+    float startX     = panel->getPositionX();
+    float startY     = panel->getPositionY() + panel->getContentSize().height / 3;
+    float yPos       = 100;
+    int index        = 0;
 
-    // Sắp xếp map theo tên để đảm bảo thứ tự nhất quán
-    std::vector<std::pair<std::string, MapData>> sortedMaps(maps.begin(), maps.end());
-    std::sort(sortedMaps.begin(), sortedMaps.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
-
-    // Thiết lập lưới: 1 cột
-    const int cols    = 1;
-    const int numMaps = static_cast<int>(sortedMaps.size());
-    const int rows    = (numMaps + cols - 1) / cols;
-
-    // Tính khoảng cách dựa trên kích thước panel
-    float iconSpacingY = panel->getContentSize().height * 0.06f;
-    // Đặt startY sát đỉnh panel
-    float startY = panel->getPositionY() + panel->getContentSize().height * 1/3 - iconSpacingY;
-
-    int index = 0;
-    for (const auto& pair : sortedMaps)
+    for (const auto& pair : maps)
     {
         const auto& map = pair.second;
         auto button =
             Utils::createMapButton(map.sprite, map.name, map.available, selectedMapName, selectedMapItem, playButton);
         if (!button)
         {
-            AXLOG("Lỗi: Không thể tạo button map: %s", map.name.c_str());
+            AXLOG("Không thể tạo button map: %s", map.name.c_str());
             continue;
         }
 
-        // Giữ logic callback của MapChooseScene
-        button->setCallback([this, mapName = map.name, playButton, buyButton, panel](Object* sender) {
+        button->setCallback([this, mapName = map.name, playButton, buyButton](Object* sender) {
             selectedMapName = mapName;
 
             if (selectedMapItem && selectedMapItem != sender)
@@ -306,12 +291,11 @@ void MapChooseScene::setupMapButtons(Node* panel,
             updateMapUI(selectedMapItem, mapName, isAvailable, playButton, buyButton);
         });
 
-        // Tính vị trí: căn giữa ngang, từ trên xuống dưới
-        int row    = index / cols;
-        float posX = panel->getPositionX();  // Căn giữa panel
-        float posY = startY - row * (button->getContentSize().height + iconSpacingY);
-        button->setPosition(Vec2(posX, posY));
+        float buttonY = startY + (button->getContentSize().height / 2) - yPos -
+                        (index * (button->getContentSize().height * 0.4 + yPos));
+        button->setPosition(Vec2(startX, buttonY));
         menuItems.pushBack(button);
         index++;
+        yPos += 25;
     }
 }

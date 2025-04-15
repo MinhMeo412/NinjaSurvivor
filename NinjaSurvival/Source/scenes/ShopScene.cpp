@@ -37,14 +37,10 @@ void ShopScene::update(float dt)
 
 void ShopScene::menuUISetup()
 {
-    // Sử dụng safeArea cho vị trí UI
-    const auto& safeOrigin = safeArea.origin;
-    const auto& safeSize   = safeArea.size;
+    float marginX = visibleSize.width * 0.05f;
+    float marginY = visibleSize.height * 0.025f;
 
-    float marginX = safeSize.width * 0.05f;
-    float marginY = safeSize.height * 0.025f;
-
-    // Tạo background (phủ toàn màn hình)
+    // Tạo background
     auto background = Sprite::create("UI/background3.png");
     if (!background)
     {
@@ -61,8 +57,8 @@ void ShopScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo panelShop.png");
         return;
     }
-    float panelY = safeOrigin.y + safeSize.height * 0.95f - panel->getContentSize().height / 2;
-    panel->setPosition(safeOrigin.x + safeSize.width / 2, panelY);
+    float panelY = origin.y + visibleSize.height * 0.95f - panel->getContentSize().height / 2;
+    panel->setPosition(origin.x + visibleSize.width / 2, panelY);
     this->addChild(panel, 2);
 
     // Tạo panel mô tả
@@ -72,15 +68,15 @@ void ShopScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo NeoPanelDecripsionInSkillUp2.png");
         return;
     }
-    float descY = panelY - panel->getContentSize().height / 2 - safeSize.height * 0.01f -
+    float descY = panelY - panel->getContentSize().height / 2 - visibleSize.height * 0.01f -
                   panelDescription->getContentSize().height / 2;
-    panelDescription->setPosition(safeOrigin.x + safeSize.width / 2, descY);
+    panelDescription->setPosition(origin.x + visibleSize.width / 2, descY);
     this->addChild(panelDescription, 3, "panelDescription");
 
     // Hiển thị coin
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =
-        Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 40);
+        Label::createWithTTF(StringUtils::format("Coins: %d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 24);
     if (!coinLabel)
     {
         AXLOG("Lỗi: Không thể tạo coinLabel");
@@ -95,8 +91,8 @@ void ShopScene::menuUISetup()
     float coinLabelWidth  = coinLabel->getContentSize().width;
     float coinSpriteWidth = coinSprite->getContentSize().width;
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
-    float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
-    float posY            = safeOrigin.y + safeSize.height - marginY;
+    float startPosX       = origin.x + visibleSize.width - marginX - totalWidth;
+    float posY            = origin.y + visibleSize.height - marginY;
     coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
     coinLabel->setAlignment(TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
@@ -104,7 +100,7 @@ void ShopScene::menuUISetup()
     coinSprite->setScale(3);
     this->addChild(coinSprite, 5, "coinSprite");
 
-    // Vẽ viền debug cho safeArea
+    // Vẽ viền debug
     auto drawNode = DrawNode::create();
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
     this->addChild(drawNode, 0);
@@ -115,7 +111,7 @@ void ShopScene::menuUISetup()
     // Tạo nút Return
     returnButton = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                          AX_CALLBACK_1(ShopScene::menuReturnCallback, this),
-                                         Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
+                                         Vec2(origin.x + marginX, origin.y + visibleSize.height - marginY));
     if (!returnButton)
     {
         AXLOG("Lỗi: Không thể tạo nút Return");
@@ -209,7 +205,7 @@ void ShopScene::menuBuyCallback(Object* sender)
 
         if (auto* coinLabel = dynamic_cast<Label*>(getChildByName("coinLabel")))
         {
-            coinLabel->setString(StringUtils::format("%d", shopData->getCoins()));
+            coinLabel->setString(StringUtils::format("Coins: %d", shopData->getCoins()));
         }
 
         // Hiển thị thông báo thành công
@@ -238,30 +234,20 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
     const auto& shopItems = shopData->getShopData();
     int index             = 0;
     const int cols        = 4;
-    float iconSpacingX    = panel->getContentSize().width * 0.12f;
+    float iconSpacingX    = panel->getContentSize().width * 0.08f;
     float startX          = panel->getPositionX() - panel->getContentSize().width * 0.35f;
     float startY          = panel->getPositionY() + panel->getContentSize().height * 0.39f;
-
-    // Lề trái cố định cho các label
-    float leftMargin = panelDescription->getContentSize().width * 0.1f;
 
     for (const auto& item : shopItems)
     {
         if (item.type != "Stat")
             continue;
 
-        // Tạo các label riêng cho thông tin stat
-        float baseY        = panelDescription->getContentSize().height * 0.8f;
-        auto nameLabel     = createStatLabel(item.name, "nameLabel", baseY, leftMargin, panelDescription);
-        auto levelLabel    = createStatLabel(item.name, "levelLabel", baseY - 30.0f, leftMargin, panelDescription);
-        auto increaseLabel = createStatLabel(item.name, "increaseLabel", baseY - 60.0f, leftMargin, panelDescription);
-        auto costLabel     = createStatLabel(item.name, "costLabel", baseY - 90.0f, leftMargin, panelDescription);
-
-        if (!nameLabel || !levelLabel || !increaseLabel || !costLabel)
-        {
-            AXLOG("Lỗi: Không thể tạo đầy đủ label cho stat %s", item.name.c_str());
+        // Tạo nhãn thông tin stat
+        auto statLabel =
+            createStatLabel(item.name, "label", panelDescription->getContentSize().height * 0.65f, panelDescription);
+        if (!statLabel)
             continue;
-        }
 
         // Cập nhật thông tin stat
         bool isMaxLevel =
@@ -295,19 +281,11 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
             selectedStatName = name;
             selectedStatItem = dynamic_cast<MenuItemSprite*>(sender);
 
-            // Ẩn tất cả label
             for (auto* child : panelDescription->getChildren())
                 if (dynamic_cast<Label*>(child))
                     child->setVisible(false);
 
-            // Hiển thị các label của stat được chọn
-            if (auto* label = dynamic_cast<Label*>(panelDescription->getChildByName("nameLabel" + name)))
-                label->setVisible(true);
-            if (auto* label = dynamic_cast<Label*>(panelDescription->getChildByName("levelLabel" + name)))
-                label->setVisible(true);
-            if (auto* label = dynamic_cast<Label*>(panelDescription->getChildByName("increaseLabel" + name)))
-                label->setVisible(true);
-            if (auto* label = dynamic_cast<Label*>(panelDescription->getChildByName("costLabel" + name)))
+            if (auto* label = dynamic_cast<Label*>(panelDescription->getChildByName("label" + name)))
                 label->setVisible(true);
 
             if (selectedStatItem)
@@ -324,51 +302,33 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
         index++;
     }
 
-    // Ẩn tất cả label ban đầu
+    // Ẩn tất cả nhãn ban đầu
     for (auto* child : panelDescription->getChildren())
         if (dynamic_cast<Label*>(child))
             child->setVisible(false);
 }
+
 void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, bool isMaxLevel)
 {
-    auto shopData      = ShopSystem::getInstance();
-    auto nameLabel     = dynamic_cast<Label*>(panelDescription->getChildByName("nameLabel" + name));
-    auto levelLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("levelLabel" + name));
-    auto increaseLabel = dynamic_cast<Label*>(panelDescription->getChildByName("increaseLabel" + name));
-    auto costLabel     = dynamic_cast<Label*>(panelDescription->getChildByName("costLabel" + name));
-
-    if (!nameLabel || !levelLabel || !increaseLabel || !costLabel)
+    auto shopData  = ShopSystem::getInstance();
+    auto statLabel = dynamic_cast<Label*>(panelDescription->getChildByName("label" + name));
+    if (!statLabel)
     {
-        AXLOG("Lỗi: Không tìm thấy đầy đủ label cho stat %s", name.c_str());
+        AXLOG("Lỗi: Không tìm thấy label cho stat %s", name.c_str());
         return;
     }
 
     int level             = shopData->getLevel("Stat", name);
     int levelValue        = shopData->getStatLevelValue("Stat", name);
     int cost              = shopData->getCost("Stat", name);
-    int levelLimit        = shopData->getLevelLimit("Stat", name);  // Lấy level tối đa
-    std::string levelText = isMaxLevel ? "Max" : StringUtils::format("%d/%d", level, levelLimit);
+    std::string levelText = isMaxLevel ? "Max" : StringUtils::format("%d", level);
 
-    nameLabel->setString(StringUtils::format("Stat: %s", name.c_str()));
-    levelLabel->setString(StringUtils::format("Level: %s", levelText.c_str()));
-    increaseLabel->setString(StringUtils::format("Increase: %d", levelValue));
-    costLabel->setString(StringUtils::format("Cost: %d", cost));
-
-    // Hiển thị label nếu stat đang được chọn
-    if (selectedStatName == name)
-    {
-        nameLabel->setVisible(true);
-        levelLabel->setVisible(true);
-        increaseLabel->setVisible(true);
-        costLabel->setVisible(true);
-    }
+    statLabel->setString(StringUtils::format("Stat: %s\nLevel: %s\nIncrease: %d\nCost: %d", name.c_str(),
+                                             levelText.c_str(), levelValue, cost));
+    statLabel->setVisible(false);
 }
 
-Label* ShopScene::createStatLabel(const std::string& name,
-                                  const std::string& tag,
-                                  float baseY,
-                                  float xPos,
-                                  Node* parent)
+Label* ShopScene::createStatLabel(const std::string& name, const std::string& tag, float baseY, Node* parent)
 {
     auto label = Label::createWithTTF("", "fonts/Pixelpurl-0vBPP.ttf", 20);
     if (!label)
@@ -376,8 +336,7 @@ Label* ShopScene::createStatLabel(const std::string& name,
         AXLOG("Lỗi: Không thể tạo label %s", (tag + name).c_str());
         return nullptr;
     }
-    label->setAnchorPoint(Vec2(0.0f, 0.5f));
-    label->setPosition(xPos, baseY);
+    label->setPosition(parent->getContentSize().width * 0.2f, baseY);
     label->setAlignment(TextHAlignment::LEFT);
     label->setVisible(false);
     parent->addChild(label, 4, tag + name);

@@ -22,7 +22,6 @@ public:
 
     bool isAnimating(Entity item) const
     {
-        AXLOG("Kiem tra item %d", item);
         return lootedItems.find(item) != lootedItems.end();
     }
     void moveItemToPlayer(Entity item);

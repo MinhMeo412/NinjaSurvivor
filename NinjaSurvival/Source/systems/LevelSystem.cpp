@@ -1,15 +1,17 @@
 #include "LevelSystem.h"
 #include "SystemManager.h"
 #include "SpawnSystem.h"
-#include "axmol.h"
+#include "gameUI/LevelUpOrChestEventLayer.h"
+#include "scenes/GameScene.h"
 
 LevelSystem::LevelSystem(EntityManager& em, ComponentManager<WeaponInventoryComponent>& wim) : entityMgr(em), wiMgr(wim) {}
 
 void LevelSystem::init()
 {
     currentXP = 0;
-    neededXP  = 10;
+    neededXP  = 5;
     level     = 1;
+    rerollCount = 1; // Lấy thêm từ shop
 }
 
 void LevelSystem::update(float dt)
@@ -26,22 +28,14 @@ void LevelSystem::levelUp()
 {
     level     = level + 1;
     currentXP = currentXP - neededXP;
-    neededXP  = 5 * (level + 1);
 
-    // Tính neededXP với hệ số tăng trưởng dựa trên mốc cấp độ
-    float growthMultiplier = 1.0f;  // Hệ số mặc định
+    float growthMultiplier = 1.0f;
     if (level >= 30)
-    {
-        growthMultiplier = 2.0f;  // Tăng gấp đôi độ khó từ cấp 30
-    }
+        growthMultiplier = 1.6f;
     else if (level >= 20)
-    {
-        growthMultiplier = 1.5f;  // Tăng 50% độ khó từ cấp 20
-    }
+        growthMultiplier = 1.4f;
     else if (level >= 10)
-    {
-        growthMultiplier = 1.2f;  // Tăng 20% độ khó từ cấp 10
-    }
+        growthMultiplier = 1.2f;
 
     neededXP = 5 * (level + 1) * growthMultiplier;
     AXLOG("Level: %d", level);
@@ -50,8 +44,6 @@ void LevelSystem::levelUp()
 void LevelSystem::increaseXP(float xp)
 {
     currentXP = currentXP + xp; //thêm buff
-
-    //AXLOG("Xp hiện tại: + %f = %f", xp, currentXP);
 }
 
 std::vector<std::string> LevelSystem::upgradeGenerator()
@@ -175,8 +167,22 @@ std::vector<std::string> LevelSystem::upgradeGenerator()
 
 void LevelSystem::chooseWeapon()
 {
-    std::vector<std::string> upgradeList = upgradeGenerator();
-    // pull up selection layer
-    //WeaponSystem::upgradeWeapon
+    std::vector<std::pair<std::string, int>> upgradeList = upgradeGenerator(); //int là level của weapon trong list (lấy level hiện tại + 1)
+    //ví dụ với weapon chưa sở hữu int  = 1
+    // với weapon hoặc buff đã sở hữu thì int = level trong inven + 1
+
+    auto gameScene                       = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
+    if (gameScene)
+    {
+        auto levelUpLayer = LevelUpOrChestEventLayer::create(true, upgradeList);  // isLevelUp = true
+        if (levelUpLayer)
+        {
+            // Lấy vị trí của uiLayer
+            ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
+            levelUpLayer->setPosition(uiLayerPos);
+            gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
+            gameScene->unscheduleUpdate();          // Dừng update
+        }
+    }
 }
 

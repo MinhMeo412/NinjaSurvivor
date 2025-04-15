@@ -52,6 +52,8 @@ public:
     //Re-position cho moveSystem
     ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
 
+    void isBossAlive(bool isBossActive);
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -70,15 +72,15 @@ private:
 
     std::unique_ptr<EntityFactory> factory;
 
-    Entity playerEntity = 0;
-    float spawnTimer    = 0.0f;
-    float spawnInterval  = 2.0f;   // Spawn mỗi 2 giây
-    int livingEnemyCount = 0;      // Đếm số enemy đang hoạt động
-    bool isBossActive    = false;  
+    Entity playerEntity  = 0;
+    float spawnTimer     = 0.0f;
+    float spawnInterval  = 2.0f;  // Spawn mỗi 2 giây
+    int maxEnemies       = 300;
+    int livingEnemyCount = 0;  // Đếm số enemy đang hoạt động
+    bool isBossActive    = false; 
 
     void spawnEnemies(float elapsedTime);
     void spawnBoss(float elapsedTime);
-    void adjustEnemySpawnDuringBoss(bool isBossActive);
 
     Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& playerPosition);
     

@@ -66,13 +66,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 200.0,
+                "speed": 50.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 1000.0
+                    "maxHealth": 100.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/master.plist",
@@ -114,13 +114,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 120.0,
+                "speed": 150.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 5.0
                 },
                 "attack": {
                     "baseDamage": 5.0,
@@ -173,16 +173,16 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 100.0,
+                "speed": 120.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 20.0
                 },
                 "attack": {
-                    "baseDamage": 50.0,
+                    "baseDamage": 5.0,
                     "flatBonus": 2.0,
                     "damageMultiplier": 0.1
                 },
@@ -229,13 +229,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 150.0,
+                "speed": 200.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 5.0
                 },
                 "attack": {
                     "baseDamage": 5.0,
@@ -288,13 +288,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 120.0,
+                "speed": 150.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 5.0
                 },
                 "attack": {
                     "baseDamage": 1.0,
@@ -523,7 +523,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 200.0,
+                "speed": 300.0,
                 "sprite": {
                     "plist": "weapon.plist",
                     "gameSceneFrame": "./kunai"

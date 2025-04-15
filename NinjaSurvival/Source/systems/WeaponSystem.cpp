@@ -9,14 +9,14 @@
 void WeaponSystem::init()
 {
     // Khai báo các kiểu tạo weapon
-    createWeapon["sword"] = [this](std::string weaponName) { return createSword(weaponName); };
-    createWeapon["shuriken"] = [this](std::string weaponName) { return createShuriken(weaponName); };
-    createWeapon["kunai"] = [this](std::string weaponName) { return createKunai(weaponName); };
+    createWeapon["sword"]       = [this](std::string weaponName, bool alreadyHave) { return createSword(weaponName, alreadyHave); };
+    createWeapon["shuriken"]    = [this](std::string weaponName, bool alreadyHave) { return createShuriken(weaponName, alreadyHave); };
+    createWeapon["kunai"]       = [this](std::string weaponName, bool alreadyHave) { return createKunai(weaponName, alreadyHave); };
 
-    //Khai báo các kiểu update weapon
-    updateWeapon["sword"]    = [this](Entity weapon, float dt) { updateSword(weapon,dt); };
-    updateWeapon["shuriken"] = [this](Entity weapon, float dt) { updateShuriken(weapon, dt); };
-    updateWeapon["kunai"]    = [this](Entity weapon, float dt) { updateKunai(weapon, dt); };
+    // Khai báo các kiểu update weapon
+    updateWeapon["sword"]       = [this](Entity weapon, float dt) { updateSword(weapon, dt); };
+    updateWeapon["shuriken"]    = [this](Entity weapon, float dt) { updateShuriken(weapon, dt); };
+    updateWeapon["kunai"]       = [this](Entity weapon, float dt) { updateKunai(weapon, dt); };
 
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
@@ -83,19 +83,26 @@ void WeaponSystem::update(float dt)
 
 void WeaponSystem::initializePlayerWeapon(Entity player)
 {
-    if(auto weaponInventory      = weaponInventoryMgr.getComponent(player))
+    if (auto weaponInventory = weaponInventoryMgr.getComponent(player))
     {
         std::string defaultWeapon = weaponInventory->weapons[0].first;
         auto it                   = createWeapon.find(defaultWeapon);
         if (it != createWeapon.end())
         {
             // Gọi hàm khởi tạo tương ứng
-            weaponPool.push_back(it->second(defaultWeapon));
+            weaponPool.push_back(it->second(defaultWeapon, true));
+            weaponPool.push_back(createShuriken("shuriken", false));
+            weaponPool.push_back(createShuriken("shuriken", true));
+            weaponPool.push_back(createShuriken("shuriken", true));
+            weaponPool.push_back(createShuriken("shuriken", true));
+            weaponPool.push_back(createShuriken("shuriken", true));
+            weaponPool.push_back(createSword("sword", false));
+            weaponPool.push_back(createSword("sword", true));
         }
     }
     else
     {
-        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll" );
+        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll", );
     }
 }
 
@@ -106,15 +113,27 @@ void WeaponSystem::upgradeWeapon(std::string weaponName)
     {
         if (weaponInventory->weapons[i].first == weaponName && weaponInventory->weapons[i].second < 5)
         {
-            weaponInventory->weapons[i].second += 1; //Tăng level trong inventory
-            //Tăng stats hoặc các chức năng khác
-            //upgradeWeaponStats(weaponInventory->weapons[i].first, weaponInventory->weapons[i].second); (string weaponName, int level)
+            weaponInventory->weapons[i].second += 1;  // Tăng level trong inventory
+            // Tăng stats hoặc các chức năng khác
+            // upgradeWeaponStats(weaponInventory->weapons[i].first, weaponInventory->weapons[i].second); (string
+            // weaponName, int level)
         }
     }
 }
 
-Entity WeaponSystem::createSword(std::string weaponName)
+Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
 {
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "sword";
+            it->second = 1;
+        }
+    }
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
@@ -129,8 +148,19 @@ Entity WeaponSystem::createSword(std::string weaponName)
     return weapon;
 }
 
-Entity WeaponSystem::createShuriken(std::string weaponName)
+Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
 {
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "shuriken";
+            it->second = 5;
+        }
+    }
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
@@ -146,8 +176,19 @@ Entity WeaponSystem::createShuriken(std::string weaponName)
 }
 
 // Chỉ tạo mẫu để đưa vào pool làm tham khảo
-Entity WeaponSystem::createKunai(std::string weaponName)
+Entity WeaponSystem::createKunai(std::string weaponName, bool alreadyHave)
 {
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "kunai";
+            it->second = 1;
+        }
+    }
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
@@ -159,19 +200,19 @@ Entity WeaponSystem::createKunai(std::string weaponName)
         sprite->initializeSprite();
     }
 
-    //Không va chạm
+    // Không va chạm
     auto* hitbox = hitboxMgr.getComponent(weapon);
     if (hitbox)
     {
         hitbox->size = ax::Size(0, 0);
     }
 
-    //Gán làm kunai mẫu
+    // Gán làm kunai mẫu
     kunaiEntity = weapon;
     return weapon;
 }
 
-Entity WeaponSystem::createTempKunai(std::string weaponName)
+Entity WeaponSystem::createTempKunai(std::string weaponName) 
 {
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
@@ -226,7 +267,7 @@ void WeaponSystem::updateSword(Entity weapon,float dt)
     }
 }
 
-void WeaponSystem::updateShuriken(Entity weapon,float dt)
+void WeaponSystem::updateShuriken(Entity weapon, float dt)
 {
     // Chia update theo từng loại weapon
     auto cooldown = cooldownMgr.getComponent(weapon);
@@ -235,14 +276,15 @@ void WeaponSystem::updateShuriken(Entity weapon,float dt)
     if (!cooldown || !hitbox)
         return;
 
-    //Check level shuriken
+    // Check level shuriken
     auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
-    auto it = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+    auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
                                         [](auto& p) { return p.first == "shuriken"; });
 
-    if (it->second == 5) //Active vĩnh viễn
+    if (it->second == 5)  // Active vĩnh viễn
     {
         cooldown->cooldownDuration = 0;
+        cooldown->cooldownTimer    = 1.0;
         // Bật hitbox
         hitbox->size = hitbox->defaultSize;
     }
