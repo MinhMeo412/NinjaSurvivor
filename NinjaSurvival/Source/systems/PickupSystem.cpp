@@ -3,6 +3,8 @@
 #include "MovementSystem.h"
 #include "LevelSystem.h"
 #include "gameUI/GameSceneUILayer.h"
+#include "gameUI/LevelUpOrChestEventLayer.h"
+#include "scenes/GameScene.h"
 #include "SystemManager.h"
 #include "AudioManager.h"
 
@@ -75,12 +77,21 @@ void PickupSystem::applyPickupEffect(std::string& itemName)
         return;
     }
 
-    if (itemName == "coin")
+    else if (itemName == "coin")
     {
         AudioManager::getInstance()->playSound("coin", false, 1.0f, "coin");
         applyCoin();
         return;
     }
+
+    else if (itemName == "chest")
+    {
+
+        applyChest();
+        return;
+    }
+
+
 }
 
 void PickupSystem::applyHeart() {}
@@ -110,4 +121,21 @@ void PickupSystem::applyXPGem(std::string& itemName)
 }
 void PickupSystem::applyBomb() {}
 void PickupSystem::applyMagnet() {}
-void PickupSystem::applyChest() {}
+void PickupSystem::applyChest()
+{
+    std::vector<std::pair<std::string, int>> upgradeList = {{"sword", 1}};  // List này chỉ có 1 giá trị (nếu full hết thì cho giá trị coin)
+
+    auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
+    if (gameScene)
+    {
+        auto levelUpLayer = LevelUpOrChestEventLayer::create(false, upgradeList);  // isLevelUp = false
+        if (levelUpLayer)
+        {
+            // Lấy vị trí của uiLayer
+            ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
+            levelUpLayer->setPosition(uiLayerPos);
+            gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
+            gameScene->unscheduleUpdate();            // Dừng update
+        }
+    }
+}

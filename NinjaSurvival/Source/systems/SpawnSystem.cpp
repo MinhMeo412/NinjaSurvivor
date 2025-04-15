@@ -96,51 +96,81 @@ void SpawnSystem::update(float dt)
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-    int maxEnemies = 300;                         // Giới hạn tối đa enemy sống
-    int numEnemies = 50 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
+    int numEnemies;  // Số enemy spawn
+    int minute = elapsedTime / 60;
+    numEnemies = 2 + minute;
 
-    // Giới hạn spawn khi vượt quá 300 enemy
-    if (livingEnemyCount >= maxEnemies)
+    // if (elapsedTime < 30)  // 0-1 phút
+    //{
+    //     numEnemies = 2 + rand() % 2;  // 2-3 quái
+    // }
+    // else if (elapsedTime < 60)  // 0-1 phút
+    //{
+    //     numEnemies = 3 + rand() % 3;  // 3-5 quái
+    // }
+    // else if (elapsedTime < 180)  // 1-3 phút
+    //{
+    //     numEnemies = 5 + rand() % 4;  // 5-8 quái
+    // }
+    // else if (elapsedTime < 420)  // 3-7 phút
+    //{
+    //     numEnemies = 10 + rand() % 6;  // 10-15 quái
+    // }
+    // else if (elapsedTime < 600)  // 7-10 phút
+    //{
+    //     numEnemies = 20 + rand() % 11;  // 20-30 quái
+    // }
+    // else  // >10 phút
+    //{
+    //     numEnemies = 35 + rand() % 16;  // 35-50 quái
+    // }
+
+    // Giới hạn spawn
+    if (livingEnemyCount < maxEnemies)
     {
-        numEnemies = std::min(numEnemies, 0);  // Chỉ spawn tối đa 2 con
+        numEnemies = std::min(numEnemies, maxEnemies - livingEnemyCount);  // Chỉ spawn tối đa đủ số max
+    }
+    else if (livingEnemyCount >= maxEnemies)
+    {
+        numEnemies = 0;  // Không spawn nữa
     }
 
     // Điều chỉnh tỷ lệ spawn khi boss xuất hiện (hoặc cho = 0 để ko spawn)
-    float spawnRateMultiplier = isBossActive ? 0.5f : 1.0f;
+    float spawnRateMultiplier = isBossActive ? 0.3f : 1.0f;
     numEnemies                = static_cast<int>(numEnemies * spawnRateMultiplier);
 
     // Tỷ lệ spawn từng loại quái
     float slimeRatio = 0.0, snakeRatio = 0.0, bearRatio = 0.0, octopusRatio = 0.0;
-    if (elapsedTime < 300)
-    {  // 0 - 5 phút
-        //slimeRatio   = 0.7;
-        slimeRatio   = 1.0; //test
-        //snakeRatio = 0.2;
-        //bearRatio    = 0.1;
+    if (elapsedTime < 60)  // 0-1 phút
+    {
+        slimeRatio = 1.0f;
     }
-    else if (elapsedTime < 600)
-    {  // 5 - 10 phút
-        slimeRatio = 0.5;
-        snakeRatio = 0.2;
-        bearRatio  = 0.2;
-        octopusRatio = 0.1;
+    else if (elapsedTime < 180)  // 1-3 phút
+    {
+        slimeRatio = 0.9f;
+        bearRatio  = 0.1f;
     }
-    else if (elapsedTime < 900)
-    {  // 10 - 15 phút
-        slimeRatio = 0.25;
-        snakeRatio = 0.15;
-        bearRatio  = 0.35;
-        octopusRatio = 0.25;
+    else if (elapsedTime < 420)  // 3-7 phút
+    {
+        slimeRatio = 0.5f;
+        snakeRatio = 0.2f;
+        bearRatio  = 0.3f;
     }
-    else 
-    { // >15 phút
-        slimeRatio   = 0.1;
-        snakeRatio   = 0.1;
-        bearRatio    = 0.7;
-        octopusRatio = 0.1;
+    else if (elapsedTime < 600)  // 7-10 phút
+    {
+        slimeRatio   = 0.3f;
+        snakeRatio   = 0.3f;
+        bearRatio    = 0.3f;
+        octopusRatio = 0.1f;
+    }
+    else  // >10 phút
+    {
+        snakeRatio   = 0.2f;
+        bearRatio    = 0.7f;
+        octopusRatio = 0.1f;
     }
 
-    //Lấy vị trí player
+    // Lấy vị trí player
     auto playerTransform = transformMgr.getComponent(playerEntity);
     if (!playerTransform)
         return;
@@ -148,7 +178,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
 
     for (int i = 0; i < numEnemies; i++)
     {
-        float randVal     = static_cast<float>(rand()) / RAND_MAX;  // Số ngẫu nhiên từ 0.0 - 1.0
+        float randVal = static_cast<float>(rand()) / RAND_MAX;  // Số ngẫu nhiên từ 0.0 - 1.0
         Entity enemy;
 
         if (randVal < slimeRatio)
@@ -168,11 +198,17 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
             enemy = spawnEntity("enemy", "Octopus", playerPos);
         }
 
-        if (enemy && isBossActive)
+        if (isBossActive)
         {
-            HealthComponent* health = healthMgr.getComponent(enemy);
-            if (health)
-                health->maxHealth *= 1.5f;  // Tăng HP khi boss xuất hiện
+            if (auto health = healthMgr.getComponent(enemy))
+            {
+                health->maxHealth *= 2.0f;
+                health->currentHealth = health->maxHealth;
+            }
+            if (auto speed = speedMgr.getComponent(enemy))
+            {
+                speed->speed = std::min(speed->speed * 2.0f, 300.0f);
+            }
         }
 
         livingEnemyCount++;  // Tăng số lượng enemy sống
@@ -191,31 +227,73 @@ void SpawnSystem::spawnBoss(float elapsedTime)
         Entity boss = spawnEntity("enemy", "Slime", playerPos);  // dùng tạm Slime làm boss
         if (boss)
         {
-            HealthComponent* health = healthMgr.getComponent(boss);
-            if (health)
+            if (elapsedTime < 610)  // boss tại phút 10
             {
-                health->maxHealth     = 1000 + (elapsedTime / 60) * 200;  // Boss trâu hơn theo thời gian
-                health->currentHealth = health->maxHealth;
+                auto health = healthMgr.getComponent(boss);
+                if (health)
+                {
+                    health->maxHealth     = health->maxHealth * 1.2;
+                    health->currentHealth = health->maxHealth;
+                }
+                if (auto speed = speedMgr.getComponent(boss))
+                {
+                    speed->speed = std::min(speed->speed * 1.2f, 200.0f);
+                }
+                if (auto attack = attackMgr.getComponent(boss))
+                {
+                    attack->baseDamage *= 1.5f;
+                }
             }
-            VelocityComponent* velocity = velocityMgr.getComponent(boss);
-            if (velocity)
+            else if (elapsedTime < 910)  // boss tại phút 15
             {
-                float bossSpeed = 0.5f - (elapsedTime / 1800.0f);  // Chậm dần
-                velocity->vx    = bossSpeed * 200;
+                auto health = healthMgr.getComponent(boss);
+                if (health)
+                {
+                    health->maxHealth     = health->maxHealth * 1.5;
+                    health->currentHealth = health->maxHealth;
+                }
+                if (auto speed = speedMgr.getComponent(boss))
+                {
+                    speed->speed = std::min(speed->speed * 1.5f, 200.0f);
+                }
+                if (auto attack = attackMgr.getComponent(boss))
+                {
+                    attack->baseDamage *= 2.0f;
+                }
             }
+            else  // boss tại phút 15 trở đi
+            {
+                auto health = healthMgr.getComponent(boss);
+                if (health)
+                {
+                    health->maxHealth =
+                        health->maxHealth * (2 + (elapsedTime - 1200) / 300);  // Boss trâu hơn theo thời gian
+                    health->currentHealth = health->maxHealth;
+                }
+                if (auto speed = speedMgr.getComponent(boss))
+                {
+                    speed->speed = std::min(speed->speed * 1.5f, 200.0f);
+                }
+                if (auto attack = attackMgr.getComponent(boss))
+                {
+                    attack->baseDamage *= 2.0f;
+                }
+            }
+
             isBossActive = true;
         }
     }
 }
 
-void SpawnSystem::adjustEnemySpawnDuringBoss(bool isBossActive)
+void SpawnSystem::isBossAlive(bool isBossActive)
 {
     this->isBossActive = isBossActive;
 }
 
 Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& position)
 {
-    Entity entity = factory->createEntity(type, name);
+    float elapsedTime = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
+    Entity entity     = factory->createEntity(type, name);
     ax::Vec2 spawnPos(getRandomSpawnPosition(entity, position));
     if (entity)
     {
@@ -233,31 +311,50 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
             animationComp->initializeAnimations();
             animationComp->currentState = "idle";
         }
+
+        if (elapsedTime > 300 && elapsedTime < 600)  // 5-10 phút
+        {
+            if (auto health = healthMgr.getComponent(entity))
+            {
+                health->maxHealth *= 2.0f;
+                health->currentHealth = health->maxHealth;
+            }
+        }
+        else if (elapsedTime > 600 && elapsedTime < 900)  // 10-15 phút
+        {
+            if (auto health = healthMgr.getComponent(entity))
+            {
+                health->maxHealth *= 3.0f;
+                health->currentHealth = health->maxHealth;
+            }
+            if (auto attack = attackMgr.getComponent(entity))
+            {
+                attack->baseDamage *= 1.5f;
+            }
+        }
+        else if (elapsedTime > 900)  // >15 phút
+        {
+            if (auto health = healthMgr.getComponent(entity))
+            {
+                health->maxHealth *= 4.0f;
+                health->currentHealth = health->maxHealth;
+            }
+            if (auto speed = speedMgr.getComponent(entity))
+            {
+                speed->speed = std::min(speed->speed * 1.5f, 300.0f);
+            }
+            if (auto attack = attackMgr.getComponent(entity))
+            {
+                attack->baseDamage *= 2.0f;
+            }
+        }
     }
 
-    //Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
+    // Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
     SystemManager::getInstance()->getSystem<MovementSystem>()->assignEntityToBatch(entity);
-    
-   
-    //Thêm vào lưới để kiểm tra collision (cần xóa khi chết)
-    //auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
-    //if (collisionSystem && transformMgr.getComponent(entity))
-    //{
-    //    int groupId = collisionSystem->getSpatialGroup(transformMgr.getComponent(entity)->x,
-    //                                                   transformMgr.getComponent(entity)->y);
-    //    collisionSystem->addToSpatialGroup(groupId, entity);
-    //}
-
+    // Xóa tại HealthSystem
     // Xóa entity khỏi batch cập nhật di chuyển khi chết
-    //SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(deadEnemyEntity);
-
-    /* //Xóa lưới để kiểm tra collision khi chết
-    auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
-    if (collisionSystem && transformMgr.getComponent(entityToDestroy))
-    {
-        int groupId = collisionSystem->getSpatialGroup(transformMgr.getComponent(entityToDestroy)->x, transformMgr.getComponent(entityToDestroy)->y);
-        collisionSystem->removeFromSpatialGroup(groupId, entityToDestroy);
-    }*/
+    // SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(deadEnemyEntity);
 
     return entity;
 }

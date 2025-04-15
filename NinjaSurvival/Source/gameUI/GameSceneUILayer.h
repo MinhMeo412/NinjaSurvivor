@@ -1,5 +1,5 @@
-#ifndef __GAMESCENE_UILAYER_H__
-#define __GAMESCENE_UILAYER_H__
+#ifndef __GAMESCENE_UI_LAYER_H__
+#define __GAMESCENE_UI_LAYER_H__
 
 #include "axmol.h"
 
@@ -12,7 +12,7 @@ public:
     void update(float dt) override;
 
     void increaseCoin(float coin);
-    void increaseKill(float kill);
+    void increaseEnemyKillCount();
 
 private:
     ax::MenuItemImage* pauseButton;
@@ -23,16 +23,20 @@ private:
     ax::Sprite* xpBar;
     ax::Sprite* xpBarUnder;
 
+    float collectedCoin = 0;
     ax::Label* coinLabel = nullptr;
-    ax::Label* killLabel = nullptr;
-    float collectedCoin;
-    float collectedKill;
+
+    ax::Label* levelLabel = nullptr;
+
+    int enemyKillCount             = 0;
+    ax::Label* enemyKillCountLabel = nullptr;
 
     void updateHPBar();
     void updateXPBar();
     void updateCoinLabel();
-    void updateKillLabel();
+    void updateLevelLabel();
+    void updateEnemyKillCountLabel();
     void gamePauseCallback(ax::Object* sender);
 };
 
-#endif  // __GAMESCENE_UILAYER_H__
+#endif  // __GAMESCENE_UI_LAYER_H__

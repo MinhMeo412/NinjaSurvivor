@@ -32,12 +32,21 @@ bool GameSceneUILayer::init()
     Rect safeArea    = _director->getSafeAreaRect();
     Vec2 safeOrigin  = safeArea.origin;
 
+    auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
+    backgroundUpper->setContentSize(Size(360, 300));  // Kích thước nền mờ
+    backgroundUpper->setPosition(Vec2(0, 580));       // Vị trí trên màn hình
+    this->addChild(backgroundUpper, 0);
+
+    auto backgroundLower = LayerColor::create(Color4B(0, 0, 0, 180));
+    backgroundLower->setContentSize(Size(360, 300));
+    backgroundLower->setPosition(Vec2(0, -300));     
+    this->addChild(backgroundLower, 0);
+
     // Nút Pause
     pauseButton  = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
                                          AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
-    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2-10;  // Góc phải
+    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2;  // Góc phải
     float pauseY = safeOrigin.y + safeArea.size.height * 2 / 3;                                   // 2/3 từ dưới lên
-    pauseButton->setScale(2);
     pauseButton->setPosition(Vec2(pauseX, pauseY));
 
     // Tạo menu
@@ -69,7 +78,6 @@ bool GameSceneUILayer::init()
     this->addChild(xpBarUnder, 1);
 
     // Tạo label và sprite cho coin
-    collectedCoin = 0;
     coinLabel     = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
     if (!coinLabel)
     {
@@ -90,19 +98,12 @@ bool GameSceneUILayer::init()
     this->addChild(coinLabel, 5);
 
     coinSprite->setPosition(
-        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 10,
+        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 5,
         coinY);                  // Margin 5 giữa label và sprite
-    coinSprite->setScale(2);  
     this->addChild(coinSprite, 5);
 
-    // Tạo label và sprite cho kill
-    collectedKill = 0;
-    killLabel     = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    if (!killLabel)
-    {
-        AXLOG("Không thể tạo killLabel");
-        return false;
-    }
+    //Enemy kill count label
+    enemyKillCountLabel     = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
     auto skullSprite = Sprite::create("skull.png");
     if (!skullSprite)
     {
@@ -111,12 +112,12 @@ bool GameSceneUILayer::init()
     }
     float killLabelX = coinLabelX;  // Cùng cột với coinLabel
     float killY      = coinY - 30;  // Dưới coinLabel
-    killLabel->setPosition(killLabelX, killY);
-    killLabel->setAlignment(ax::TextHAlignment::RIGHT);
-    this->addChild(killLabel, 5);
+    enemyKillCountLabel->setPosition(killLabelX, killY);
+    enemyKillCountLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    this->addChild(enemyKillCountLabel, 5);
 
     skullSprite->setPosition(
-        killLabelX + killLabel->getContentSize().width / 2 + skullSprite->getContentSize().width / 2 + 5,
+        killLabelX + enemyKillCountLabel->getContentSize().width / 2 + skullSprite->getContentSize().width / 2 + 5,
         killY);                   // Margin 5
     skullSprite->setScale(0.8f);  // Thu nhỏ nếu cần
     this->addChild(skullSprite, 5);
@@ -142,6 +143,12 @@ bool GameSceneUILayer::init()
     this->addChild(hpBarRed, 2);
     this->addChild(hpBarGray, 1);
 
+
+    // Level label
+    levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Marker Felt.ttf", 24);
+    levelLabel->setPosition(ax::Vec2(180, xpBar->getPosition().y - 40));  // Xem lại vị trí
+    this->addChild(levelLabel, 5);
+
     return true;
 }
 void GameSceneUILayer::update(float dt)
@@ -156,25 +163,33 @@ void GameSceneUILayer::update(float dt)
     updateHPBar();
     updateCoinLabel();
     updateXPBar();
+    updateLevelLabel();
+    updateEnemyKillCountLabel();
 }
 
 void GameSceneUILayer::increaseCoin(float coin)
 {
     collectedCoin = collectedCoin + coin;
 }
-void GameSceneUILayer::increaseKill(float kill)
+void GameSceneUILayer::increaseEnemyKillCount()
 {
-    collectedKill = collectedKill + kill;
+    enemyKillCount += 1;
 }
 
 void GameSceneUILayer::updateCoinLabel()
 {
-    //coinLabel->setString(std::to_string((int)collectedCoin));
     coinLabel->setString(ax::StringUtils::format("%d", (int)collectedCoin));
 }
-void GameSceneUILayer::updateKillLabel()
+
+void GameSceneUILayer::updateLevelLabel()
 {
-    killLabel->setString(ax::StringUtils::format("%d", (int)collectedKill));
+    int level = SystemManager::getInstance()->getSystem<LevelSystem>()->getLevel();
+    levelLabel->setString(ax::StringUtils::format("Level %d", level));
+}
+
+void GameSceneUILayer::updateEnemyKillCountLabel()
+{
+    enemyKillCountLabel->setString(ax::StringUtils::format("%d", enemyKillCount));
 }
 
 //Cập nhật vị trí và máu của thanh HP

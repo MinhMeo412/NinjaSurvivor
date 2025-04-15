@@ -58,15 +58,10 @@ void CharacterChooseScene::menuNextCallback(Object* sender)
 
 void CharacterChooseScene::menuUISetup()
 {
-    // Sử dụng safeArea cho vị trí UI (trừ background)
-    const auto& safeOrigin = safeArea.origin;
-    const auto& safeSize   = safeArea.size;
+    float marginX = visibleSize.width * 0.05f;
+    float marginY = visibleSize.height * 0.025f;
 
-    // Margins tính theo safeSize để giữ tỷ lệ
-    float marginX = safeSize.width * 0.05f;
-    float marginY = safeSize.height * 0.025f;
-
-    // Tạo background (giữ nguyên, phủ toàn màn hình)
+    // Tạo background
     auto background = Sprite::create("UI/background3.png");
     if (!background)
     {
@@ -76,26 +71,26 @@ void CharacterChooseScene::menuUISetup()
     background->setPosition(origin + visibleSize / 2);
     this->addChild(background, 0);
 
-    // Tạo panel chọn nhân vật, căn giữa trên cùng safeArea
+    // Tạo panel chọn nhân vật
     auto panelChooseCharacter = Sprite::create("UI/NeopanelChoseCharacter2.png");
     if (!panelChooseCharacter)
     {
         AXLOG("Lỗi: Không thể tạo NeopanelChoseCharacter2.png");
         return;
     }
-    float panelY = safeOrigin.y + safeSize.height * 0.95f - panelChooseCharacter->getContentSize().height / 2;
-    panelChooseCharacter->setPosition(safeOrigin.x + safeSize.width / 2, panelY);
+    float panelY = origin.y + visibleSize.height * 0.95f - panelChooseCharacter->getContentSize().height / 2;
+    panelChooseCharacter->setPosition(origin.x + visibleSize.width / 2, panelY);
     this->addChild(panelChooseCharacter, 2);
 
-    // Vẽ viền debug cho safeArea
+    // Vẽ viền debug
     auto drawNode = DrawNode::create();
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
     this->addChild(drawNode, 0);
 
-    // Hiển thị coin, góc trên bên phải safeArea
+    // Hiển thị coin
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =
-        Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 40);
+        Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 24);
     if (!coinLabel)
     {
         AXLOG("Lỗi: Không thể tạo coinLabel");
@@ -110,8 +105,8 @@ void CharacterChooseScene::menuUISetup()
     float coinLabelWidth  = coinLabel->getContentSize().width;
     float coinSpriteWidth = coinSprite->getContentSize().width;
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
-    float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
-    float posY            = safeOrigin.y + safeSize.height - marginY;
+    float startPosX       = origin.x + visibleSize.width - marginX - totalWidth;
+    float posY            = origin.y + visibleSize.height - marginY;
     coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
     coinLabel->setAlignment(TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
@@ -122,10 +117,10 @@ void CharacterChooseScene::menuUISetup()
     // Khởi tạo menu items
     Vector<MenuItem*> menuItems;
 
-    // Tạo nút Return, góc trên bên trái safeArea
+    // Tạo nút Return
     returnButton = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                          AX_CALLBACK_1(CharacterChooseScene::menuReturnCallback, this),
-                                         Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
+                                         Vec2(origin.x + marginX, origin.y + visibleSize.height - marginY));
     if (!returnButton)
     {
         AXLOG("Lỗi: Không thể tạo nút Return");
@@ -133,7 +128,7 @@ void CharacterChooseScene::menuUISetup()
     }
     menuItems.pushBack(returnButton);
 
-    // Tạo panel mô tả, dưới panelChooseCharacter
+    // Tạo panel mô tả
     auto panelDescription = Sprite::create("UI/NeoDescriptionCharacter.png");
     if (!panelDescription)
     {
@@ -141,22 +136,9 @@ void CharacterChooseScene::menuUISetup()
         return;
     }
     float descY = panelChooseCharacter->getPositionY() - panelChooseCharacter->getContentSize().height / 2 -
-                  safeSize.height * 0.01f - panelDescription->getContentSize().height / 2;
-    panelDescription->setPosition(safeOrigin.x + safeSize.width / 2, descY);
+                  visibleSize.height * 0.01f - panelDescription->getContentSize().height / 2;
+    panelDescription->setPosition(origin.x + visibleSize.width / 2, descY);
     this->addChild(panelDescription, 2);
-
-    // Tạo label "Choose your character"
-    auto chooseCharacterLabel = Label::createWithTTF("Choose your character", "fonts/Pixelpurl-0vBPP.ttf", 30);
-    if (!chooseCharacterLabel)
-    {
-        AXLOG("Lỗi: Không thể tạo chooseCharacterLabel");
-        return;
-    }
-    chooseCharacterLabel->setPosition(panelDescription->getContentSize().width / 2,
-                                      panelDescription->getContentSize().height / 2);
-    chooseCharacterLabel->setAlignment(TextHAlignment::CENTER);
-    chooseCharacterLabel->setVisible(true);
-    panelDescription->addChild(chooseCharacterLabel, 6, "chooseCharacterLabel");
 
     // Tính vị trí nút Next/Buy
     auto nextSprite = Sprite::create("UI/buttonNext.png");
@@ -202,6 +184,8 @@ void CharacterChooseScene::menuUISetup()
     this->addChild(menu, 6);
 }
 
+
+
 void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* panelDescription, bool isAvailable)
 {
     auto gameData       = GameData::getInstance();
@@ -219,7 +203,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
         return;
     }
 
-    // Ẩn tất cả label
+    // Ẩn tất cả nhãn
     for (auto* child : panelDescription->getChildren())
         if (dynamic_cast<Label*>(child))
             child->setVisible(false);
@@ -241,6 +225,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     }
 
     auto templ = entities.at("player").at(name);
+    // Sửa: Dùng %.0f để hiển thị số nguyên
     healthLabel->setString(templ.health.has_value() ? StringUtils::format("Health: %.0f", templ.health->maxHealth)
                                                     : "Health: N/A");
     attackLabel->setString(templ.attack.has_value() ? StringUtils::format("Attack: %.0f", templ.attack->baseDamage)
@@ -273,10 +258,10 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
 
         if (selectedCharacterName.empty() || currentCoins < cost)
         {
-            auto errorLabel = Label::createWithTTF("You so poor :)))!", "fonts/Pixelpurl-0vBPP.ttf", 20);
+            auto errorLabel = Label::createWithTTF("Không đủ coin!", "fonts/Pixelpurl-0vBPP.ttf", 20);
             if (errorLabel)
             {
-                errorLabel->setPosition(safeArea.origin + safeArea.size / 2);  // Hiển thị trong safeArea
+                errorLabel->setPosition(visibleSize / 2);
                 this->addChild(errorLabel, 20);
                 errorLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
             }
@@ -307,7 +292,7 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
         }
 
         if (auto* coinLabel = dynamic_cast<Label*>(this->getChildByName("coinLabel")))
-            coinLabel->setString(StringUtils::format("%d", shopData->getCoins()));  // Loại bỏ "Coins:"
+            coinLabel->setString(StringUtils::format("Coins: %d", shopData->getCoins()));
 
         shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
         AXLOG("Đã mở khóa nhân vật: %s", selectedCharacterName.c_str());
@@ -317,7 +302,8 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
 Label* CharacterChooseScene::createStatLabel(const std::string& name,
                                              const std::string& tag,
                                              float baseY,
-                                             float xPos,
+                                             float xOffset,
+                                             float yOffset,
                                              Node* parent)
 {
     auto label = Label::createWithTTF("", "fonts/Pixelpurl-0vBPP.ttf", 18);
@@ -326,9 +312,7 @@ Label* CharacterChooseScene::createStatLabel(const std::string& name,
         AXLOG("Lỗi: Không thể tạo label %s", tag.c_str());
         return nullptr;
     }
-    // Căn lề trái với anchor point (0, 0.5) để văn bản bắt đầu từ xPos
-    label->setAnchorPoint(Vec2(0.0f, 0.5f));
-    label->setPosition(xPos, baseY);
+    label->setPosition(parent->getContentSize().width * 0.18f + xOffset, baseY - yOffset);
     label->setAlignment(TextHAlignment::LEFT);
     label->setVisible(false);
     parent->addChild(label, 6, tag + name);
@@ -360,9 +344,6 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         panelChooseCharacter->getPositionY() + panelChooseCharacter->getContentSize().height / 2.5f - iconSpacingY;
     float startX = panelLeft + iconSpacingX;
 
-    // Lề trái cố định cho các label (ngoại trừ weaponLabel)
-    float leftMargin = panelDescription->getContentSize().width * 0.06f;
-
     int index = 0;
     for (const auto& [name, templ] : entities.at("player"))
     {
@@ -374,24 +355,20 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         }
         characterLabel->setPosition(panelDescription->getContentSize().width / 2,
                                     panelDescription->getContentSize().height * 0.85f);
-        characterLabel->setAlignment(TextHAlignment::CENTER);
         characterLabel->setVisible(false);
         panelDescription->addChild(characterLabel, 6, "label" + name);
 
         float characterLabelBottomY =
             panelDescription->getContentSize().height * 0.85f - characterLabel->getContentSize().height * 0.5f;
-        float baseY = characterLabelBottomY - 10.0f;
+        float baseY = characterLabelBottomY - 20.0f;
 
-        // Tạo stat labels
-        auto healthLabel = createStatLabel(name, "healthLabel", baseY, leftMargin, panelDescription);
-        // WeaponLabel cùng hàng với healthLabel, cách một khoảng cố định
-        float healthLabelWidth =
-            healthLabel ? healthLabel->getContentSize().width : 100.0f;  // Giá trị mặc định nếu lỗi
-        float weaponLabelX = leftMargin + healthLabelWidth + 110.0f;      // Khoảng cách 20px
-        auto weaponLabel   = createStatLabel(name, "weaponLabel", baseY, weaponLabelX, panelDescription);
-        auto attackLabel   = createStatLabel(name, "attackLabel", baseY - 20.0f, leftMargin, panelDescription);
-        auto speedLabel    = createStatLabel(name, "speedLabel", baseY - 40.0f, leftMargin, panelDescription);
-        auto unlockLabel   = createStatLabel(name, "unlockLabel", baseY - 50.0f, leftMargin, panelDescription);
+        auto healthLabel = createStatLabel(name, "healthLabel", baseY, 0.0f, 0.0f, panelDescription);
+        auto weaponLabel = createStatLabel(name, "weaponLabel", baseY, 150.0f, 0.0f, panelDescription);
+        auto attackLabel = createStatLabel(name, "attackLabel", baseY, 0.0f,
+                                           20.0f, panelDescription);
+        auto speedLabel  = createStatLabel(name, "speedLabel", baseY, 0.0f,
+                                           30.0f, panelDescription);
+        auto unlockLabel = createStatLabel(name, "unlockLabel", baseY, 0.0f, 0.0f, panelDescription);
 
         if (!healthLabel || !weaponLabel || !attackLabel || !speedLabel || !unlockLabel)
         {
@@ -408,9 +385,8 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             continue;
         }
 
-        // Sửa lỗi capture bằng cách sử dụng initialization capture
-        button->setCallback([this, characterName = name, buyButton, nextButton, panelDescription](Object* sender) {
-            selectedCharacterName = characterName;
+        button->setCallback([this, name, buyButton, nextButton, panelDescription](Object* sender) {
+            selectedCharacterName = name;
 
             if (selectedCharacterItem && selectedCharacterItem != sender)
             {
@@ -427,16 +403,16 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             bool isAvailable     = false;
             const auto& entities = GameData::getInstance()->getEntityTemplates();
             if (entities.find("player") != entities.end() &&
-                entities.at("player").find(characterName) != entities.at("player").end())
+                entities.at("player").find(name) != entities.at("player").end())
             {
-                isAvailable = entities.at("player").at(characterName).available;
+                isAvailable = entities.at("player").at(name).available;
             }
             else
             {
-                AXLOG("Lỗi: Không tìm thấy nhân vật %s trong entityTemplates", characterName.c_str());
+                AXLOG("Lỗi: Không tìm thấy nhân vật %s trong entityTemplates", name.c_str());
             }
 
-            updateCharacterStats(characterName, panelDescription, isAvailable);
+            updateCharacterStats(name, panelDescription, isAvailable);
             Utils::updateItemUI(selectedCharacterItem, panelDescription, isAvailable);
             buyButton->setVisible(!isAvailable);
             nextButton->setVisible(isAvailable);
@@ -448,3 +424,4 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         index++;
     }
 }
+

@@ -17,21 +17,17 @@ void ItemSystem::init()
     int num = 1000;
     for (int i = 0; i < num; i++)
     {
-        Entity item = factory->createEntity("item", "coin");
-
+        Entity item = factory->createEntity("item", "chest");
         if (auto spriteComp = spriteMgr.getComponent(item))
         {
             spriteComp->initializeSprite();
         }
-
         auto transform = transformMgr.getComponent(item);
         if (!transform)
             continue;
-
         // Tính toán vị trí dựa trên số thứ tự i
         float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
         float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-
         transform->x = 1000 + offsetX;
         transform->y = 1000 + offsetY;
     }
@@ -39,20 +35,16 @@ void ItemSystem::init()
     for (int i = 0; i < num; i++)
     {
         Entity item = factory->createEntity("item", "greenGem");
-
         if (auto spriteComp = spriteMgr.getComponent(item))
         {
             spriteComp->initializeSprite();
         }
-
         auto transform = transformMgr.getComponent(item);
         if (!transform)
             continue;
-
         // Tính toán vị trí dựa trên số thứ tự i
         float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
         float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-
         transform->x = 1000 + offsetX;
         transform->y = 1500 + offsetY;
     }
@@ -64,7 +56,7 @@ void ItemSystem::update(float dt)
 {
     float elapsedTime = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
 
-    // Spawn item ngẫu nhiên mỗi x giây
+    // Spawn item ngẫu nhiên mỗi 30 giây
     if (static_cast<int>(elapsedTime) % 30 == 0 && elapsedTime > 0)
     {
         //spawnRandomItems();
@@ -74,7 +66,8 @@ void ItemSystem::update(float dt)
 // Spawn item khi quái chết
 void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
 {
-    auto transform = transformMgr.getComponent(deadEntity);
+    float elapsedTime = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
+    auto transform    = transformMgr.getComponent(deadEntity);
     if (!transform)
         return;
 
@@ -83,16 +76,56 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
     if (isBoss)
     {
         // Boss: Nhiều XP gem, Coin, và 1 Chest
-        //spawnMultipleItems(position, "xp_gem", 3, 6, 0.8f);  // 3-6 XP gem, 80%
-        spawnMultipleItems(position, "coin", 2, 5, 0.7f);    // 2-5 Coin, 70%
-        spawnSingleItem(position, "chest", 1.0f);            // 100% Chest
+        // spawnMultipleItems(position, "xp_gem", 3, 6, 0.8f);  // 3-6 XP gem, 80%
+        spawnMultipleItems(position, "coin", 10, 20, 1.0f);
+        spawnMultipleItems(position, "heart", 1, 3, 1.0f);
+        spawnSingleItem(position, "chest", 1.0f);          // 100% Chest
     }
     else
     {
-        // Enemy thường: XP gem, Coin, Heart
-        //spawnSingleItem(position, "xp_gem", 0.9f);  // 90%
-        spawnSingleItem(position, "coin", 1.0f);    // 5%
-        spawnSingleItem(position, "heart", 0.01f);   // 1%
+        float dropChance = static_cast<float>(rand()) / RAND_MAX;
+        if (dropChance < 0.8f) // 80% rớt gem
+        {
+            float greenGemRatio = 1.0f;
+            float blueGemRatio  = 0.0f;
+            float redGemRatio   = 0.0f;
+
+            if (elapsedTime > 600)
+            {
+                greenGemRatio = 0.5f;
+                blueGemRatio  = 0.3f;
+                redGemRatio   = 0.2f;
+            }
+            else if (elapsedTime > 420)
+            {
+                greenGemRatio = 0.6f;
+                blueGemRatio  = 0.3f;
+                redGemRatio   = 0.1f;
+            }
+            else if (elapsedTime > 180)
+            {
+                greenGemRatio = 0.8f;
+                blueGemRatio  = 0.2f;
+                redGemRatio   = 0.0f;
+            }
+            else if (elapsedTime > 60)
+            {
+                greenGemRatio = 0.9f;
+                blueGemRatio  = 0.1f;
+                redGemRatio   = 0.0f;
+            }
+
+            float randVal = static_cast<float>(rand()) / RAND_MAX;
+            if (randVal < greenGemRatio)
+                spawnSingleItem(position, "greenGem", 1.0f);
+            else if (randVal < greenGemRatio + blueGemRatio)
+                spawnSingleItem(position, "blueGem", 1.0f);
+            else
+                spawnSingleItem(position, "redGem", 1.0f);
+        }
+
+        spawnSingleItem(position, "coin", 0.15f); // 15% coin
+        spawnSingleItem(position, "heart", 0.03f); // 3% heart
     }
 }
 
@@ -133,9 +166,9 @@ void ItemSystem::spawnMultipleItems(const ax::Vec2& position,
                 spriteComp->initializeSprite();
             }
 
-            // Offset ngẫu nhiên để không chồng nhau
-            float offsetX = (rand() % 21 - 10) * 1.0f;  // -10 đến 10
-            float offsetY = (rand() % 21 - 10) * 1.0f;
+            // Offset ngẫu nhiên trong vùng 64x64
+            float offsetX  = (rand() % 65 - 32) * 1.0f;  // -32 đến 32
+            float offsetY  = (rand() % 65 - 32) * 1.0f;
             auto transform = transformMgr.getComponent(item);
             transform->x   = position.x + offsetX;
             transform->y   = position.y + offsetY;

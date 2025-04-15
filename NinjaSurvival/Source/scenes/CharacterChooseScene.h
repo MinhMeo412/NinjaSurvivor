@@ -25,8 +25,9 @@ private:
     ax::Label* createStatLabel(const std::string& name,
                                const std::string& tag,
                                float baseY,
-                               float xPos,
-                               Node* parent);
+                               float xOffset,
+                               float yOffset,
+                               ax::Node* parent);
     void updateCharacterStats(const std::string& name, ax::Node* panelDescription, bool isAvailable);
     ax::MenuItemSprite* createBuyButton(ax::MenuItemSprite* nextButton, ax::Node* panelDescription, float x, float y);
     void setupCharacterButtons(ax::Node* panelChooseCharacter,

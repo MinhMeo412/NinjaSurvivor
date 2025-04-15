@@ -370,12 +370,7 @@ bool MovementSystem::isOutOfView(Entity entity)
 //Thêm item được nhặt vào danh sách
 void MovementSystem::moveItemToPlayer(Entity item)
 {
-    AXLOG("Them item: %d",item);
     lootedItems.insert(item);  // Thêm item vào danh sách nhặt
-    for (auto& item : lootedItems)
-    {
-        AXLOG("Item trong chuoi: %d", item);
-    }
 }
 
 // Tạo Batch cho các entity

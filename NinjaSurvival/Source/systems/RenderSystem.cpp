@@ -104,7 +104,7 @@ void RenderSystem::addSpriteToScene(Entity entity)
     }
 
 
-    TransformComponent* transform = transformMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
     if (transform)
     {
         sprite->gameSceneFrame->setPosition(transform->x, transform->y);
