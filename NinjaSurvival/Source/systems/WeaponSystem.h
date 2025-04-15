@@ -64,34 +64,34 @@ private:
 
     std::unique_ptr<EntityFactory> factory;
 
-    using CreateFunc = std::function<Entity(std::string)>;
+    using CreateFunc = std::function<Entity(std::string, bool)>;
     std::unordered_map<std::string, CreateFunc> createWeapon;
 
-    using UpdateFunc = std::function<void(Entity,float)>;
+    using UpdateFunc = std::function<void(Entity, float)>;
     std::unordered_map<std::string, UpdateFunc> updateWeapon;
 
-    using UpgradeFunc = std::function<void(std::string,int)>;
+    using UpgradeFunc = std::function<void(std::string, int)>;
     std::unordered_map<std::string, UpgradeFunc> upgradeWeaponzxcv;
 
-    Entity playerEntity = 0;          // Entity của player để gắn vị trí vũ khí
-    std::vector<Entity> weaponPool;   // Pool chứa các entity vũ khí tái sử dụng
-    std::vector<Entity> tempWeaponPool;   // Pool chứa các entity vũ khí không tái sử dụng
+    Entity playerEntity = 0;             // Entity của player để gắn vị trí vũ khí
+    std::vector<Entity> weaponPool;      // Pool chứa các entity vũ khí tái sử dụng
+    std::vector<Entity> tempWeaponPool;  // Pool chứa các entity vũ khí không tái sử dụng
 
     // Tạo entity weapon
-    Entity createSword(std::string weaponName);  
-    Entity createShuriken(std::string weaponName);
-    Entity createKunai(std::string weaponName);
+    Entity createSword(std::string weaponName, bool alreadyHave);
+    Entity createShuriken(std::string weaponName, bool alreadyHave);
+    Entity createKunai(std::string weaponName, bool alreadyHave);
 
-    //Update weapon mỗi frame
-    void updateSword(Entity weapon,float dt);
-    void updateShuriken(Entity weapon,float dt);
-    void updateKunai(Entity weapon,float dt);
+    // Update weapon mỗi frame
+    void updateSword(Entity weapon, float dt);
+    void updateShuriken(Entity weapon, float dt);
+    void updateKunai(Entity weapon, float dt);
     Entity kunaiEntity;
 
-    //Tạo các tempEntityWeapon
+    // Tạo các tempEntityWeapon
     Entity createTempKunai(std::string weaponName);
 
-    //Upgrade weapon
+    // Upgrade weapon
 
     // Khởi tạo vũ khí cho player
     void initializePlayerWeapon(Entity player);

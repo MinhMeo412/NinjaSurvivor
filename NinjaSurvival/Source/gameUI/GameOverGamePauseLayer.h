@@ -1,5 +1,5 @@
-#ifndef __GAME_OVER_GAME_PAUSE_SCENE_H__
-#define __GAME_OVER_GAME_PAUSE_SCENE_H__
+#ifndef __GAME_OVER_GAME_PAUSE_LAYER_H__
+#define __GAME_OVER_GAME_PAUSE_LAYER_H__
 
 #include "axmol.h"
 
@@ -25,4 +25,4 @@ private:
     void onQuitGame(ax::Object* sender);
 };
 
-#endif  // __GAME_OVER_GAME_PAUSE_SCENE_H__
+#endif  // __GAME_OVER_GAME_PAUSE_LAYER_H__
