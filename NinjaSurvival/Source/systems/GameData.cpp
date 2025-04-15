@@ -376,6 +376,8 @@ void GameData::syncStatsWithShopSystem()
                     AttackComponent{static_cast<float>(components["attack"]["baseDamage"].GetDouble()), 0.0f, 1.0f};
             if (components.HasMember("speed") && components["speed"].IsFloat())
                 templ.speed = SpeedComponent{static_cast<float>(components["speed"].GetFloat())};
+            if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
+                templ.cooldown = CooldownComponent{static_cast<float>(components["cooldown"].GetFloat())};
         }
 
         baseTemplates[type][name] = templ;
@@ -425,6 +427,15 @@ void GameData::syncStatsWithShopSystem()
                 templ.speed         = SpeedComponent{baseSpeed + static_cast<float>(speedLevelValue)};
                 AXLOG("Đồng bộ Speed cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseSpeed, speedLevelValue,
                       templ.speed->speed);
+            }
+            if (templ.cooldown.has_value() && baseTempl.cooldown.has_value())
+            {
+                float baseCooldown     = baseTempl.cooldown->cooldownDuration;
+                int cooldownLevelValue = shop->getStatLevelValue("Stat", "ReduceCooldown");
+                templ.cooldown =
+                    CooldownComponent{baseCooldown * (1.0f - static_cast<float>(cooldownLevelValue) / 100.0f)};
+                AXLOG("Đồng bộ Cooldown cho %s: cơ bản=%f, giảm=%d%%, cuối=%f", name.c_str(), baseCooldown,
+                      cooldownLevelValue, templ.cooldown->cooldownDuration);
             }
         }
     }

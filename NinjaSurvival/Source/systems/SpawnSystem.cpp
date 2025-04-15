@@ -96,14 +96,10 @@ void SpawnSystem::update(float dt)
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-<<<<<<< HEAD
-    int maxEnemies = 600;                         // Giới hạn tối đa enemy sống
-    int numEnemies = 50 + (elapsedTime / 60) * 2;  // Tăng số quái theo phút
-=======
+
     int numEnemies;  // Số enemy spawn
     int minute = elapsedTime / 60;
     numEnemies = 2 + minute;
->>>>>>> origin/main
 
     // if (elapsedTime < 30)  // 0-1 phút
     //{

@@ -157,7 +157,7 @@ void LevelUpOrChestEventLayer::createUI()
 void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
 {
     // Gọi upgradeGenerator để làm mới upgradeList
-    upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator();
+    //upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator();
 
     // Xóa menu hiện tại
     if (selectionMenu)

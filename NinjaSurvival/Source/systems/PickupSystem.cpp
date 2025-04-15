@@ -123,19 +123,19 @@ void PickupSystem::applyBomb() {}
 void PickupSystem::applyMagnet() {}
 void PickupSystem::applyChest()
 {
-    std::vector<std::pair<std::string, int>> upgradeList = {{"sword", 1}};  // List này chỉ có 1 giá trị (nếu full hết thì cho giá trị coin)
+    //std::vector<std::pair<std::string, int>> upgradeList = {{"sword", 1}};  // List này chỉ có 1 giá trị (nếu full hết thì cho giá trị coin)
 
-    auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
-    if (gameScene)
-    {
-        auto levelUpLayer = LevelUpOrChestEventLayer::create(false, upgradeList);  // isLevelUp = false
-        if (levelUpLayer)
-        {
-            // Lấy vị trí của uiLayer
-            ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
-            levelUpLayer->setPosition(uiLayerPos);
-            gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            gameScene->unscheduleUpdate();            // Dừng update
-        }
-    }
+    //auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
+    //if (gameScene)
+    //{
+    //    auto levelUpLayer = LevelUpOrChestEventLayer::create(false, upgradeList);  // isLevelUp = false
+    //    if (levelUpLayer)
+    //    {
+    //        // Lấy vị trí của uiLayer
+    //        ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
+    //        levelUpLayer->setPosition(uiLayerPos);
+    //        gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
+    //        gameScene->unscheduleUpdate();            // Dừng update
+    //    }
+    //}
 }

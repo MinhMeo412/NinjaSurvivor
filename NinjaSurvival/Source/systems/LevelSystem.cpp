@@ -167,22 +167,22 @@ std::vector<std::string> LevelSystem::upgradeGenerator()
 
 void LevelSystem::chooseWeapon()
 {
-    std::vector<std::pair<std::string, int>> upgradeList = upgradeGenerator(); //int là level của weapon trong list (lấy level hiện tại + 1)
+    //std::vector<std::pair<std::string, int>> upgradeList = upgradeGenerator(); //int là level của weapon trong list (lấy level hiện tại + 1)
     //ví dụ với weapon chưa sở hữu int  = 1
     // với weapon hoặc buff đã sở hữu thì int = level trong inven + 1
 
-    auto gameScene                       = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
-    if (gameScene)
-    {
-        auto levelUpLayer = LevelUpOrChestEventLayer::create(true, upgradeList);  // isLevelUp = true
-        if (levelUpLayer)
-        {
-            // Lấy vị trí của uiLayer
-            ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
-            levelUpLayer->setPosition(uiLayerPos);
-            gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            gameScene->unscheduleUpdate();          // Dừng update
-        }
-    }
+    //auto gameScene                       = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
+    //if (gameScene)
+    //{
+    //    auto levelUpLayer = LevelUpOrChestEventLayer::create(true, upgradeList);  // isLevelUp = true
+    //    if (levelUpLayer)
+    //    {
+    //        // Lấy vị trí của uiLayer
+    //        ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
+    //        levelUpLayer->setPosition(uiLayerPos);
+    //        gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
+    //        gameScene->unscheduleUpdate();          // Dừng update
+    //    }
+    //}
 }
 
