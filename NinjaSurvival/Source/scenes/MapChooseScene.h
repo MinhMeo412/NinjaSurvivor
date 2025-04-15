@@ -12,10 +12,6 @@ public:
     bool init() override;
     void update(float dt) override;
 
-private:
-    ax::MenuItemImage* closeItem        = nullptr;
-    ax::MenuItemSprite* selectedMapItem = nullptr;
-    std::string selectedMapName;
 
     void menuCloseCallback(ax::Object* sender);
     void menuPlayCallback(ax::Object* sender);
@@ -31,6 +27,11 @@ private:
                      bool isAvailable,
                      ax::MenuItemSprite* playButton,
                      ax::MenuItemSprite* buyButton);
+
+private:
+    ax::MenuItemImage* closeItem        = nullptr;
+    ax::MenuItemSprite* selectedMapItem = nullptr;
+    std::string selectedMapName;
 };
 
 #endif  // __MAP_CHOOSE_SCENE_H__

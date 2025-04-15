@@ -82,6 +82,11 @@ bool ShopSystem::createSaveGame()
         {"Stat", "Health", false, 0, 0, 50, 10, 0.1f, 10.0f},  // Health: +10 mỗi cấp
         {"Stat", "Attack", false, 0, 0, 50, 10, 0.1f, 5.0f},   // Attack: +5 mỗi cấp
         {"Stat", "Speed", false, 0, 0, 50, 10, 0.1f, 2.0f},    // Speed: +2 mỗi cấp
+        {"Stat", "XPGain", false, 0, 0, 50, 5, 0.1f, 10.0f},          // XP Gain: +10% mỗi cấp (5 cấp)
+        {"Stat", "CoinGain", false, 0, 0, 50, 10, 0.1f, 10.0f},       // Coin Gain: +10% mỗi cấp (10 cấp)
+        {"Stat", "RerollWeapon", false, 0, 0, 50, 3, 0.0f, 1.0f},     // RerollWeapon: +1 lần mỗi cấp (3 cấp)
+        {"Stat", "ReduceCooldown", false, 0, 0, 50, 5, 0.1f, 10.0f},  // Reduce Cooldown: -10% mỗi cấp (5 cấp)
+        {"Stat", "SpawnRate", false, 0, 0, 50, 10, 0.1f, 10.0f},      // Spawn Rate: +10% mỗi cấp (10 cấp)
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
@@ -182,7 +187,26 @@ bool ShopSystem::upgradeStat(const std::string& name)
             data.level = currentLevel + 1;
 
             // Tính levelValue
-            data.levelValue = static_cast<int>(data.level.value() * data.valueIncrement.value());
+            if (data.name == "RerollWeapon")
+            {
+                data.levelValue = data.level.value();  // RerollWeapon: levelValue = level
+            }
+            else if (data.name == "XPGain" || data.name == "CoinGain" || data.name == "ReduceCooldown" ||
+                     data.name == "SpawnRate")
+            {
+                data.levelValue = static_cast<int>(data.level.value() * data.valueIncrement.value());
+            }
+            else
+            {
+                data.levelValue = static_cast<int>(data.level.value() * data.valueIncrement.value());
+            }
+
+            // Cập nhật cost (trừ RerollWeapon)
+            if (data.name != "RerollWeapon")
+            {
+                int currentCost = data.cost.value();
+                data.cost       = static_cast<int>(currentCost * (1.0f + data.valueIncrease.value()));
+            }
 
             // Cập nhật cost
             int currentCost = data.cost.value();

@@ -35,8 +35,9 @@ bool GameSceneUILayer::init()
     // Nút Pause
     pauseButton  = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
                                          AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
-    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2;  // Góc phải
+    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2-10;  // Góc phải
     float pauseY = safeOrigin.y + safeArea.size.height * 2 / 3;                                   // 2/3 từ dưới lên
+    pauseButton->setScale(2);
     pauseButton->setPosition(Vec2(pauseX, pauseY));
 
     // Tạo menu
@@ -89,9 +90,9 @@ bool GameSceneUILayer::init()
     this->addChild(coinLabel, 5);
 
     coinSprite->setPosition(
-        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 5,
+        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 10,
         coinY);                  // Margin 5 giữa label và sprite
-    //coinSprite->setScale(0.8f);  
+    coinSprite->setScale(2);  
     this->addChild(coinSprite, 5);
 
     // Tạo label và sprite cho kill

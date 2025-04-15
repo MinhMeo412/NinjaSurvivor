@@ -95,7 +95,7 @@ void WeaponSystem::initializePlayerWeapon(Entity player)
     }
     else
     {
-        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll", );
+        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll" );
     }
 }
 
@@ -171,7 +171,7 @@ Entity WeaponSystem::createKunai(std::string weaponName)
     return weapon;
 }
 
-Entity WeaponSystem::createTempKunai(std::string weaponName) 
+Entity WeaponSystem::createTempKunai(std::string weaponName)
 {
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
