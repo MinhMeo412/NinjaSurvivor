@@ -124,8 +124,7 @@
                 },
                 "attack": {
                     "baseDamage": 5.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
                 "sprite": {
@@ -183,8 +182,7 @@
                 },
                 "attack": {
                     "baseDamage": 5.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
                 "sprite": {
@@ -239,8 +237,7 @@
                 },
                 "attack": {
                     "baseDamage": 5.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
                 "sprite": {
@@ -298,8 +295,7 @@
                 },
                 "attack": {
                     "baseDamage": 1.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
                 "sprite": {
@@ -474,8 +470,7 @@
                 },
                 "attack": {
                     "baseDamage": 10.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 2.0
             }
@@ -503,8 +498,7 @@
                 },
                 "attack": {
                     "baseDamage": 10.0,
-                    "flatBonus": 2.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
                 "duration": 4.0
@@ -534,10 +528,9 @@
                 },
                 "attack": {
                     "baseDamage": 5.0,
-                    "flatBonus": 1.0,
-                    "damageMultiplier": 0.1
+                    "damageMultiplier": 0.0
                 },
-                "cooldown": 0.5,
+                "cooldown": 1.0,
                 "duration": 2.0
             }
         }

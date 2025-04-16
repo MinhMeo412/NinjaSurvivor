@@ -41,11 +41,13 @@ public:
     void init() override;
     void update(float dt) override;
 
-    void upgradeWeapon(std::string weaponName);  // Nâng cấp vũ khí
+    void upgradeWeaponAndBuff(std::string name);  // Nâng cấp vũ khí
 
     // Lấy danh sách entity vũ khí (moveSystem truy cập để xử lý vị trí)
     const std::vector<Entity>& getWeaponEntities() const { return weaponPool; }
     const std::vector<Entity>& getTempWeaponEntities() const { return tempWeaponPool; }
+
+    float attackBuff = 0;
 
 private:
     EntityManager& entityManager;
@@ -71,7 +73,8 @@ private:
     std::unordered_map<std::string, UpdateFunc> updateWeapon;
 
     using UpgradeFunc = std::function<void(std::string, int)>;
-    std::unordered_map<std::string, UpgradeFunc> upgradeWeaponzxcv;
+    std::unordered_map<std::string, UpgradeFunc> upgradeWeapon;
+    std::unordered_map<std::string, UpgradeFunc> upgradeBuff;
 
     Entity playerEntity = 0;             // Entity của player để gắn vị trí vũ khí
     std::vector<Entity> weaponPool;      // Pool chứa các entity vũ khí tái sử dụng
@@ -79,19 +82,30 @@ private:
 
     // Tạo entity weapon
     Entity createSword(std::string weaponName, bool alreadyHave);
+    std::vector<Entity> swordList;
     Entity createShuriken(std::string weaponName, bool alreadyHave);
+    std::vector<Entity> shurikenList;
     Entity createKunai(std::string weaponName, bool alreadyHave);
+    Entity kunaiEntity;
+    Entity createTempKunai(std::string weaponName); // Tạo các tempEntityWeapon
 
     // Update weapon mỗi frame
     void updateSword(Entity weapon, float dt);
     void updateShuriken(Entity weapon, float dt);
     void updateKunai(Entity weapon, float dt);
-    Entity kunaiEntity;
 
-    // Tạo các tempEntityWeapon
-    Entity createTempKunai(std::string weaponName);
+    
 
     // Upgrade weapon
+    void upgradeSword(std::string weaponName, int level);
+    void upgradeShuriken(std::string weaponName, int level);
+    void upgradeKunai(std::string weaponName, int level);
+
+    // Upgrade buff
+    void upgradeAttack(std::string buffName, int level);
+    void upgradeHealth(std::string buffName, int level);
+    void upgradeSpeed(std::string buffName, int level);
+    void upgradeXPGain(std::string buffName, int level);
 
     // Khởi tạo vũ khí cho player
     void initializePlayerWeapon(Entity player);

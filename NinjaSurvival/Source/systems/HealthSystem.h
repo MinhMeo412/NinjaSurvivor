@@ -27,6 +27,9 @@ public:
 
     float getPlayerMaxHealth() const;
     float getPlayerCurrentHealth() const;
+    void setPlayerCurrentHealth(float hpRecover);
+
+    void applyBombDamageToAll(float damage);
 
 private:
     EntityManager& entityManager;
@@ -37,7 +40,8 @@ private:
     ComponentManager<DurationComponent>& durationMgr;
 
     // Công thức tính dame
-    float calculateDamage(const AttackComponent* attack) const;
+    float calculateEnemyDamage(const AttackComponent* attack);
+    float calculatePlayerDamage(const AttackComponent* attack);
 
     // Trừ máu
     void applyDamage(Entity target, float damage);
@@ -47,10 +51,18 @@ private:
     bool canDealDamage(Entity attacker);
     void resetCooldown(Entity attacker);
 
-
-
     // Callback khi player hết máu
-    std::function<void()> onPlayerOutOfHealth;  
+    std::function<void()> onPlayerOutOfHealth;
+
+    // Khởi tạo std::random_device và mt19937 với seed
+    std::random_device rd;     // Lấy entropy từ hệ thống
+    std::mt19937 gen;       // Tạo bộ sinh số pseudo-random
+    // Hàm để sinh một số ngẫu nhiên thực (float) trong khoảng [min, max]
+    float getRandomFloat(float min, float max)
+    {
+        std::uniform_real_distribution<float> dist(min, max);
+        return dist(gen);
+    }
 };
 
 #endif  // __HEALTH_SYSTEM_H__

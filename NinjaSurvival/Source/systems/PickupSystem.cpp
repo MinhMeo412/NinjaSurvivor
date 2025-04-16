@@ -1,7 +1,9 @@
+#include "Utils.h"
 #include "PickupSystem.h"
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
 #include "LevelSystem.h"
+#include "HealthSystem.h"
 #include "gameUI/GameSceneUILayer.h"
 #include "gameUI/LevelUpOrChestEventLayer.h"
 #include "scenes/GameScene.h"
@@ -86,21 +88,41 @@ void PickupSystem::applyPickupEffect(std::string& itemName)
 
     else if (itemName == "chest")
     {
-
         applyChest();
         return;
     }
 
+    else if (itemName == "heart")
+    {
+        applyHeart();
+        return;
+    }
 
+    else if (itemName == "magnet")
+    {
+        applyMagnet();
+        return;
+    }
+
+    else if (itemName == "bomb")
+    {
+        applyBomb();
+        return;
+    }
 }
 
-void PickupSystem::applyHeart() {}
+void PickupSystem::applyHeart()
+{
+    SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(25.0);
+}
+
 void PickupSystem::applyCoin()
 {
     float amount   = 1;
     auto gameLayer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
     gameLayer->increaseCoin(amount);
 }
+
 void PickupSystem::applyXPGem(std::string& itemName)
 {
     if (itemName == "greenGem")
@@ -119,8 +141,31 @@ void PickupSystem::applyXPGem(std::string& itemName)
         return;
     }
 }
-void PickupSystem::applyBomb() {}
-void PickupSystem::applyMagnet() {}
+
+void PickupSystem::applyBomb()
+{
+    SystemManager::getInstance()->getSystem<HealthSystem>()->applyBombDamageToAll(200);
+}
+
+void PickupSystem::applyMagnet()
+{
+    for (auto entity : entityManager.getActiveEntities())
+    {
+        auto identity = identityMgr.getComponent(entity);
+        if (!identity || identity->type != "item")
+            continue;
+        if (Utils::in(identity->name, "greenGem", "blueGem", "redGem"))
+        {
+            auto movementSystem = SystemManager::getInstance()->getSystem<MovementSystem>();
+
+            if (!movementSystem->isAnimating(entity))
+            {
+                movementSystem->moveItemToPlayer(entity);
+            }
+        }
+    }
+}
+
 void PickupSystem::applyChest()
 {
     std::unordered_map<std::string, int> upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator(false);

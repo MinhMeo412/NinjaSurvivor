@@ -36,7 +36,6 @@ void WeaponMovementSystem::update(float dt)
 
     // Reset biến đếm kiếm mỗi frame
     swordCountInFrame = 0;
-    shurikenCountInFrame = 0;
 
     // Xử lý move của weapon
     auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
@@ -241,18 +240,9 @@ void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
         }
     }
 
-    shurikenCountInFrame++;
-
     // Các thông số cho chuyển động tròn 
-    float radius       = 32.0f; // Bán kính quỹ đạo
+    float radius             = hitbox->defaultSize.x * 2;      // Bán kính quỹ đạo
     const float angularSpeed = 0.67f * 3.14159f; // Tốc độ góc (1 vòng/giây)
-
-    // Khởi tạo góc nếu chưa có
-    if (vel->vx == 0.0f && vel->vy == 0.0f && shurikenCount > 0)
-    {
-        // Phân bổ góc đều dựa trên thứ tự shuriken trong frame
-        vel->vx = (shurikenCountInFrame - 1) * (2.0f * 3.14159f / shurikenCount);
-    }
 
     // Cập nhật góc
     vel->vx += angularSpeed * dt;
@@ -282,4 +272,21 @@ void WeaponMovementSystem::moveKunaiWeapon(Entity entity, float dt)
 
     transform->x += vel->vx * speed->speed * dt;
     transform->y += vel->vy * speed->speed * dt;
+}
+
+
+void WeaponMovementSystem::recalculateShurikenAngles(const std::vector<Entity>& shurikenList)
+{
+    // Số lượng shuriken
+    int shurikenCount = static_cast<int>(shurikenList.size());
+
+    // Phân bổ góc đều cho mỗi shuriken
+    for (size_t i = 0; i < shurikenList.size(); ++i)
+    {
+        auto vel = velocityMgr.getComponent(shurikenList[i]);
+        if (vel)
+        {
+            vel->vx = static_cast<float>(i) * (2.0f * 3.14159f / shurikenCount);
+        }
+    }
 }
