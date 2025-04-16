@@ -448,28 +448,31 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
     //    index++;
     //}
     // Define character order with names and their corresponding indices
-    std::vector<std::pair<std::string, int>> characterOrder = {
-        {"Ninja", 0}, {"Master", 1}, {"hello", 2}
-        // Add more characters as needed, e.g., {"Warrior", 2}, {"Mage", 3}
-    };
+    // Tạo characterOrder từ entityTemplates
+    std::vector<std::pair<std::string, int>> characterOrder;
+    int index = 0;
+    for (const auto& [name, templ] : entities.at("player"))
+    {
+        characterOrder.emplace_back(name, index++);
+    }
 
     int numCharacters = entities.at("player").size();
-    const int cols    = 2;
-    const int rows    = (numCharacters + cols - 1) / cols;
+    const int cols    = 4;                                  // Số cột cố định là 4
+    const int rows    = (numCharacters + cols - 1) / cols;  // Tính số hàng
 
-    float iconSpacingX = panelChooseCharacter->getContentSize().width * 0.06f;
+    float iconSpacingX = panelChooseCharacter->getContentSize().width * 0.093f;
     float iconSpacingY = panelChooseCharacter->getContentSize().height * 0.03f;
     float panelLeft    = panelChooseCharacter->getPositionX() - panelChooseCharacter->getContentSize().width / 2.4f;
     float startY =
         panelChooseCharacter->getPositionY() + panelChooseCharacter->getContentSize().height / 2.5f - iconSpacingY;
-    float startX = panelLeft + iconSpacingX;
+    float startX       = panelLeft + iconSpacingX;
 
     // Lề trái cố định cho các label (ngoại trừ weaponLabel)
     float leftMargin = panelDescription->getContentSize().width * 0.06f;
 
     for (const auto& [name, templ] : entities.at("player"))
     {
-        // Look up the index for the current character name in characterOrder
+        // Tìm index từ characterOrder
         int index = -1;
         for (const auto& pair : characterOrder)
         {
@@ -480,7 +483,7 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             }
         }
 
-        // Skip characters not found in characterOrder
+        // Bỏ qua nếu không tìm thấy (trường hợp này khó xảy ra vì characterOrder được tạo từ entities)
         if (index == -1)
         {
             AXLOG("Cảnh báo: Nhân vật %s không có trong characterOrder, bỏ qua", name.c_str());
@@ -505,7 +508,6 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
 
         // Tạo stat labels
         auto healthLabel = createStatLabel(name, "healthLabel", baseY, leftMargin, panelDescription);
-        // WeaponLabel cùng hàng với healthLabel, cách một khoảng cố định
         float healthLabelWidth =
             healthLabel ? healthLabel->getContentSize().width : 100.0f;  // Giá trị mặc định nếu lỗi
         float weaponLabelX = leftMargin + healthLabelWidth + 110.0f;     // Khoảng cách 20px
@@ -529,7 +531,7 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             continue;
         }
 
-        // Sửa lỗi capture bằng cách sử dụng initialization capture
+        // Gắn callback cho nút
         button->setCallback([this, characterName = name, buyButton, nextButton, panelDescription](Object* sender) {
             selectedCharacterName = characterName;
 
@@ -564,8 +566,14 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         });
 
         button->setUserData(characterLabel);
-        // Use the index from characterOrder to calculate position
-        button->setPosition(Vec2(startX + index * (button->getContentSize().width + iconSpacingX), startY));
+
+        // Tính toán vị trí nút theo lưới 4 cột
+        int col            = index % cols;  // Cột (0 đến 3)
+        int row            = index / cols;  // Hàng
+        float buttonWidth  = button->getContentSize().width;
+        float buttonHeight = button->getContentSize().height;
+        button->setPosition(
+            Vec2(startX + col * (buttonWidth + iconSpacingX), startY - row * (buttonHeight + iconSpacingY)));
         menuItems.pushBack(button);
     }
 }

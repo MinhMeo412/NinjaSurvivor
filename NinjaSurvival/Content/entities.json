@@ -102,55 +102,6 @@
             }
         },
         {
-            "type": "player",
-            "name": "hello",
-            "available": false,
-            "profileImage": "Entity/Character/Faceset1.png",
-            "components": {
-                "transform": {
-                    "x": 700.0,
-                    "y": 1000.0
-                },
-                "velocity": {
-                    "vx": 0.0,
-                    "vy": 0.0
-                },
-                "speed": 50.0,
-                "hitbox": {
-                    "width": 16.0,
-                    "height": 16.0
-                },
-                "health": {
-                    "maxHealth": 100.0
-                },
-                "sprite": {
-                    "plist": "Entity/Character/master.plist",
-                    "gameSceneFrame": "./master_down0"
-                },
-                "animation": {
-                    "frames": {
-                        "moveDown": [
-                            "./master_down0",
-                            "./master_down1"
-                        ],
-                        "moveRight": [
-                            "./master_right0",
-                            "./master_right1"
-                        ],
-                        "moveLeft": [
-                            "./master_left0",
-                            "./master_left1"
-                        ],
-                        "idle": [
-                            "./master_down0"
-                        ]
-                    },
-                    "frameDuration": 0.2
-                },
-                "weapon": "sword"
-            }
-        },
-        {
             "type": "enemy",
             "name": "Slime",
             "available": true,
