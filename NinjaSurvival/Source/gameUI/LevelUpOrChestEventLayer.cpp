@@ -9,14 +9,14 @@
 using namespace ax;
 
 LevelUpOrChestEventLayer::LevelUpOrChestEventLayer(bool isLevelUp,
-                                                   const std::vector<std::pair<std::string, int>>& upgradeList)
+                                                   const std::unordered_map<std::string, int>& upgradeList)
     : isLevelUp(isLevelUp), upgradeList(upgradeList)
 {
     rerollCount = SystemManager::getInstance()->getSystem<LevelSystem>()->getRerollCount();
 }
 
 LevelUpOrChestEventLayer* LevelUpOrChestEventLayer::create(bool isLevelUp,
-                                                           const std::vector<std::pair<std::string, int>>& upgradeList)
+                                                           const std::unordered_map<std::string, int>& upgradeList)
 {
     auto layer = new (std::nothrow) LevelUpOrChestEventLayer(isLevelUp, upgradeList);
     if (layer && layer->init())
@@ -88,29 +88,35 @@ void LevelUpOrChestEventLayer::createUI()
     // Kiểm tra nếu upgradeList rỗng, thêm "No upgrades available" vào danh sách
     if (upgradeList.empty())
     {
-        AXLOG("createUI - upgradeList empty, adding 'No upgrades available'");
-        upgradeList.push_back({"No upgrades available", 0});
+        AXLOG("'No upgrades available'");
+        return;
     }
 
-    for (int i = 0; i < maxDisplay; i++)
+    int i = 0;
+    for (const auto& upgrade : upgradeList)
     {
+        if (i >= maxDisplay)
+            break;
+
         // Tạo văn bản hiển thị với định dạng yêu cầu
-        std::string displayText = upgradeList[i].first;
-        if (upgradeList[i].second > 0)
+        std::string displayText = upgrade.first;
+        if (upgrade.second > 0)
         {
-            displayText += " - level " + std::to_string(upgradeList[i].second);
+            displayText += " - level " + std::to_string(upgrade.second);
         }
-        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgradeList[i].first, upgradeList[i].second);
+        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
 
         auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 24);
-        itemLabel->setDimensions(300, 0);               // Giới hạn chiều rộng, cho phép xuống dòng
-        itemLabel->setAlignment(TextHAlignment::LEFT);  // Căn trái văn bản
+        itemLabel->setDimensions(300, 0);
+        itemLabel->setAlignment(TextHAlignment::LEFT);
         itemLabel->setAnchorPoint(Vec2(0, 0.5));
-        
+
+
+        //Tạo menu item với event khi nhấn
         auto menuItem = MenuItemLabel::create(itemLabel, [=](Object* sender) {
             if (isLevelUp)
             {
-                selectedUpgrade = upgradeList[i].first;
+                selectedUpgrade = upgrade.first;
                 if (confirmButton)
                 {
                     confirmButton->setVisible(true);
@@ -118,27 +124,21 @@ void LevelUpOrChestEventLayer::createUI()
             }
         });
 
-            float panelWidth  = panelChooseUp->getContentSize().width;
-            float panelHeight = panelChooseUp->getContentSize().height;
+        menuItem->setPosition(Vec2(0, 50 - i * itemHeight));
 
-            float startY = (maxDisplay - 1) * itemHeight / 2;  // Tính offset để căn giữa danh sách
-          
-            menuItem->setPosition(Vec2(panelWidth * 2 / 15, startY - i * itemHeight));
-
-
-        
         if (!isLevelUp)
         {
+            // Tự động gán selectedUpgrade cho mục duy nhất
+            selectedUpgrade = upgrade.first;
+
             // Vô hiệu hóa tương tác nhưng giữ màu bình thường
             menuItem->setCascadeOpacityEnabled(false);
             menuItem->setCascadeColorEnabled(false);
             menuItem->setEnabled(false);
-            if (itemLabel)
-            {
-                itemLabel->setTextColor(Color4B::WHITE);  // Đảm bảo màu chữ không đổi
-            }
+            itemLabel->setTextColor(Color4B::WHITE);
         }
         selectionItems.pushBack(menuItem);
+        i++;
     }
 
     // Tạo menu cho danh sách lựa chọn
@@ -191,7 +191,7 @@ void LevelUpOrChestEventLayer::createUI()
 void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
 {
     // Gọi upgradeGenerator để làm mới upgradeList
-    //upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator();
+    upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator(true);
 
     // Xóa menu hiện tại
     if (selectionMenu)
@@ -203,49 +203,54 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
     // Tạo lại danh sách mới
     Vector<MenuItem*> newItems;
     float itemHeight  = 80.0f;
-    int newMaxDisplay = std::min(static_cast<int>(upgradeList.size()), 3);
+    int maxDisplay = std::min(static_cast<int>(upgradeList.size()), 3);
 
-    for (int i = 0; i < newMaxDisplay; i++)
+    auto visibleSize   = Director::getInstance()->getVisibleSize();
+
+    int i = 0;
+    for (const auto& upgrade : upgradeList)
     {
-        // Tạo văn bản hiển thị với định dạng yêu cầu
-        std::string displayText = upgradeList[i].first;
-        if (upgradeList[i].second > 0)
-        {
-            displayText += " - level " + std::to_string(upgradeList[i].second);
-        }
-        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgradeList[i].first, upgradeList[i].second);
+        if (i >= maxDisplay)
+            break;
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Marker Felt.ttf", 24);
-        itemLabel->setDimensions(300, 0);               // Giới hạn chiều rộng, cho phép xuống dòng
-        itemLabel->setAlignment(TextHAlignment::LEFT);  // Căn trái văn bản
+        // Tạo văn bản hiển thị với định dạng yêu cầu
+        std::string displayText = upgrade.first;
+        if (upgrade.second > 0)
+        {
+            displayText += " - level " + std::to_string(upgrade.second);
+        }
+        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
+
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 24);
+        itemLabel->setDimensions(300, 0);
+        itemLabel->setAlignment(TextHAlignment::LEFT);
+        itemLabel->setAnchorPoint(Vec2(0, 0.5));
 
         auto menuItem = MenuItemLabel::create(itemLabel, [=](Object* sender) {
             if (isLevelUp)
             {
-                selectedUpgrade = upgradeList[i].first;
+                selectedUpgrade = upgrade.first;
                 if (confirmButton)
                 {
                     confirmButton->setVisible(true);
                 }
             }
         });
+
         menuItem->setPosition(Vec2(0, 50 - i * itemHeight));
+
         if (!isLevelUp)
         {
-            // Vô hiệu hóa tương tác nhưng giữ màu bình thường
             menuItem->setCascadeOpacityEnabled(false);
             menuItem->setCascadeColorEnabled(false);
             menuItem->setEnabled(false);
-            if (itemLabel)
-            {
-                itemLabel->setTextColor(Color4B::WHITE);  // Đảm bảo màu chữ không đổi
-            }
+            itemLabel->setTextColor(Color4B::WHITE);
         }
         newItems.pushBack(menuItem);
+        i++;
     }
 
     // Tạo menu mới
-    auto visibleSize = Director::getInstance()->getVisibleSize();
     selectionMenu    = Menu::createWithArray(newItems);
     selectionMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(selectionMenu, 2);  // Đảm bảo menu ở trên panel
@@ -271,10 +276,15 @@ void LevelUpOrChestEventLayer::onConfirm(ax::Object* sender)
         // music click
         AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
 
-        if (isLevelUp && !selectedUpgrade.empty())
+        if (!selectedUpgrade.empty())
         {
             // Xử lý
             // SystemManager::getInstance()->getSystem<LevelSystem>()
+            AXLOG("Upgrade item %s", selectedUpgrade.c_str());
+        }
+        else 
+        {
+            AXLOG("Khong co upgrade duoc chon");
         }
 
         gameScene->scheduleUpdate();  // Tiếp tục update của GameScene

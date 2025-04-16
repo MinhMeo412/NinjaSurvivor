@@ -123,7 +123,7 @@ void PickupSystem::applyBomb() {}
 void PickupSystem::applyMagnet() {}
 void PickupSystem::applyChest()
 {
-    std::vector<std::pair<std::string, int>> upgradeList = {{"sword", 1}};  // List này chỉ có 1 giá trị (nếu full hết thì cho giá trị coin)
+    std::unordered_map<std::string, int> upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator(false);
 
     auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
     if (gameScene)
