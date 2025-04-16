@@ -1,7 +1,10 @@
+#include "Utils.h"
 #include "WeaponSystem.h"
 #include "EntityFactory.h"
 #include "SpawnSystem.h"
+#include "MovementSystem.h"
 #include "TimeSystem.h"
+#include "LevelSystem.h"
 #include "RenderSystem.h"
 #include "SystemManager.h"
 #include "GameData.h"
@@ -17,6 +20,17 @@ void WeaponSystem::init()
     updateWeapon["sword"]       = [this](Entity weapon, float dt) { updateSword(weapon, dt); };
     updateWeapon["shuriken"]    = [this](Entity weapon, float dt) { updateShuriken(weapon, dt); };
     updateWeapon["kunai"]       = [this](Entity weapon, float dt) { updateKunai(weapon, dt); };
+
+    // Khai báo các kiểu upgrade weapon
+    upgradeWeapon["sword"]      = [this](std::string weaponName, int level) { upgradeSword(weaponName, level); };
+    upgradeWeapon["shuriken"]   = [this](std::string weaponName, int level) { upgradeShuriken(weaponName, level); };
+    upgradeWeapon["kunai"]      = [this](std::string weaponName, int level) { upgradeKunai(weaponName, level); };
+
+    // Khai báo các kiểu upgrade buff
+    upgradeBuff["attack"]       = [this](std::string buffName, int level) { upgradeAttack(buffName, level); };
+    upgradeBuff["health"]       = [this](std::string buffName, int level) { upgradeHealth(buffName, level); };
+    upgradeBuff["speed"]        = [this](std::string buffName, int level) { upgradeSpeed(buffName, level); };
+    upgradeBuff["xp_gain"]      = [this](std::string buffName, int level) { upgradeXPGain(buffName, level); };
 
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
@@ -91,13 +105,6 @@ void WeaponSystem::initializePlayerWeapon(Entity player)
         {
             // Gọi hàm khởi tạo tương ứng
             weaponPool.push_back(it->second(defaultWeapon, true));
-            weaponPool.push_back(createShuriken("shuriken", false));
-            weaponPool.push_back(createShuriken("shuriken", true));
-            weaponPool.push_back(createShuriken("shuriken", true));
-            weaponPool.push_back(createShuriken("shuriken", true));
-            weaponPool.push_back(createShuriken("shuriken", true));
-            weaponPool.push_back(createSword("sword", false));
-            weaponPool.push_back(createSword("sword", true));
         }
     }
     else
@@ -106,17 +113,97 @@ void WeaponSystem::initializePlayerWeapon(Entity player)
     }
 }
 
-void WeaponSystem::upgradeWeapon(std::string weaponName)
+void WeaponSystem::upgradeWeaponAndBuff(std::string wpOrBuffName)
 {
-    auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
-    for (int i = 0; i < weaponInventory->weapons.size(); i++)
+    if (Utils::not_in(wpOrBuffName, "coin", "heart"))
     {
-        if (weaponInventory->weapons[i].first == weaponName && weaponInventory->weapons[i].second < 5)
+        const auto& templ = GameData::getInstance()->getEntityTemplates();
+        std::string type  = GameData::getInstance()->findTypeByName(templ, wpOrBuffName);
+
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+
+        if (type == "") // Upgrade buff
         {
-            weaponInventory->weapons[i].second += 1;  // Tăng level trong inventory
-            // Tăng stats hoặc các chức năng khác
-            // upgradeWeaponStats(weaponInventory->weapons[i].first, weaponInventory->weapons[i].second); (string
-            // weaponName, int level)
+            bool found = false;
+            for (auto& [name, level] : weaponInventory->buffs)
+            {
+                if (name == wpOrBuffName) //Nếu đã có trong invent
+                {
+                    level += 1;  // Tăng level trong inventory
+                    auto it = upgradeBuff.find(wpOrBuffName);
+                    if (it != upgradeBuff.end())
+                    {
+                        // Gọi hàm upgrade tương ứng
+                        it->second(wpOrBuffName, level);
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) //Nếu chưa có trong invent
+            {
+                for (auto& [name, level] : weaponInventory->buffs)
+                {
+                    if (name == "")
+                    {
+                        name  = wpOrBuffName;
+                        level = 1;
+                        auto it = upgradeBuff.find(wpOrBuffName);
+                        if (it != upgradeBuff.end())
+                        {
+                            // Gọi hàm upgrade tương ứng
+                            it->second(wpOrBuffName, level);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        else // Upgrade weapon
+        {
+            bool found = false;
+            for (auto& [name, level] : weaponInventory->weapons)
+            {
+                if (name == wpOrBuffName) //Nếu đã có trong invent
+                {
+                    level += 1;  // Tăng level trong inventory
+                    auto it = upgradeWeapon.find(wpOrBuffName);
+                    if (it != upgradeWeapon.end())
+                    {
+                        // Gọi hàm upgrade tương ứng
+                        it->second(wpOrBuffName, level);
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) //Nếu chưa có trong invent
+            {
+                for (auto& [name, level] : weaponInventory->weapons)
+                {
+                    if (name == "")
+                    {
+                        auto it = createWeapon.find(wpOrBuffName);
+                        if (it != createWeapon.end())
+                        {
+                            // Gọi hàm khởi tạo tương ứng
+                            weaponPool.push_back(it->second(wpOrBuffName, false));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (wpOrBuffName == "coin")
+        {
+
+        }
+        else if (wpOrBuffName == "heart")
+        {
+
         }
     }
 }
@@ -145,6 +232,8 @@ Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
         sprite->initializeSprite();
     }
 
+    swordList.push_back(weapon);
+
     return weapon;
 }
 
@@ -158,7 +247,7 @@ Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
         if (it != weaponInventory->weapons.end())
         {
             it->first  = "shuriken";
-            it->second = 5;
+            it->second = 1;
         }
     }
     const auto& templ = GameData::getInstance()->getEntityTemplates();
@@ -171,6 +260,8 @@ Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
     {
         sprite->initializeSprite();
     }
+
+    shurikenList.push_back(weapon);
 
     return weapon;
 }
@@ -325,5 +416,442 @@ void WeaponSystem::updateKunai(Entity weapon, float dt)
     {
         tempWeaponPool.push_back(createTempKunai("kunai"));
         cooldown->cooldownTimer = cooldown->cooldownDuration;
+    }
+}
+
+void WeaponSystem::upgradeSword(std::string weaponName, int level)
+{
+    if (weaponName != "sword")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        // Thêm 1 kiếm chém phía sau
+        auto it = createWeapon.find(weaponName);
+        weaponPool.push_back(it->second(weaponName, true));
+        // Đồng bộ CD
+        for (auto sword : swordList)
+        {
+            auto cooldown = cooldownMgr.getComponent(sword);
+            cooldown->cooldownTimer = 0.0;
+        }
+        break;
+    }
+    case 3:
+    {
+        for (auto sword : swordList)
+        {
+            // Giảm cooldown
+            auto cooldown           = cooldownMgr.getComponent(sword);
+            cooldown->cooldownDuration -= 0.25;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(sword);
+            attack->baseDamage += 5;
+        }
+        break;
+    }
+    case 4:
+    {
+        // Giảm cooldown
+        for (auto sword : swordList)
+        {
+            auto cooldown = cooldownMgr.getComponent(sword);
+            cooldown->cooldownDuration -= 0.25;
+        }
+        break;
+    }
+    case 5:
+    {
+        for (auto sword : swordList)
+        {
+            // Tăng size
+            auto transform   = transformMgr.getComponent(sword);
+            transform->scale = 2.0;
+            auto hitbox      = hitboxMgr.getComponent(sword);
+            hitbox->defaultSize *= 2.0;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(sword);
+            attack->baseDamage += 5;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
+{
+    if (weaponName != "shuriken")
+        return;
+
+    switch (level)
+    {
+    case 2:  
+    {
+        // Thêm 1 shuriken
+        auto it = createWeapon.find(weaponName);
+        weaponPool.push_back(it->second(weaponName, true));
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        for (auto shuriken : shurikenList)
+        {
+            // Đồng bộ CD
+            auto cooldown           = cooldownMgr.getComponent(shuriken);
+            cooldown->cooldownTimer = 0.0;
+        }
+        break;
+    }
+    case 3:
+    {
+        // Thêm 1 shuriken
+        auto it = createWeapon.find(weaponName);
+        weaponPool.push_back(it->second(weaponName, true));
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+
+        auto cooldownSync = cooldownMgr.getComponent(shurikenList[0]);
+        // Giảm CD
+        cooldownSync->cooldownDuration -= 0.5;
+        for (auto shuriken : shurikenList)
+        {
+            // Đồng bộ CD
+            auto cooldown           = cooldownMgr.getComponent(shuriken);
+            cooldown->cooldownTimer = 0.0;
+            cooldown->cooldownDuration = cooldownSync->cooldownDuration;
+        }
+        break;
+    }
+    case 4:
+    {
+        // Thêm 1 shuriken
+        auto it = createWeapon.find(weaponName);
+        weaponPool.push_back(it->second(weaponName, true));
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        auto cooldownSync = cooldownMgr.getComponent(shurikenList[0]);
+        // Giảm CD
+        cooldownSync->cooldownDuration -= 1.0;
+        for (auto shuriken : shurikenList)
+        {
+            // Đồng bộ CD
+            auto cooldown              = cooldownMgr.getComponent(shuriken);
+            cooldown->cooldownTimer    = 0.0;
+            cooldown->cooldownDuration = cooldownSync->cooldownDuration;
+        }
+        break;
+    }
+    case 5: 
+    {
+        // Thêm 1 shuriken
+        auto it = createWeapon.find(weaponName);
+        weaponPool.push_back(it->second(weaponName, true));
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        for (auto shuriken : shurikenList)
+        {
+            // Tăng size
+            auto transform   = transformMgr.getComponent(shuriken);
+            transform->scale = 2.0;
+            auto hitbox      = hitboxMgr.getComponent(shuriken);
+            hitbox->defaultSize *= 2.0;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(shuriken);
+            attack->baseDamage += 5;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeKunai(std::string weaponName, int level)
+{
+    if (weaponName != "kunai")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        // Giảm CD
+        auto cooldown = cooldownMgr.getComponent(kunaiEntity);
+        cooldown->cooldownDuration -= 0.1;
+        break;
+    }
+    case 3:
+    {
+        // Giảm CD
+        auto cooldown = cooldownMgr.getComponent(kunaiEntity);
+        cooldown->cooldownDuration -= 0.1;
+        // Tăng dame
+        auto attack = attackMgr.getComponent(kunaiEntity);
+        attack->baseDamage += 3;
+        break;
+    }
+    case 4:
+    {
+        // Giảm CD
+        auto cooldown = cooldownMgr.getComponent(kunaiEntity);
+        cooldown->cooldownDuration -= 0.15;
+        break;
+    }
+    case 5:
+    {
+        // Giảm CD
+        auto cooldown = cooldownMgr.getComponent(kunaiEntity);
+        cooldown->cooldownDuration -= 0.25;
+        // Tăng dame
+        auto attack = attackMgr.getComponent(kunaiEntity);
+        attack->baseDamage += 4;
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeAttack(std::string buffName, int level)
+{
+    if (buffName != "attack")
+        return;
+
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        attackBuff += 0.1;
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        attackBuff += 0.1;
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        attackBuff += 0.1;
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        attackBuff += 0.1;
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        attackBuff += 0.1;
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeHealth(std::string buffName, int level)
+{
+    if (buffName != "health")
+        return;
+
+    auto identity      = identityMgr.getComponent(playerEntity);
+    auto characterData = GameData::getInstance()->getEntityTemplates().at(identity->type).at(identity->name);
+    float baseHealth   = characterData.health->maxHealth;
+
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        float healthMultiplier = 0.1;
+        float hpIncrease        = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+
+        auto health     = healthMgr.getComponent(playerEntity);
+        health->maxHealth += hpIncrease;
+        health->currentHealth += hpIncrease;
+        if (health->currentHealth > health->maxHealth)
+        {
+            health->currentHealth = health->maxHealth;
+        }
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        float healthMultiplier = 0.1;
+        float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+
+        auto health = healthMgr.getComponent(playerEntity);
+        health->maxHealth += hpIncrease;
+        health->currentHealth += hpIncrease;
+        if (health->currentHealth > health->maxHealth)
+        {
+            health->currentHealth = health->maxHealth;
+        }
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        float healthMultiplier = 0.1;
+        float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+
+        auto health = healthMgr.getComponent(playerEntity);
+        health->maxHealth += hpIncrease;
+        health->currentHealth += hpIncrease;
+        if (health->currentHealth > health->maxHealth)
+        {
+            health->currentHealth = health->maxHealth;
+        }
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        float healthMultiplier = 0.1;
+        float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+
+        auto health = healthMgr.getComponent(playerEntity);
+        health->maxHealth += hpIncrease;
+        health->currentHealth += hpIncrease;
+        if (health->currentHealth > health->maxHealth)
+        {
+            health->currentHealth = health->maxHealth;
+        }
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        float healthMultiplier = 0.1;
+        float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+
+        auto health = healthMgr.getComponent(playerEntity);
+        health->maxHealth += hpIncrease;
+        health->currentHealth += hpIncrease;
+        if (health->currentHealth > health->maxHealth)
+        {
+            health->currentHealth = health->maxHealth;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeSpeed(std::string buffName, int level)
+{
+    if (buffName != "speed")
+        return;
+
+    auto identity      = identityMgr.getComponent(playerEntity);
+    auto characterData = GameData::getInstance()->getEntityTemplates().at(identity->type).at(identity->name);
+    float baseSpeed   = characterData.speed->speed;
+
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        float speedMultiplier = 0.1;
+        float speedIncrease   = (baseSpeed * (1 + speedMultiplier)) - baseSpeed;
+
+        auto speed = speedMgr.getComponent(playerEntity);
+        speed->speed += speedIncrease;
+
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        float speedMultiplier = 0.1;
+        float speedIncrease   = (baseSpeed * (1 + speedMultiplier)) - baseSpeed;
+
+        auto speed = speedMgr.getComponent(playerEntity);
+        speed->speed += speedIncrease;
+
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        float speedMultiplier = 0.1;
+        float speedIncrease   = (baseSpeed * (1 + speedMultiplier)) - baseSpeed;
+
+        auto speed = speedMgr.getComponent(playerEntity);
+        speed->speed += speedIncrease;
+
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        float speedMultiplier = 0.1;
+        float speedIncrease   = (baseSpeed * (1 + speedMultiplier)) - baseSpeed;
+
+        auto speed = speedMgr.getComponent(playerEntity);
+        speed->speed += speedIncrease;
+
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        float speedMultiplier = 0.1;
+        float speedIncrease   = (baseSpeed * (1 + speedMultiplier)) - baseSpeed;
+
+        auto speed = speedMgr.getComponent(playerEntity);
+        speed->speed += speedIncrease;
+
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void WeaponSystem::upgradeXPGain(std::string buffName, int level)
+{
+    if (buffName != "xp_gain")
+        return;
+
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<LevelSystem>()->inventXpGainBuff += 0.1;
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<LevelSystem>()->inventXpGainBuff += 0.1;
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<LevelSystem>()->inventXpGainBuff += 0.1;
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<LevelSystem>()->inventXpGainBuff += 0.1;
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<LevelSystem>()->inventXpGainBuff += 0.1;
+        break;
+    }
+    default:
+        break;
     }
 }

@@ -26,6 +26,8 @@ public:
     }
     void moveItemToPlayer(Entity item);
 
+    WeaponMovementSystem* getWeaponMoveSystem() const { return weaponMovementSystem.get(); };
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;

@@ -43,7 +43,8 @@ void LevelSystem::levelUp()
 
 void LevelSystem::increaseXP(float xp)
 {
-    currentXP = currentXP + xp; //thêm buff
+    float xpMultiplier = 1.0f + shopXpGainBuff + inventXpGainBuff;
+    currentXP = currentXP + (xp * xpMultiplier); //thêm buff
 }
 
 std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelUp)
@@ -164,6 +165,7 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             if (selectedIndices.insert(randomIndex).second)
             {
                 randomValues.push_back(filterUpgrade[randomIndex]);
+                // AXLOG("RandomValue: %s",.c_str());
             }
         }
 
@@ -181,14 +183,14 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
 
         for (const auto& val : fallback)
         {
-            randomValues.push_back(val);
             if (randomValues.size() == 3)
                 break;
+            randomValues.push_back(val);
         }
     }
     else
     {
-        while (selectedIndices.size() < 3)
+        while (selectedIndices.size() < 3 && selectedIndices.size() < others.size())
         {
             std::uniform_int_distribution<> dis(0, others.size() - 1);
             int randomIndex = dis(gen);
@@ -204,6 +206,7 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
     // Part 4: Turn random values generated into unordered_map to return + logic for chest
     std::unordered_map<std::string, int> levelUpResult;
     std::unordered_map<std::string, int> chestResult;
+    std::unordered_set<std::string> upgradeSet(filterUpgrade.begin(), filterUpgrade.end());
 
     if (isLevelUp)
     {
@@ -217,6 +220,14 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             else
             {
                 levelUpResult[key] = 0;
+            }
+        }
+
+        for (auto& [key, value] : levelUpResult)
+        {
+            if (upgradeSet.count(key))
+            {
+                value += 1;
             }
         }
 
@@ -244,7 +255,15 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             chestResult.insert({"coin", 0});
         }
 
-        for (const auto& entry : levelUpResult)
+        for (auto& [key, value] : chestResult)
+        {
+            if (upgradeSet.count(key))
+            {
+                value += 1;
+            }
+        }
+
+        for (const auto& entry : chestResult)
         {
             AXLOG("Chest upgrade: %s, %d", entry.first.c_str(), entry.second);
         }

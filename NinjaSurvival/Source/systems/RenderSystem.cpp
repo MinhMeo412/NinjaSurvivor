@@ -273,12 +273,13 @@ void RenderSystem::updateSwordEntitySprite(Entity entity)
     // Lật sprite dựa trên hướng vận tốc
     if (vel->vx > 0)  // Sang phải
     {
-        sprite->gameSceneFrame->setScaleX(1.0f);  // Không lật
+        sprite->gameSceneFrame->setScaleX(1.0f * transform->scale);  // Không lật
     }
     else if (vel->vx < 0)  // Sang trái
     {
-        sprite->gameSceneFrame->setScaleX(-1.0f);  // Lật ngang
+        sprite->gameSceneFrame->setScaleX(-1.0f * transform->scale);  // Lật ngang
     }
+    sprite->gameSceneFrame->setScaleY(transform->scale);
     sprite->gameSceneFrame->setPosition(transform->x, transform->y);
     sprite->gameSceneFrame->setOpacity(255);
     sprite->gameSceneFrame->runAction(ax::FadeOut::create(0.5f));
@@ -291,6 +292,7 @@ void RenderSystem::updateShurikenEntitySprite(Entity entity)
     auto transform = transformMgr.getComponent(entity);
     auto cooldown  = cooldownMgr.getComponent(entity);
 
+    sprite->gameSceneFrame->setScale(transform->scale);
     sprite->gameSceneFrame->setPosition(transform->x, transform->y);
 
     // Định nghĩa tag cho hành động xoay

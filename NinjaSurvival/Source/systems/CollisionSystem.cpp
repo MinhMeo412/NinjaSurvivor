@@ -26,13 +26,13 @@ void CollisionSystem::init()
     }
 
     //// Đặt callback logic khi va chạm xảy ra
-    //onCollision = [](Entity e1, Entity e2)
-    //    {
-    //        AXLOG("Collision between %u and %u", e1, e2);
-    //        //Xử lý logic va chạm
-    //        auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
-    //        healthSystem->handleCollision(e1, e2);
-    //    };
+    onCollision = [](Entity e1, Entity e2)
+        {
+            AXLOG("Collision between %u and %u", e1, e2);
+            //Xử lý logic va chạm
+            auto healthSystem = SystemManager::getInstance()->getSystem<HealthSystem>();
+            healthSystem->handleCollision(e1, e2);
+        };
 
     onWeaponCollision = [](Entity e1, Entity e2) {
         AXLOG("Collision between %u and %u", e1, e2);

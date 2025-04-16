@@ -240,14 +240,11 @@ bool GameData::loadEntityData(const std::string& jsonString)
                 if (attack.HasMember("baseDamage") && attack["baseDamage"].IsFloat())
                 {
                     float baseDamage = attack["baseDamage"].GetFloat();
-                    float flatBonus  = attack.HasMember("flatBonus") && attack["flatBonus"].IsFloat()
-                                           ? attack["flatBonus"].GetFloat()
-                                           : 0.0f;
                     float damageMultiplier =
                         attack.HasMember("damageMultiplier") && attack["damageMultiplier"].IsFloat()
                             ? attack["damageMultiplier"].GetFloat()
                             : 0.0f;
-                    templ.attack = AttackComponent{baseDamage, flatBonus, damageMultiplier};
+                    templ.attack = AttackComponent{baseDamage, damageMultiplier};
                 }
             }
 
@@ -373,7 +370,7 @@ void GameData::syncStatsWithShopSystem()
             if (components.HasMember("attack") && components["attack"].IsObject() &&
                 components["attack"].HasMember("baseDamage"))
                 templ.attack =
-                    AttackComponent{static_cast<float>(components["attack"]["baseDamage"].GetDouble()), 0.0f, 1.0f};
+                    AttackComponent{static_cast<float>(components["attack"]["baseDamage"].GetDouble()), 1.0f};
             if (components.HasMember("speed") && components["speed"].IsFloat())
                 templ.speed = SpeedComponent{static_cast<float>(components["speed"].GetFloat())};
             if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
@@ -413,8 +410,7 @@ void GameData::syncStatsWithShopSystem()
             {
                 float baseDamage     = baseTempl.attack->baseDamage;
                 int attackLevelValue = shop->getStatLevelValue("Stat", "Attack");
-                templ.attack         = AttackComponent{baseDamage + static_cast<float>(attackLevelValue),
-                                               templ.attack->flatBonus, templ.attack->damageMultiplier};
+                templ.attack         = AttackComponent{baseDamage + static_cast<float>(attackLevelValue), templ.attack->damageMultiplier};
                 AXLOG("Đồng bộ Attack cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseDamage, attackLevelValue,
                       templ.attack->baseDamage);
             }
@@ -559,6 +555,6 @@ std::string GameData::findTypeByName(
             return typeKey;  // Tìm thấy type chứa name
         }
     }
-    // Không tìm thấy -> ném exception
-    throw std::runtime_error("Entity name '" + name + "' not found in any type.");
+    // Không tìm thấy -> trả về rỗng
+    return "";
 }

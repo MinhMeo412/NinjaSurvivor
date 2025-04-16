@@ -15,39 +15,48 @@ void ItemSystem::init()
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr, durationMgr);
 
     int num = 1000;
-    for (int i = 0; i < num; i++)
-    {
-        Entity item = factory->createEntity("item", "chest");
-        if (auto spriteComp = spriteMgr.getComponent(item))
-        {
-            spriteComp->initializeSprite();
-        }
-        auto transform = transformMgr.getComponent(item);
-        if (!transform)
-            continue;
-        // Tính toán vị trí dựa trên số thứ tự i
-        float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-        float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-        transform->x = 1000 + offsetX;
-        transform->y = 1000 + offsetY;
-    }
+    //for (int i = 0; i < num; i++)
+    //{
+    //    Entity item = factory->createEntity("item", "chest");
+    //    if (auto spriteComp = spriteMgr.getComponent(item))
+    //    {
+    //        spriteComp->initializeSprite();
+    //    }
+    //    auto transform = transformMgr.getComponent(item);
+    //    if (!transform)
+    //        continue;
+    //    // Tính toán vị trí dựa trên số thứ tự i
+    //    float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //    float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //    transform->x = 1000 + offsetX;
+    //    transform->y = 1000 + offsetY;
+    //}
 
-    for (int i = 0; i < num; i++)
-    {
-        Entity item = factory->createEntity("item", "greenGem");
-        if (auto spriteComp = spriteMgr.getComponent(item))
-        {
-            spriteComp->initializeSprite();
-        }
-        auto transform = transformMgr.getComponent(item);
-        if (!transform)
-            continue;
-        // Tính toán vị trí dựa trên số thứ tự i
-        float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-        float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-        transform->x = 1000 + offsetX;
-        transform->y = 1500 + offsetY;
-    }
+    //for (int i = 0; i < num; i++)
+    //{
+    //    Entity item = factory->createEntity("item", "greenGem");
+    //    if (auto spriteComp = spriteMgr.getComponent(item))
+    //    {
+    //        spriteComp->initializeSprite();
+    //    }
+    //    auto transform = transformMgr.getComponent(item);
+    //    if (!transform)
+    //        continue;
+    //    // Tính toán vị trí dựa trên số thứ tự i
+    //    float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //    float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //    transform->x = 1000 + offsetX;
+    //    transform->y = 1500 + offsetY;
+    //}
+
+    //Entity item = factory->createEntity("item", "magnet");
+    //if (auto spriteComp = spriteMgr.getComponent(item))
+    //{
+    //    spriteComp->initializeSprite();
+    //}
+    //auto transform = transformMgr.getComponent(item);
+    //transform->x  = 900 ;
+    //transform->y  = 1600 ;
 
 }
 
@@ -179,17 +188,17 @@ void ItemSystem::spawnMultipleItems(const ax::Vec2& position,
 // Spawn item ngẫu nhiên trên map
 void ItemSystem::spawnRandomItems()
 {
-    int itemsToSpawn = rand() % 5 + 1;  // 1-3 item mỗi lần
+    int itemsToSpawn = rand() % 10 + 1;  // 1-5 item mỗi lần
     for (int i = 0; i < itemsToSpawn; ++i)
     {
         float chance = static_cast<float>(rand()) / RAND_MAX;
         std::string name;
-        if (chance < 0.3f)
-            name = "bomb";  // 30%
-        else if (chance < 0.6f)
+        if (chance < 0.2f)
+            name = "bomb";  // 20%
+        else if (chance < 0.5f)
             name = "magnet";  // 30%
         else
-            name = "health";  // 40%
+            name = "health";  // 50%
 
         Entity item       = factory->createEntity("item", name);
 

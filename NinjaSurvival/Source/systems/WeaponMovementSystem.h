@@ -19,6 +19,9 @@ public:
     void update(float dt) override;
     void init() override;
 
+    // Hàm tính lại góc cho tất cả shuriken
+    void recalculateShurikenAngles(const std::vector<Entity>& shurikenList);
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -44,11 +47,10 @@ private:
     int swordCountInFrame = 0; //Biến tạm để xử lý hướng sword
 
     void moveShurikenWeapon(Entity entity, float dt);
-    int shurikenCountInFrame = 0; //Biến tạm để xử lý vị trí shuriken
 
     void moveKunaiWeapon(Entity entity, float dt);
 
-
+    
 };
 
 #endif  // __WEAPON_MOVEMENT_SYSTEM_H__

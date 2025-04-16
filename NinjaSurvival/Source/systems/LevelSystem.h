@@ -24,16 +24,20 @@ public:
 
     std::unordered_map<std::string, int> upgradeGenerator(bool isLevelUp);
 
+    float shopXpGainBuff   = 0;
+    float inventXpGainBuff = 0;
+
 private:
     float currentXP;
     float neededXP;
     int level;
     int rerollCount = 0;
+
     EntityManager& entityMgr;
     ComponentManager<WeaponInventoryComponent>& wiMgr;
 
     std::vector<std::string> weapons = {"sword", "shuriken", "kunai"};
-    std::vector<std::string> buffs   = {"attack", "health", "speed"};
+    std::vector<std::string> buffs   = {"attack", "health", "speed", "xp_gain"};
     std::vector<std::string> others  = {"coin", "heart"};
 
 

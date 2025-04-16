@@ -2,6 +2,7 @@
 #include "WeaponUpgradeUtils.h"
 #include "LevelUpOrChestEventLayer.h"
 #include "systems/LevelSystem.h"
+#include "systems/WeaponSystem.h"
 #include "systems/SystemManager.h"
 #include "scenes/GameScene.h"
 #include "AudioManager.h"
@@ -279,7 +280,7 @@ void LevelUpOrChestEventLayer::onConfirm(ax::Object* sender)
         if (!selectedUpgrade.empty())
         {
             // Xử lý
-            // SystemManager::getInstance()->getSystem<LevelSystem>()
+            SystemManager::getInstance()->getSystem<WeaponSystem>()->upgradeWeaponAndBuff(selectedUpgrade);
             AXLOG("Upgrade item %s", selectedUpgrade.c_str());
         }
         else 
