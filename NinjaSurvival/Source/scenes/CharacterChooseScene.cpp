@@ -349,6 +349,110 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         return;
     }
 
+    //int numCharacters = entities.at("player").size();
+    //const int cols    = 2;
+    //const int rows    = (numCharacters + cols - 1) / cols;
+
+    //float iconSpacingX = panelChooseCharacter->getContentSize().width * 0.06f;
+    //float iconSpacingY = panelChooseCharacter->getContentSize().height * 0.03f;
+    //float panelLeft    = panelChooseCharacter->getPositionX() - panelChooseCharacter->getContentSize().width / 2.4f;
+    //float startY =
+    //    panelChooseCharacter->getPositionY() + panelChooseCharacter->getContentSize().height / 2.5f - iconSpacingY;
+    //float startX = panelLeft + iconSpacingX;
+
+    //// Lề trái cố định cho các label (ngoại trừ weaponLabel)
+    //float leftMargin = panelDescription->getContentSize().width * 0.06f;
+
+    //int index = 0;
+    //for (const auto& [name, templ] : entities.at("player"))
+    //{
+    //    auto characterLabel = Label::createWithTTF(name, "fonts/Pixelpurl-0vBPP.ttf", 30);
+    //    if (!characterLabel)
+    //    {
+    //        AXLOG("Lỗi: Không thể tạo label cho nhân vật %s", name.c_str());
+    //        continue;
+    //    }
+    //    characterLabel->setPosition(panelDescription->getContentSize().width / 2,
+    //                                panelDescription->getContentSize().height * 0.85f);
+    //    characterLabel->setAlignment(TextHAlignment::CENTER);
+    //    characterLabel->setVisible(false);
+    //    panelDescription->addChild(characterLabel, 6, "label" + name);
+
+    //    float characterLabelBottomY =
+    //        panelDescription->getContentSize().height * 0.85f - characterLabel->getContentSize().height * 0.5f;
+    //    float baseY = characterLabelBottomY - 10.0f;
+
+    //    // Tạo stat labels
+    //    auto healthLabel = createStatLabel(name, "healthLabel", baseY, leftMargin, panelDescription);
+    //    // WeaponLabel cùng hàng với healthLabel, cách một khoảng cố định
+    //    float healthLabelWidth =
+    //        healthLabel ? healthLabel->getContentSize().width : 100.0f;  // Giá trị mặc định nếu lỗi
+    //    float weaponLabelX = leftMargin + healthLabelWidth + 110.0f;     // Khoảng cách 20px
+    //    auto weaponLabel   = createStatLabel(name, "weaponLabel", baseY, weaponLabelX, panelDescription);
+    //    auto attackLabel   = createStatLabel(name, "attackLabel", baseY - 20.0f, leftMargin, panelDescription);
+    //    auto speedLabel    = createStatLabel(name, "speedLabel", baseY - 40.0f, leftMargin, panelDescription);
+    //    auto unlockLabel   = createStatLabel(name, "unlockLabel", baseY - 50.0f, leftMargin, panelDescription);
+
+    //    if (!healthLabel || !weaponLabel || !attackLabel || !speedLabel || !unlockLabel)
+    //    {
+    //        AXLOG("Lỗi: Không thể tạo đầy đủ label cho nhân vật %s", name.c_str());
+    //        continue;
+    //    }
+
+    //    auto button = Utils::createCharacterButton(
+    //        templ.profilePhoto.has_value() ? templ.profilePhoto.value() : "CloseNormal.png", name, templ.available,
+    //        selectedCharacterName, selectedCharacterItem, nextButton);
+    //    if (!button)
+    //    {
+    //        AXLOG("Lỗi: Không thể tạo button cho nhân vật %s", name.c_str());
+    //        continue;
+    //    }
+
+    //    // Sửa lỗi capture bằng cách sử dụng initialization capture
+    //    button->setCallback([this, characterName = name, buyButton, nextButton, panelDescription](Object* sender) {
+    //        selectedCharacterName = characterName;
+
+    //        if (selectedCharacterItem && selectedCharacterItem != sender)
+    //        {
+    //            if (auto* oldBorder = selectedCharacterItem->getChildByName("border"))
+    //                oldBorder->setVisible(false);
+    //        }
+    //        if (selectedCharacterItem)
+    //            selectedCharacterItem->setEnabled(true);
+    //        selectedCharacterItem = dynamic_cast<MenuItemSprite*>(sender);
+    //        selectedCharacterItem->setEnabled(false);
+    //        if (auto* border = selectedCharacterItem->getChildByName("border"))
+    //            border->setVisible(true);
+
+    //        bool isAvailable     = false;
+    //        const auto& entities = GameData::getInstance()->getEntityTemplates();
+    //        if (entities.find("player") != entities.end() &&
+    //            entities.at("player").find(characterName) != entities.at("player").end())
+    //        {
+    //            isAvailable = entities.at("player").at(characterName).available;
+    //        }
+    //        else
+    //        {
+    //            AXLOG("Lỗi: Không tìm thấy nhân vật %s trong entityTemplates", characterName.c_str());
+    //        }
+
+    //        updateCharacterStats(characterName, panelDescription, isAvailable);
+    //        Utils::updateItemUI(selectedCharacterItem, panelDescription, isAvailable);
+    //        buyButton->setVisible(!isAvailable);
+    //        nextButton->setVisible(isAvailable);
+    //    });
+
+    //    button->setUserData(characterLabel);
+    //    button->setPosition(Vec2(startX + index * (button->getContentSize().width + iconSpacingX), startY));
+    //    menuItems.pushBack(button);
+    //    index++;
+    //}
+    // Define character order with names and their corresponding indices
+    std::vector<std::pair<std::string, int>> characterOrder = {
+        {"Ninja", 0}, {"Master", 1}, {"hello", 2}
+        // Add more characters as needed, e.g., {"Warrior", 2}, {"Mage", 3}
+    };
+
     int numCharacters = entities.at("player").size();
     const int cols    = 2;
     const int rows    = (numCharacters + cols - 1) / cols;
@@ -363,9 +467,26 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
     // Lề trái cố định cho các label (ngoại trừ weaponLabel)
     float leftMargin = panelDescription->getContentSize().width * 0.06f;
 
-    int index = 0;
     for (const auto& [name, templ] : entities.at("player"))
     {
+        // Look up the index for the current character name in characterOrder
+        int index = -1;
+        for (const auto& pair : characterOrder)
+        {
+            if (pair.first == name)
+            {
+                index = pair.second;
+                break;
+            }
+        }
+
+        // Skip characters not found in characterOrder
+        if (index == -1)
+        {
+            AXLOG("Cảnh báo: Nhân vật %s không có trong characterOrder, bỏ qua", name.c_str());
+            continue;
+        }
+
         auto characterLabel = Label::createWithTTF(name, "fonts/Pixelpurl-0vBPP.ttf", 30);
         if (!characterLabel)
         {
@@ -443,8 +564,8 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         });
 
         button->setUserData(characterLabel);
+        // Use the index from characterOrder to calculate position
         button->setPosition(Vec2(startX + index * (button->getContentSize().width + iconSpacingX), startY));
         menuItems.pushBack(button);
-        index++;
     }
 }

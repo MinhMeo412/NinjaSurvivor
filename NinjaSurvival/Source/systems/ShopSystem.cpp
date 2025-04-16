@@ -89,9 +89,9 @@ bool ShopSystem::createSaveGame()
         {"Stat", "SpawnRate", false, 0, 0, 50, 10, 0.1f, 10.0f},      // Spawn Rate: +10% mỗi cấp (10 cấp)
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}};
-
+        {"entities", "hello", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt}};
     shopDataVersion++;
     return saveToFile(filePath);
 }
