@@ -25,7 +25,7 @@ std::string getDescription(const std::string& name, int level)
         switch (level)
         {
         case 0:
-            return "Basic shield equipped";
+            return "Basic shuriken equipped";
         case 1:
             return "Block frontal attacks";
         case 2:
@@ -41,7 +41,7 @@ std::string getDescription(const std::string& name, int level)
         switch (level)
         {
         case 0:
-            return "Basic bow equipped";
+            return "Basic kunai equipped";
         case 1:
             return "Shoot single arrow";
         case 2:

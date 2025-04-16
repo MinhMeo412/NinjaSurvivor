@@ -22,7 +22,7 @@ public:
     int getRerollCount() { return rerollCount; }
     int setRerollCount(int rerollCountLeft) { return rerollCount = rerollCountLeft; }
 
-    std::vector<std::string> upgradeGenerator();
+    std::unordered_map<std::string, int> upgradeGenerator(bool isLevelUp);
 
 private:
     float currentXP;
@@ -34,6 +34,7 @@ private:
 
     std::vector<std::string> weapons = {"sword", "shuriken", "kunai"};
     std::vector<std::string> buffs   = {"attack", "health", "speed"};
+    std::vector<std::string> others  = {"coin", "heart"};
 
 
     void levelUp();
