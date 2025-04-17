@@ -92,21 +92,21 @@ bool GameSceneUILayer::init()
         return false;
     }
     float coinLabelX = safeOrigin.x + safeArea.size.width - coinLabel->getContentSize().width -
-                       coinSprite->getContentSize().width - 20;  // Margin 20
-    float coinY = xpY - 30;                                      // Dưới thanh XP
+                       coinSprite->getContentSize().width - 17;  // Margin 20
+    float coinY = 640 - 20;                                      // Dưới thanh XP
     coinLabel->setPosition(coinLabelX, coinY);
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     this->addChild(coinLabel, 5);
 
     coinSprite->setPosition(
-        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 5,
-        coinY);                  // Margin 5 giữa label và sprite
-    coinSprite->setScale(2);  
+        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 7,
+        coinY);  // Margin 5 giữa label và sprite
+    coinSprite->setScale(2);
     this->addChild(coinSprite, 5);
 
-    //Enemy kill count label
-    enemyKillCountLabel     = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    auto skullSprite = Sprite::create("skull.png");
+    // Enemy kill count label
+    enemyKillCountLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
+    auto skullSprite    = Sprite::create("skull.png");
     if (!skullSprite)
     {
         AXLOG("Không thể tạo skullSprite");
@@ -147,7 +147,7 @@ bool GameSceneUILayer::init()
 
 
     // Level label
-    levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Marker Felt.ttf", 24);
+    levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Pixelpurl-0vBPP.ttf", 24);
     levelLabel->setPosition(ax::Vec2(180, xpBar->getPosition().y - 40));  // Xem lại vị trí
     this->addChild(levelLabel, 5);
 
@@ -245,4 +245,22 @@ void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
             gameScene->unscheduleUpdate();         // Dừng update của GameScene
         }
     }
+}
+void GameSceneUILayer::bossAlert()
+{
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+
+    // Tạo label "Boss Incoming"
+    auto bossLabel = Label::createWithTTF("Boss Incoming", "fonts/Pixelpurl-0vBPP.ttf", 36);
+    bossLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    bossLabel->setColor(Color3B::RED);  // Đặt màu đỏ cho label
+    bossLabel->setOpacity(0);  // Bắt đầu ẩn để fade in
+    this->addChild(bossLabel, 10);
+
+    // Tạo hiệu ứng: FadeIn + Blink, sau đó xóa label
+    auto fadeIn   = FadeIn::create(0.5f);    // Xuất hiện mượt mà trong 0.5 giây
+    auto blink    = Blink::create(2.5f, 5);  // Nhấp nháy 5 lần trong 2.5 giây
+    auto remove   = CallFunc::create([bossLabel]() { bossLabel->removeFromParentAndCleanup(true); });
+    auto sequence = Sequence::create(fadeIn, blink, remove, nullptr);
+    bossLabel->runAction(sequence);
 }

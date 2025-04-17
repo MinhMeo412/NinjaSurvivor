@@ -76,19 +76,19 @@ bool ShopSystem::createSaveGame()
         return true;
     }
 
-    // Khởi tạo dữ liệu mặc định
+    // Khởi tạo dữ liệu mặc định với levelValue là float (phần trăm)
     shopData = {
-        {"Coin", "", false, std::nullopt, 1000, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
-        {"Stat", "Health", false, 0, 0, 50, 10, 0.1f, 10.0f},         // Health: +10 mỗi cấp
-        {"Stat", "Attack", false, 0, 0, 50, 10, 0.1f, 5.0f},          // Attack: +5 mỗi cấp
-        {"Stat", "Speed", false, 0, 0, 50, 10, 0.1f, 2.0f},           // Speed: +2 mỗi cấp
-        {"Stat", "XPGain", false, 0, 0, 50, 5, 0.1f, 10.0f},          // XP Gain: +10% mỗi cấp (5 cấp)
-        {"Stat", "CoinGain", false, 0, 0, 50, 10, 0.1f, 10.0f},       // Coin Gain: +10% mỗi cấp (10 cấp)
-        {"Stat", "RerollWeapon", false, 0, 0, 50, 3, 0.0f, 1.0f},     // RerollWeapon: +1 lần mỗi cấp (3 cấp)
-        {"Stat", "ReduceCooldown", false, 0, 0, 50, 5, 0.1f, 10.0f},  // Reduce Cooldown: -10% mỗi cấp (5 cấp)
-        {"Stat", "SpawnRate", false, 0, 0, 50, 10, 0.1f, 10.0f},      // Spawn Rate: +10% mỗi cấp (10 cấp)
-        {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
+        {"Coin", "", false, std::nullopt, 1000.0f, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
+        {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},         // Health: +10% mỗi cấp
+        {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.05f},        // Attack: +5% mỗi cấp
+        {"Stat", "Speed", false, 0, 0.0f, 50, 10, 0.1f, 0.02f},         // Speed: +2% mỗi cấp
+        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: +10% mỗi cấp
+        {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},       // Coin Gain: +10% mỗi cấp
+        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},    // RerollWeapon: +1 mỗi cấp
+        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},  // Reduce Cooldown: +10% mỗi cấp
+        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},      // Spawn Rate: +10% mỗi cấp
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
+        {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}};
 
@@ -186,19 +186,14 @@ bool ShopSystem::upgradeStat(const std::string& name)
             // Tăng cấp độ
             data.level = currentLevel + 1;
 
-            // Tính levelValue
+            // Tính levelValue (phần trăm tăng)
             if (data.name == "RerollWeapon")
             {
-                data.levelValue = data.level.value();  // RerollWeapon: levelValue = level
-            }
-            else if (data.name == "XPGain" || data.name == "CoinGain" || data.name == "ReduceCooldown" ||
-                     data.name == "SpawnRate")
-            {
-                data.levelValue = static_cast<int>(data.level.value() * data.valueIncrement.value());
+                data.levelValue = static_cast<float>(data.level.value());  // RerollWeapon: levelValue = level
             }
             else
             {
-                data.levelValue = static_cast<int>(data.level.value() * data.valueIncrement.value());
+                data.levelValue = data.level.value() * data.valueIncrement.value();
             }
 
             // Cập nhật cost (trừ RerollWeapon)
@@ -208,16 +203,12 @@ bool ShopSystem::upgradeStat(const std::string& name)
                 data.cost       = static_cast<int>(currentCost * (1.0f + data.valueIncrease.value()));
             }
 
-            // Cập nhật cost
-            int currentCost = data.cost.value();
-            data.cost       = static_cast<int>(currentCost * (1.0f + data.valueIncrease.value()));
-
             // Lưu và đồng bộ
             shopDataVersion++;
             saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
             GameData::getInstance()->syncStatsWithShopSystem();
 
-            AXLOG("Đã nâng cấp %s: level=%d, levelValue=%d, cost=%d", name.c_str(), data.level.value(),
+            AXLOG("Đã nâng cấp %s: level=%d, levelValue=%.2f, cost=%d", name.c_str(), data.level.value(),
                   data.levelValue.value(), data.cost.value());
             return true;
         }
@@ -288,8 +279,8 @@ bool ShopSystem::loadSaveGame()
             newData.available = dataObj["available"].GetBool();
         if (dataObj.HasMember("level") && dataObj["level"].IsInt())
             newData.level = dataObj["level"].GetInt();
-        if (dataObj.HasMember("levelValue") && dataObj["levelValue"].IsInt())
-            newData.levelValue = dataObj["levelValue"].GetInt();
+        if (dataObj.HasMember("levelValue") && dataObj["levelValue"].IsDouble())
+            newData.levelValue = static_cast<float>(dataObj["levelValue"].GetDouble());
         if (dataObj.HasMember("cost") && dataObj["cost"].IsInt())
             newData.cost = dataObj["cost"].GetInt();
         if (dataObj.HasMember("levelLimit") && dataObj["levelLimit"].IsInt())
@@ -359,7 +350,7 @@ void ShopSystem::syncMapsWithGameData()
     {
         if (data.type == "maps" && maps.find(data.name) != maps.end())
         {
-            data.available = maps[data.name].available;
+            data.available = data.available;
         }
     }
 }
@@ -372,14 +363,14 @@ void ShopSystem::syncCoinsWithGameData(float coinMultiplier)
         {
             if (data.levelValue.has_value())
             {
-                int currentCoins   = data.levelValue.value();
-                int increasedCoins = static_cast<int>(currentCoins * coinMultiplier);
-                data.levelValue    = currentCoins + increasedCoins;
-                AXLOG("Coin tăng với hệ số %.2f: %d -> %d", coinMultiplier, currentCoins, data.levelValue.value());
+                float currentCoins   = data.levelValue.value();
+                float increasedCoins = currentCoins * coinMultiplier;
+                data.levelValue      = currentCoins + increasedCoins;
+                AXLOG("Coin tăng với hệ số %.2f: %.0f -> %.0f", coinMultiplier, currentCoins, data.levelValue.value());
             }
             else
             {
-                data.levelValue = 0;
+                data.levelValue = 0.0f;
             }
             shopDataVersion++;
             break;
@@ -393,7 +384,7 @@ int ShopSystem::getCoins() const
     for (const auto& data : shopData)
     {
         if (data.type == "Coin")
-            return data.levelValue.value_or(0);
+            return static_cast<int>(data.levelValue.value_or(0.0f));
     }
     return 0;
 }
@@ -404,13 +395,14 @@ void ShopSystem::setCoins(int value)
     {
         if (data.type == "Coin")
         {
-            data.levelValue = value;
+            data.levelValue = static_cast<float>(value);
             shopDataVersion++;
             saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
             return;
         }
     }
-    shopData.push_back({"Coin", "", false, std::nullopt, value, 0, std::nullopt, std::nullopt, std::nullopt});
+    shopData.push_back(
+        {"Coin", "", false, std::nullopt, static_cast<float>(value), 0, std::nullopt, std::nullopt, std::nullopt});
     shopDataVersion++;
     saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
 }
@@ -494,12 +486,26 @@ float ShopSystem::getValueIncrement(const std::string& type, const std::string& 
     return 0.0f;
 }
 
-int ShopSystem::getStatLevelValue(const std::string& type, const std::string& name) const
+float ShopSystem::getStatLevelValue(const std::string& type, const std::string& name) const
 {
     for (const auto& data : shopData)
     {
         if (data.type == type && data.name == name && data.levelValue.has_value())
+        {
             return data.levelValue.value();
+        }
     }
-    return 0;
+    return 0.0f;
+}
+
+float ShopSystem::getShopBuff(const std::string& buffName) const
+{
+    for (const auto& data : shopData)
+    {
+        if (data.type == "Stat" && data.name == buffName && data.levelValue.has_value())
+        {
+            return data.levelValue.value();
+        }
+    }
+    return 0.0f;
 }

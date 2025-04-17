@@ -11,7 +11,7 @@ using namespace ax;
 
 LevelUpOrChestEventLayer::LevelUpOrChestEventLayer(bool isLevelUp,
                                                    const std::unordered_map<std::string, int>& upgradeList)
-    : isLevelUp(isLevelUp), upgradeList(upgradeList)
+    : isLevelUp(isLevelUp), upgradeList(upgradeList), selectedMenuItem(nullptr)
 {
     rerollCount = SystemManager::getInstance()->getSystem<LevelSystem>()->getRerollCount();
 }
@@ -49,13 +49,45 @@ bool LevelUpOrChestEventLayer::init()
     return true;
 }
 
+void LevelUpOrChestEventLayer::highlightSelectedItem(ax::MenuItemSprite* menuItem)
+{
+    // Xóa highlight khỏi item trước đó
+    if (selectedMenuItem)
+    {
+        auto prevBorder = selectedMenuItem->getChildByName("selection_border");
+        if (prevBorder)
+        {
+            prevBorder->setVisible(false);
+        }
+    }
+
+    // Cập nhật item được chọn
+    selectedMenuItem = menuItem;
+
+    if (menuItem)
+    {
+        // Tìm hoặc tạo border
+        auto border = menuItem->getChildByName<DrawNode*>("selection_border");
+        if (!border)
+        {
+            border = DrawNode::create();
+            border->setName("selection_border");
+            auto sprite = menuItem->getNormalImage();
+            auto size   = sprite->getContentSize();
+            // Vẽ viền màu vàng, độ dày 4 pixel
+            border->drawRect(Vec2(0, 0), Vec2(size.width, size.height), Color4F::YELLOW, 4.0f);
+            menuItem->addChild(border, 1);
+        }
+        border->setVisible(true);
+    }
+}
+
 void LevelUpOrChestEventLayer::createUI()
 {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin      = Director::getInstance()->getVisibleOrigin();
 
-    // Tạo panel
-    // Create panelLevelUp
+    // Tạo panelLevelUp
     auto panelLevelUp = Sprite::create("UI/panelLevelUp.png");
     if (panelLevelUp)
     {
@@ -67,17 +99,6 @@ void LevelUpOrChestEventLayer::createUI()
         AXLOG("Error: Failed to load panelLevelUp.png");
     }
 
-    // Create panelChooseUp
-    auto panelChooseUp = Sprite::create("UI/panelChooseUp.png");
-    if (panelChooseUp)
-    {
-        panelChooseUp->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-        this->addChild(panelChooseUp, 2);
-    }
-    else
-    {
-        AXLOG("Error: Failed to load panelChooseUp.png");
-    }
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
 
@@ -86,7 +107,7 @@ void LevelUpOrChestEventLayer::createUI()
     float itemHeight = 80.0f;
     int maxDisplay   = std::min(static_cast<int>(upgradeList.size()), 3);
 
-    // Kiểm tra nếu upgradeList rỗng, thêm "No upgrades available" vào danh sách
+    // Kiểm tra nếu upgradeList rỗng
     if (upgradeList.empty())
     {
         AXLOG("'No upgrades available'");
@@ -99,25 +120,20 @@ void LevelUpOrChestEventLayer::createUI()
         if (i >= maxDisplay)
             break;
 
-        // Tạo văn bản hiển thị với định dạng yêu cầu
-        std::string displayText = upgrade.first;
-        if (upgrade.second > 0)
+        // Tạo sprite cho sub-panel
+        auto subPanelSprite = Sprite::create("UI/panelChooseUp.png");
+        if (!subPanelSprite)
         {
-            displayText += " - level " + std::to_string(upgrade.second);
+            AXLOG("Error: Failed to load panelChooseUp.png");
+            continue;
         }
-        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 24);
-        itemLabel->setDimensions(300, 0);
-        itemLabel->setAlignment(TextHAlignment::LEFT);
-        itemLabel->setAnchorPoint(Vec2(0, 0.5));
-
-
-        //Tạo menu item với event khi nhấn
-        auto menuItem = MenuItemLabel::create(itemLabel, [=](Object* sender) {
+        // Tạo menu item với sprite sub-panel
+        auto menuItem = MenuItemSprite::create(subPanelSprite, subPanelSprite, [=](ax::Object* sender) {
             if (isLevelUp)
             {
                 selectedUpgrade = upgrade.first;
+                highlightSelectedItem(dynamic_cast<MenuItemSprite*>(sender));  // Sử dụng sender
                 if (confirmButton)
                 {
                     confirmButton->setVisible(true);
@@ -125,19 +141,39 @@ void LevelUpOrChestEventLayer::createUI()
             }
         });
 
-        menuItem->setPosition(Vec2(0, 50 - i * itemHeight));
+        // Tạo văn bản hiển thị
+        std::string displayText = upgrade.first;
+        if (upgrade.second > 0)
+        {
+            displayText += " - level " + std::to_string(upgrade.second);
+        }
+        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
+
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
+        itemLabel->setDimensions(280, 0);  // Hơi nhỏ hơn 300 để có lề
+        itemLabel->setAlignment(TextHAlignment::LEFT);
+        itemLabel->setAnchorPoint(Vec2(0, 0.5));
+        itemLabel->setPosition(Vec2(10, subPanelSprite->getContentSize().height / 2));  // Vị trí với lề trái
+
+        // Thêm nhãn vào menu item
+        menuItem->addChild(itemLabel);
+
+        // Định vị menu item
+        float startY = (maxDisplay - 1) * itemHeight * 4 / 5;     // Căn giữa danh sách theo chiều dọc
+        menuItem->setPosition(Vec2(0, startY - i * itemHeight));  // Căn giữa theo chiều ngang
 
         if (!isLevelUp)
         {
             // Tự động gán selectedUpgrade cho mục duy nhất
             selectedUpgrade = upgrade.first;
-
-            // Vô hiệu hóa tương tác nhưng giữ màu bình thường
+            // Vô hiệu hóa tương tác
             menuItem->setCascadeOpacityEnabled(false);
             menuItem->setCascadeColorEnabled(false);
             menuItem->setEnabled(false);
-            itemLabel->setTextColor(Color4B::WHITE);
+            subPanelSprite->setColor(Color3B::GRAY);  // Làm xám sub-panel
+            highlightSelectedItem(menuItem);          // Highlight mặc định cho mục duy nhất
         }
+
         selectionItems.pushBack(menuItem);
         i++;
     }
@@ -146,26 +182,27 @@ void LevelUpOrChestEventLayer::createUI()
     selectionMenu = Menu::createWithArray(selectionItems);
     selectionMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(selectionMenu, 2);
-   
-    
 
     // Tạo nút Confirm
-    confirmButton = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
+    float buttonY  = panelLevelUp->getContentSize().height * 1.5/3;  // 5/6 từ trên xuống dưới = 1/6 từ dưới lên
+    confirmButton = MenuItemImage::create("UI/confirm.png", "UI/confirm.png",
                                           AX_CALLBACK_1(LevelUpOrChestEventLayer::onConfirm, this));
-    confirmButton->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 150));
+    confirmButton->setPosition(Vec2(panelLevelUp->getContentSize().width * 2/5, buttonY));
+    confirmButton->setScale(1.5);
     confirmButton->setVisible(isLevelUp ? false : true);
 
     // Tạo nút Reroll và label (chỉ khi isLevelUp = true)
     if (isLevelUp)
     {
-        rerollButton = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
+        rerollButton = MenuItemImage::create("UI/RerollWeapon.png", "UI/RerollWeapon.png",
                                              AX_CALLBACK_1(LevelUpOrChestEventLayer::onReroll, this));
-        rerollButton->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 100));
+        rerollButton->setPosition(Vec2(panelLevelUp->getContentSize().width * 4/5, buttonY));
+        rerollButton->setScale(1.5);
 
         // Tạo label hiển thị số lần reroll
-        rerollCountLabel = Label::createWithTTF("Reroll: " + std::to_string(rerollCount), "fonts/Marker Felt.ttf", 20);
-        rerollCountLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 130));
-        this->addChild(rerollCountLabel, 2);
+        rerollCountLabel = Label::createWithTTF(std::to_string(rerollCount), "fonts/Pixelpurl-0vBPP.ttf", 25);
+        rerollCountLabel->setPosition(rerollButton->getContentSize() / 2);
+        rerollButton->addChild(rerollCountLabel, 20);
 
         // Nếu rerollCount = 0, làm mờ và vô hiệu hóa nút
         if (rerollCount <= 0)
@@ -188,7 +225,6 @@ void LevelUpOrChestEventLayer::createUI()
     this->addChild(menu, 2);
 }
 
-
 void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
 {
     // Gọi upgradeGenerator để làm mới upgradeList
@@ -201,12 +237,15 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
         selectionMenu = nullptr;
     }
 
+    // Xóa highlight hiện tại
+    selectedMenuItem = nullptr;
+
     // Tạo lại danh sách mới
     Vector<MenuItem*> newItems;
-    float itemHeight  = 80.0f;
-    int maxDisplay = std::min(static_cast<int>(upgradeList.size()), 3);
+    float itemHeight = 80.0f;
+    int maxDisplay   = std::min(static_cast<int>(upgradeList.size()), 3);
 
-    auto visibleSize   = Director::getInstance()->getVisibleSize();
+    auto visibleSize = Director::getInstance()->getVisibleSize();
 
     int i = 0;
     for (const auto& upgrade : upgradeList)
@@ -214,23 +253,20 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
         if (i >= maxDisplay)
             break;
 
-        // Tạo văn bản hiển thị với định dạng yêu cầu
-        std::string displayText = upgrade.first;
-        if (upgrade.second > 0)
+        // Tạo sprite cho sub-panel
+        auto subPanelSprite = Sprite::create("UI/panelChooseUp.png");
+        if (!subPanelSprite)
         {
-            displayText += " - level " + std::to_string(upgrade.second);
+            AXLOG("Error: Failed to load panelChooseUp.png");
+            continue;
         }
-        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 24);
-        itemLabel->setDimensions(300, 0);
-        itemLabel->setAlignment(TextHAlignment::LEFT);
-        itemLabel->setAnchorPoint(Vec2(0, 0.5));
-
-        auto menuItem = MenuItemLabel::create(itemLabel, [=](Object* sender) {
+        // Tạo menu item với sprite sub-panel
+        auto menuItem = MenuItemSprite::create(subPanelSprite, subPanelSprite, [=](ax::Object* sender) {
             if (isLevelUp)
             {
                 selectedUpgrade = upgrade.first;
+                highlightSelectedItem(dynamic_cast<MenuItemSprite*>(sender));  // Sử dụng sender
                 if (confirmButton)
                 {
                     confirmButton->setVisible(true);
@@ -238,21 +274,44 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
             }
         });
 
-        menuItem->setPosition(Vec2(0, 50 - i * itemHeight));
+        // Tạo văn bản hiển thị
+        std::string displayText = upgrade.first;
+        if (upgrade.second > 0)
+        {
+            displayText += " - level " + std::to_string(upgrade.second);
+        }
+        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
+
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
+        itemLabel->setDimensions(280, 0);  // Hơi nhỏ hơn 300 để có lề
+        itemLabel->setAlignment(TextHAlignment::LEFT);
+        itemLabel->setAnchorPoint(Vec2(0, 0.5));
+        itemLabel->setPosition(Vec2(10, subPanelSprite->getContentSize().height / 2));  // Vị trí với lề trái
+
+        // Thêm nhãn vào menu item
+        menuItem->addChild(itemLabel);
+
+        // Định vị menu item
+        float startY = (maxDisplay - 1) * itemHeight * 4 / 5;     // Căn giữa danh sách theo chiều dọc
+        menuItem->setPosition(Vec2(0, startY - i * itemHeight));  // Căn giữa theo chiều ngang
 
         if (!isLevelUp)
         {
+            // Tự động gán selectedUpgrade cho mục duy nhất
+            selectedUpgrade = upgrade.first;
             menuItem->setCascadeOpacityEnabled(false);
             menuItem->setCascadeColorEnabled(false);
             menuItem->setEnabled(false);
-            itemLabel->setTextColor(Color4B::WHITE);
+            subPanelSprite->setColor(Color3B::GRAY);  // Làm xám sub-panel
+            highlightSelectedItem(menuItem);          // Highlight mặc định cho mục duy nhất
         }
+
         newItems.pushBack(menuItem);
         i++;
     }
 
     // Tạo menu mới
-    selectionMenu    = Menu::createWithArray(newItems);
+    selectionMenu = Menu::createWithArray(newItems);
     selectionMenu->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(selectionMenu, 2);  // Đảm bảo menu ở trên panel
 
@@ -260,7 +319,7 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
     rerollCount--;
     if (rerollCountLabel)
     {
-        rerollCountLabel->setString("Reroll: " + std::to_string(rerollCount));
+        rerollCountLabel->setString(std::to_string(rerollCount));
     }
     if (rerollCount <= 0 && rerollButton)
     {
@@ -283,7 +342,7 @@ void LevelUpOrChestEventLayer::onConfirm(ax::Object* sender)
             SystemManager::getInstance()->getSystem<WeaponSystem>()->upgradeWeaponAndBuff(selectedUpgrade);
             AXLOG("Upgrade item %s", selectedUpgrade.c_str());
         }
-        else 
+        else
         {
             AXLOG("Khong co upgrade duoc chon");
         }

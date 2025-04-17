@@ -240,14 +240,11 @@ bool GameData::loadEntityData(const std::string& jsonString)
                 if (attack.HasMember("baseDamage") && attack["baseDamage"].IsFloat())
                 {
                     float baseDamage = attack["baseDamage"].GetFloat();
-                    float flatBonus  = attack.HasMember("flatBonus") && attack["flatBonus"].IsFloat()
-                                           ? attack["flatBonus"].GetFloat()
-                                           : 0.0f;
                     float damageMultiplier =
                         attack.HasMember("damageMultiplier") && attack["damageMultiplier"].IsFloat()
                             ? attack["damageMultiplier"].GetFloat()
                             : 0.0f;
-                    templ.attack = AttackComponent{baseDamage, flatBonus, damageMultiplier};
+                    templ.attack = AttackComponent{baseDamage, damageMultiplier};
                 }
             }
 
@@ -373,11 +370,7 @@ void GameData::syncStatsWithShopSystem()
             if (components.HasMember("attack") && components["attack"].IsObject() &&
                 components["attack"].HasMember("damageMultiplier"))
                 templ.attack =
-<<<<<<< Updated upstream
-                    AttackComponent{static_cast<float>(components["attack"]["baseDamage"].GetDouble()), 0.0f, 1.0f};
-=======
                     AttackComponent{static_cast<float>(components["attack"]["damageMultiplier"].GetDouble()), 1.0f};
->>>>>>> Stashed changes
             if (components.HasMember("speed") && components["speed"].IsFloat())
                 templ.speed = SpeedComponent{static_cast<float>(components["speed"].GetFloat())};
             if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
@@ -405,41 +398,41 @@ void GameData::syncStatsWithShopSystem()
             // Cập nhật Health
             if (templ.health.has_value() && baseTempl.health.has_value())
             {
-                float baseHealth     = baseTempl.health->maxHealth;
-                int healthLevelValue = shop->getStatLevelValue("Stat", "Health");
-                templ.health         = HealthComponent{baseHealth + static_cast<float>(healthLevelValue)};
-                AXLOG("Đồng bộ Health cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseHealth, healthLevelValue,
+                float baseHealth = baseTempl.health->maxHealth;
+                float healthBuff = shop->getStatLevelValue("Stat", "Health");
+                templ.health     = HealthComponent{baseHealth + baseHealth * healthBuff};
+                AXLOG("Đồng bộ Health cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseHealth, healthBuff,
                       templ.health->maxHealth);
             }
 
             // Cập nhật Attack
             if (templ.attack.has_value() && baseTempl.attack.has_value())
             {
-                float baseDamage     = baseTempl.attack->damageMultiplier;
-                int attackLevelValue = shop->getStatLevelValue("Stat", "Attack");
-                templ.attack         = AttackComponent{baseDamage + static_cast<float>(attackLevelValue),
-                                               templ.attack->flatBonus, templ.attack->damageMultiplier};
-                AXLOG("Đồng bộ Attack cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseDamage, attackLevelValue,
+                float baseDamage = baseTempl.attack->damageMultiplier;
+                float attackBuff = shop->getStatLevelValue("Stat", "Attack");
+                templ.attack     = AttackComponent{baseDamage + baseDamage * attackBuff, templ.attack->damageMultiplier};
+                AXLOG("Đồng bộ Attack cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseDamage, attackBuff,
                       templ.attack->damageMultiplier);
             }
 
             // Cập nhật Speed
             if (templ.speed.has_value() && baseTempl.speed.has_value())
             {
-                float baseSpeed     = baseTempl.speed->speed;
-                int speedLevelValue = shop->getStatLevelValue("Stat", "Speed");
-                templ.speed         = SpeedComponent{baseSpeed + static_cast<float>(speedLevelValue)};
-                AXLOG("Đồng bộ Speed cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseSpeed, speedLevelValue,
+                float baseSpeed = baseTempl.speed->speed;
+                float speedBuff = shop->getStatLevelValue("Stat", "Speed");
+                templ.speed     = SpeedComponent{baseSpeed + baseSpeed * speedBuff};
+                AXLOG("Đồng bộ Speed cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseSpeed, speedBuff,
                       templ.speed->speed);
             }
+
+            // Cập nhật Cooldown
             if (templ.cooldown.has_value() && baseTempl.cooldown.has_value())
             {
-                float baseCooldown     = baseTempl.cooldown->cooldownDuration;
-                int cooldownLevelValue = shop->getStatLevelValue("Stat", "ReduceCooldown");
-                templ.cooldown =
-                    CooldownComponent{baseCooldown * (1.0f - static_cast<float>(cooldownLevelValue) / 100.0f)};
-                AXLOG("Đồng bộ Cooldown cho %s: cơ bản=%f, giảm=%d%%, cuối=%f", name.c_str(), baseCooldown,
-                      cooldownLevelValue, templ.cooldown->cooldownDuration);
+                float baseCooldown = baseTempl.cooldown->cooldownDuration;
+                float cooldownBuff = shop->getStatLevelValue("Stat", "ReduceCooldown");
+                templ.cooldown     = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
+                AXLOG("Đồng bộ Cooldown cho %s: cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), baseCooldown,
+                      cooldownBuff, templ.cooldown->cooldownDuration);
             }
         }
     }
@@ -563,6 +556,6 @@ std::string GameData::findTypeByName(
             return typeKey;  // Tìm thấy type chứa name
         }
     }
-    // Không tìm thấy -> ném exception
-    throw std::runtime_error("Entity name '" + name + "' not found in any type.");
+    // Không tìm thấy -> trả về rỗng
+    return "";
 }
