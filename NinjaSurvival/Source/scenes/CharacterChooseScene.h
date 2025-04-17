@@ -3,6 +3,7 @@
 
 #include "axmol.h"
 #include "SceneBase.h"
+#include "ui/UIScrollView.h"
 
 class CharacterChooseScene : public SceneBase
 {
@@ -30,6 +31,11 @@ private:
                                ax::MenuItemSprite* nextButton,
                                ax::MenuItemSprite* buyButton,
                                ax::Vector<ax::MenuItem*>& menuItems);
+    ax::ui::ScrollView* createWeaponDesScrollView(const std::string& name,
+                                                  const std::string& tag,
+                                                  float baseY,
+                                                  float xPos,
+                                                  Node* parent);
 };
 
 #endif  // __CHARACTER_CHOOSE_SCENE_H__

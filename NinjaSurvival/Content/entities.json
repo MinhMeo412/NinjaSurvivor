@@ -14,7 +14,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 40.0,
+                "speed": 200.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -55,7 +55,7 @@
         {
             "type": "player",
             "name": "Master",
-            "available": true,
+            "available": false,
             "profileImage": "Entity/Character/Faceset1.png",
             "components": {
                 "transform": {

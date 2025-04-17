@@ -5,6 +5,7 @@
 #include "systems/GameData.h"
 #include "systems/ShopSystem.h"
 #include "AudioManager.h"
+#include "WeaponUpgradeUtils.h"
 
 using namespace ax;
 
@@ -17,24 +18,17 @@ bool CharacterChooseScene::init()
         return false;
     }
 
-    // Thêm: Đồng bộ để đảm bảo chỉ số mới nhất
     GameData::getInstance()->syncStatsWithShopSystem();
-
     menuUISetup();
     return true;
 }
 
-void CharacterChooseScene::update(float dt)
-{
-    // Dự phòng cho cập nhật sau
-}
+void CharacterChooseScene::update(float dt) {}
 
 void CharacterChooseScene::menuReturnCallback(Object* sender)
 {
-    // âm thanh click
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
     AudioManager::getInstance()->stopSound("background");
-
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MainScene>()));
 }
 
@@ -47,10 +41,7 @@ void CharacterChooseScene::menuNextCallback(Object* sender)
     }
     _director->getEventDispatcher()->setEnabled(false);
     GameData::getInstance()->setSelectedCharacter(selectedCharacterName);
-
-    // âm thanh click
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
-
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, utils::createInstance<MapChooseScene>()));
     this->scheduleOnce([this](float) { _director->getEventDispatcher()->setEnabled(true); }, TRANSITION_TIME,
                        "enableInput");
@@ -58,15 +49,11 @@ void CharacterChooseScene::menuNextCallback(Object* sender)
 
 void CharacterChooseScene::menuUISetup()
 {
-    // Sử dụng safeArea cho vị trí UI (trừ background)
     const auto& safeOrigin = safeArea.origin;
     const auto& safeSize   = safeArea.size;
+    float marginX          = safeSize.width * 0.05f;
+    float marginY          = safeSize.height * 0.025f;
 
-    // Margins tính theo safeSize để giữ tỷ lệ
-    float marginX = safeSize.width * 0.05f;
-    float marginY = safeSize.height * 0.025f;
-
-    // Tạo background (giữ nguyên, phủ toàn màn hình)
     auto background = Sprite::create("UI/background3.png");
     if (!background)
     {
@@ -76,7 +63,6 @@ void CharacterChooseScene::menuUISetup()
     background->setPosition(origin + visibleSize / 2);
     this->addChild(background, 0);
 
-    // Tạo panel chọn nhân vật, căn giữa trên cùng safeArea
     auto panelChooseCharacter = Sprite::create("UI/NeopanelChoseCharacter2.png");
     if (!panelChooseCharacter)
     {
@@ -87,12 +73,10 @@ void CharacterChooseScene::menuUISetup()
     panelChooseCharacter->setPosition(safeOrigin.x + safeSize.width / 2, panelY);
     this->addChild(panelChooseCharacter, 2);
 
-    // Vẽ viền debug cho safeArea
     auto drawNode = DrawNode::create();
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
     this->addChild(drawNode, 0);
 
-    // Hiển thị coin, góc trên bên phải safeArea
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =
         Label::createWithTTF(StringUtils::format("%d", shopData->getCoins()), "fonts/Pixelpurl-0vBPP.ttf", 40);
@@ -119,10 +103,8 @@ void CharacterChooseScene::menuUISetup()
     coinSprite->setScale(3);
     this->addChild(coinSprite, 5, "coinSprite");
 
-    // Khởi tạo menu items
     Vector<MenuItem*> menuItems;
 
-    // Tạo nút Return, góc trên bên trái safeArea
     returnButton = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                          AX_CALLBACK_1(CharacterChooseScene::menuReturnCallback, this),
                                          Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
@@ -133,7 +115,6 @@ void CharacterChooseScene::menuUISetup()
     }
     menuItems.pushBack(returnButton);
 
-    // Tạo panel mô tả, dưới panelChooseCharacter
     auto panelDescription = Sprite::create("UI/NeoDescriptionCharacter.png");
     if (!panelDescription)
     {
@@ -145,7 +126,6 @@ void CharacterChooseScene::menuUISetup()
     panelDescription->setPosition(safeOrigin.x + safeSize.width / 2, descY);
     this->addChild(panelDescription, 2);
 
-    // Tạo label "Choose your character"
     auto chooseCharacterLabel = Label::createWithTTF("Choose your character", "fonts/Pixelpurl-0vBPP.ttf", 30);
     if (!chooseCharacterLabel)
     {
@@ -158,7 +138,6 @@ void CharacterChooseScene::menuUISetup()
     chooseCharacterLabel->setVisible(true);
     panelDescription->addChild(chooseCharacterLabel, 6, "chooseCharacterLabel");
 
-    // Tính vị trí nút Next/Buy
     auto nextSprite = Sprite::create("UI/buttonNext.png");
     if (!nextSprite)
     {
@@ -172,7 +151,6 @@ void CharacterChooseScene::menuUISetup()
     float playY = panelDescBottom + (nextSprite->getContentSize().height / 2 * 0.8f) +
                   panelDescription->getContentSize().height * 0.075f;
 
-    // Tạo nút Next
     auto nextButton =
         Utils::createButton("UI/buttonNext.png", AX_CALLBACK_1(CharacterChooseScene::menuNextCallback, this),
                             Vec2(playX, playY), 0.8f, false);
@@ -183,7 +161,6 @@ void CharacterChooseScene::menuUISetup()
     }
     menuItems.pushBack(nextButton);
 
-    // Tạo nút Buy
     auto buyButton = createBuyButton(dynamic_cast<MenuItemSprite*>(nextButton), panelDescription, playX, playY);
     if (!buyButton)
     {
@@ -192,14 +169,53 @@ void CharacterChooseScene::menuUISetup()
     }
     menuItems.pushBack(buyButton);
 
-    // Tạo button nhân vật
     setupCharacterButtons(panelChooseCharacter, panelDescription, dynamic_cast<MenuItemSprite*>(nextButton), buyButton,
                           menuItems);
 
-    // Tạo menu
     auto menu = Menu::createWithArray(menuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 6);
+}
+
+ax::ui::ScrollView* CharacterChooseScene::createWeaponDesScrollView(const std::string& name,
+                                                                    const std::string& tag,
+                                                                    float baseY,
+                                                                    float xPos,
+                                                                    Node* parent)
+{
+    auto scrollView = ax::ui::ScrollView::create();
+    if (!scrollView)
+    {
+        AXLOG("Lỗi: Không thể tạo ScrollView cho weaponDes");
+        return nullptr;
+    }
+
+    auto panelSize     = parent->getContentSize();
+    float maxWidth     = panelSize.width - xPos - 20.0f;
+    float scrollHeight = 60.0f;
+
+    scrollView->setContentSize(ax::Size(maxWidth, scrollHeight));
+    scrollView->setPosition(Vec2(xPos, baseY));
+    scrollView->setAnchorPoint(Vec2(0.0f, 0.5f));
+    scrollView->setDirection(ax::ui::ScrollView::Direction::VERTICAL);
+    scrollView->setBounceEnabled(true);
+    scrollView->setScrollBarEnabled(false);
+    scrollView->setVisible(false);
+
+    auto label = ax::Label::createWithTTF("", "fonts/Pixelpurl-0vBPP.ttf", 18);
+    if (!label)
+    {
+        AXLOG("Lỗi: Không thể tạo Label trong ScrollView");
+        return nullptr;
+    }
+    label->setAnchorPoint(Vec2(0.0f, 1.0f));
+    label->setPosition(Vec2(0.0f, scrollHeight));
+    label->setAlignment(ax::TextHAlignment::LEFT);
+    label->setMaxLineWidth(maxWidth);
+    scrollView->addChild(label, 0, "weaponDesLabel");
+
+    parent->addChild(scrollView, 6, "weaponDesScrollView" + name);
+    return scrollView;
 }
 
 void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* panelDescription, bool isAvailable)
@@ -209,20 +225,24 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto characterLabel = dynamic_cast<Label*>(panelDescription->getChildByName("label" + name));
     auto healthLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("healthLabel" + name));
     auto weaponLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("weaponLabel" + name));
-    auto attackLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("attackLabel" + name));
-    auto speedLabel     = dynamic_cast<Label*>(panelDescription->getChildByName("speedLabel" + name));
-    auto unlockLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("unlockLabel" + name));
+    auto weaponDesScrollView =
+        dynamic_cast<ax::ui::ScrollView*>(panelDescription->getChildByName("weaponDesScrollView" + name));
+    auto attackLabel = dynamic_cast<Label*>(panelDescription->getChildByName("attackLabel" + name));
+    auto speedLabel  = dynamic_cast<Label*>(panelDescription->getChildByName("speedLabel" + name));
+    auto unlockLabel = dynamic_cast<Label*>(panelDescription->getChildByName("unlockLabel" + name));
 
-    if (!characterLabel || !healthLabel || !weaponLabel || !attackLabel || !speedLabel || !unlockLabel)
+    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !attackLabel || !speedLabel ||
+        !unlockLabel)
     {
-        AXLOG("Lỗi: Thiếu label cho nhân vật %s", name.c_str());
+        AXLOG("Lỗi: Thiếu label hoặc ScrollView cho nhân vật %s", name.c_str());
         return;
     }
 
-    // Ẩn tất cả label
     for (auto* child : panelDescription->getChildren())
-        if (dynamic_cast<Label*>(child))
+    {
+        if (dynamic_cast<Label*>(child) || dynamic_cast<ax::ui::ScrollView*>(child))
             child->setVisible(false);
+    }
 
     characterLabel->setVisible(true);
 
@@ -243,8 +263,8 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto templ = entities.at("player").at(name);
     healthLabel->setString(templ.health.has_value() ? StringUtils::format("Health: %.0f", templ.health->maxHealth)
                                                     : "Health: N/A");
-    attackLabel->setString(templ.attack.has_value() ? StringUtils::format("Attack: %.0f", templ.attack->baseDamage)
-                                                    : "Attack: N/A");
+    attackLabel->setString(
+        templ.attack.has_value() ? StringUtils::format("Attack: %.0f", templ.attack->damageMultiplier) : "Attack: N/A");
     speedLabel->setString(templ.speed.has_value() ? StringUtils::format("Speed: %.0f", templ.speed->speed)
                                                   : "Speed: N/A");
     weaponLabel->setString(
@@ -253,10 +273,52 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
             ? StringUtils::format("Default Weapon: %s", templ.weaponInventory->weapons[0].first.c_str())
             : "Default Weapon: None");
 
+    std::string desWeapon;
+    if (templ.weaponInventory.has_value() && !templ.weaponInventory->weapons.empty() &&
+        !templ.weaponInventory->weapons[0].first.empty())
+    {
+        desWeapon = templ.weaponInventory->weapons[0].first;
+    }
+
+    auto weaponDesLabel = dynamic_cast<Label*>(weaponDesScrollView->getChildByName("weaponDesLabel"));
+    if (weaponDesLabel)
+    {
+        std::string description =
+            !desWeapon.empty() ? "Information:\n" + WeaponUpgradeUtils::getDescription(desWeapon, 1) : "None";
+        weaponDesLabel->setString(description);
+
+        auto labelSize  = weaponDesLabel->getContentSize();
+        auto scrollSize = weaponDesScrollView->getContentSize();
+        weaponDesScrollView->setInnerContainerSize(
+            ax::Size(scrollSize.width, std::max(scrollSize.height, labelSize.height)));
+        weaponDesLabel->setPosition(Vec2(0.0f, weaponDesScrollView->getInnerContainerSize().height));
+    }
+
     healthLabel->setVisible(true);
     attackLabel->setVisible(true);
     speedLabel->setVisible(true);
     weaponLabel->setVisible(true);
+    weaponDesScrollView->setVisible(true);
+}
+
+Label* CharacterChooseScene::createStatLabel(const std::string& name,
+                                             const std::string& tag,
+                                             float baseY,
+                                             float xPos,
+                                             Node* parent)
+{
+    auto label = Label::createWithTTF("", "fonts/Pixelpurl-0vBPP.ttf", 18);
+    if (!label)
+    {
+        AXLOG("Lỗi: Không thể tạo label %s", tag.c_str());
+        return nullptr;
+    }
+    label->setAnchorPoint(Vec2(0.0f, 0.5f));
+    label->setPosition(xPos, baseY);
+    label->setAlignment(TextHAlignment::LEFT);
+    label->setVisible(false);
+    parent->addChild(label, 6, tag + name);
+    return label;
 }
 
 MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton,
@@ -276,7 +338,7 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
             auto errorLabel = Label::createWithTTF("You so poor :)))!", "fonts/Pixelpurl-0vBPP.ttf", 20);
             if (errorLabel)
             {
-                errorLabel->setPosition(safeArea.origin + safeArea.size / 2);  // Hiển thị trong safeArea
+                errorLabel->setPosition(safeArea.origin + safeArea.size / 2);
                 this->addChild(errorLabel, 20);
                 errorLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
             }
@@ -307,32 +369,11 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
         }
 
         if (auto* coinLabel = dynamic_cast<Label*>(this->getChildByName("coinLabel")))
-            coinLabel->setString(StringUtils::format("%d", shopData->getCoins()));  // Loại bỏ "Coins:"
+            coinLabel->setString(StringUtils::format("%d", shopData->getCoins()));
 
         shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
         AXLOG("Đã mở khóa nhân vật: %s", selectedCharacterName.c_str());
     }, Vec2(x, y), 0.8f, false));
-}
-
-Label* CharacterChooseScene::createStatLabel(const std::string& name,
-                                             const std::string& tag,
-                                             float baseY,
-                                             float xPos,
-                                             Node* parent)
-{
-    auto label = Label::createWithTTF("", "fonts/Pixelpurl-0vBPP.ttf", 18);
-    if (!label)
-    {
-        AXLOG("Lỗi: Không thể tạo label %s", tag.c_str());
-        return nullptr;
-    }
-    // Căn lề trái với anchor point (0, 0.5) để văn bản bắt đầu từ xPos
-    label->setAnchorPoint(Vec2(0.0f, 0.5f));
-    label->setPosition(xPos, baseY);
-    label->setAlignment(TextHAlignment::LEFT);
-    label->setVisible(false);
-    parent->addChild(label, 6, tag + name);
-    return label;
 }
 
 void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
@@ -349,23 +390,46 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         return;
     }
 
-    int numCharacters = entities.at("player").size();
-    const int cols    = 2;
-    const int rows    = (numCharacters + cols - 1) / cols;
+    // Tạo characterOrder từ entityTemplates
+    std::vector<std::pair<std::string, int>> characterOrder;
+    int index = 0;
+    for (const auto& [name, templ] : entities.at("player"))
+    {
+        characterOrder.emplace_back(name, index++);
+    }
 
-    float iconSpacingX = panelChooseCharacter->getContentSize().width * 0.06f;
+    int numCharacters = entities.at("player").size();
+    const int cols    = 4;                                  // Số cột cố định là 4
+    const int rows    = (numCharacters + cols - 1) / cols;  // Tính số hàng
+
+    float iconSpacingX = panelChooseCharacter->getContentSize().width * 0.093f;
     float iconSpacingY = panelChooseCharacter->getContentSize().height * 0.03f;
     float panelLeft    = panelChooseCharacter->getPositionX() - panelChooseCharacter->getContentSize().width / 2.4f;
     float startY =
         panelChooseCharacter->getPositionY() + panelChooseCharacter->getContentSize().height / 2.5f - iconSpacingY;
     float startX = panelLeft + iconSpacingX;
 
-    // Lề trái cố định cho các label (ngoại trừ weaponLabel)
     float leftMargin = panelDescription->getContentSize().width * 0.06f;
 
-    int index = 0;
     for (const auto& [name, templ] : entities.at("player"))
     {
+        // Tìm index từ characterOrder
+        int index = -1;
+        for (const auto& pair : characterOrder)
+        {
+            if (pair.first == name)
+            {
+                index = pair.second;
+                break;
+            }
+        }
+
+        if (index == -1)
+        {
+            AXLOG("Cảnh báo: Nhân vật %s không có trong characterOrder, bỏ qua", name.c_str());
+            continue;
+        }
+
         auto characterLabel = Label::createWithTTF(name, "fonts/Pixelpurl-0vBPP.ttf", 30);
         if (!characterLabel)
         {
@@ -382,18 +446,17 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             panelDescription->getContentSize().height * 0.85f - characterLabel->getContentSize().height * 0.5f;
         float baseY = characterLabelBottomY - 10.0f;
 
-        // Tạo stat labels
-        auto healthLabel = createStatLabel(name, "healthLabel", baseY, leftMargin, panelDescription);
-        // WeaponLabel cùng hàng với healthLabel, cách một khoảng cố định
-        float healthLabelWidth =
-            healthLabel ? healthLabel->getContentSize().width : 100.0f;  // Giá trị mặc định nếu lỗi
-        float weaponLabelX = leftMargin + healthLabelWidth + 110.0f;     // Khoảng cách 20px
-        auto weaponLabel   = createStatLabel(name, "weaponLabel", baseY, weaponLabelX, panelDescription);
-        auto attackLabel   = createStatLabel(name, "attackLabel", baseY - 20.0f, leftMargin, panelDescription);
-        auto speedLabel    = createStatLabel(name, "speedLabel", baseY - 40.0f, leftMargin, panelDescription);
-        auto unlockLabel   = createStatLabel(name, "unlockLabel", baseY - 50.0f, leftMargin, panelDescription);
+        auto healthLabel       = createStatLabel(name, "healthLabel", baseY, leftMargin, panelDescription);
+        float healthLabelWidth = healthLabel ? healthLabel->getContentSize().width : 100.0f;
+        float weaponLabelX     = leftMargin + healthLabelWidth + 125.0f;
+        auto weaponLabel       = createStatLabel(name, "weaponLabel", baseY, weaponLabelX, panelDescription);
+        auto weaponDesScrollView =
+            createWeaponDesScrollView(name, "weaponDesScrollView", baseY - 40.0f, weaponLabelX, panelDescription);
+        auto attackLabel = createStatLabel(name, "attackLabel", baseY - 20.0f, leftMargin, panelDescription);
+        auto speedLabel  = createStatLabel(name, "speedLabel", baseY - 40.0f, leftMargin, panelDescription);
+        auto unlockLabel = createStatLabel(name, "unlockLabel", baseY - 50.0f, leftMargin, panelDescription);
 
-        if (!healthLabel || !weaponLabel || !attackLabel || !speedLabel || !unlockLabel)
+        if (!healthLabel || !weaponLabel || !weaponDesScrollView || !attackLabel || !speedLabel || !unlockLabel)
         {
             AXLOG("Lỗi: Không thể tạo đầy đủ label cho nhân vật %s", name.c_str());
             continue;
@@ -408,7 +471,6 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             continue;
         }
 
-        // Sửa lỗi capture bằng cách sử dụng initialization capture
         button->setCallback([this, characterName = name, buyButton, nextButton, panelDescription](Object* sender) {
             selectedCharacterName = characterName;
 
@@ -443,8 +505,13 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         });
 
         button->setUserData(characterLabel);
-        button->setPosition(Vec2(startX + index * (button->getContentSize().width + iconSpacingX), startY));
+
+        int col            = index % cols;
+        int row            = index / cols;
+        float buttonWidth  = button->getContentSize().width;
+        float buttonHeight = button->getContentSize().height;
+        button->setPosition(
+            Vec2(startX + col * (buttonWidth + iconSpacingX), startY - row * (buttonHeight + iconSpacingY)));
         menuItems.pushBack(button);
-        index++;
     }
 }

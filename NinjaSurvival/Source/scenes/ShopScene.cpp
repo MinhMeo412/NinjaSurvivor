@@ -176,7 +176,7 @@ void ShopScene::menuBuyCallback(Object* sender)
 
     if (currentCoins < cost)
     {
-        auto errorLabel = Label::createWithTTF("Không đủ coin!", "fonts/Pixelpurl-0vBPP.ttf", 20);
+        auto errorLabel = Label::createWithTTF("You so poor :)))!", "fonts/Pixelpurl-0vBPP.ttf", 20);
         if (errorLabel)
         {
             errorLabel->setPosition(visibleSize / 2);
@@ -189,10 +189,10 @@ void ShopScene::menuBuyCallback(Object* sender)
     if (shopData->upgradeStat(selectedStatName))
     {
         shopData->setCoins(currentCoins - cost);
-        int newLevel      = shopData->getLevel("Stat", selectedStatName);
-        int newLevelValue = shopData->getStatLevelValue("Stat", selectedStatName);
-        int newCost       = shopData->getCost("Stat", selectedStatName);
-        bool isMaxLevel   = newLevel >= shopData->getLevelLimit("Stat", selectedStatName);
+        int newLevel    = shopData->getLevel("Stat", selectedStatName);
+        float newBuff   = shopData->getShopBuff(selectedStatName);
+        int newCost     = shopData->getCost("Stat", selectedStatName);
+        bool isMaxLevel = newLevel >= shopData->getLevelLimit("Stat", selectedStatName);
 
         // Cập nhật giao diện
         if (selectedStatItem)
@@ -213,7 +213,7 @@ void ShopScene::menuBuyCallback(Object* sender)
         }
 
         // Hiển thị thông báo thành công
-        auto successLabel = Label::createWithTTF(StringUtils::format("Đã nâng cấp %s!", selectedStatName.c_str()),
+        auto successLabel = Label::createWithTTF(StringUtils::format("%s Upgraded!", selectedStatName.c_str()),
                                                  "fonts/Pixelpurl-0vBPP.ttf", 20);
         if (successLabel)
         {
@@ -223,8 +223,8 @@ void ShopScene::menuBuyCallback(Object* sender)
         }
 
         shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
-        AXLOG("Đã nâng cấp stat: %s, level=%d, levelValue=%d, cost=%d", selectedStatName.c_str(), newLevel,
-              newLevelValue, newCost);
+        AXLOG("Đã nâng cấp stat: %s, level=%d, buff=%.2f, cost=%d", selectedStatName.c_str(), newLevel, newBuff,
+              newCost);
     }
     else
     {
@@ -236,14 +236,23 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
 {
     auto shopData         = ShopSystem::getInstance();
     const auto& shopItems = shopData->getShopData();
-    int index             = 0;
-    const int cols        = 6;
-    float iconSpacingX    = panel->getContentSize().width * 0.12f;
-    float startX          = panel->getPositionX() - panel->getContentSize().width * 0.35f;
-    float startY          = panel->getPositionY() + panel->getContentSize().height * 0.39f;
+    int numStats          = 0;
+    for (const auto& item : shopItems)
+    {
+        if (item.type == "Stat")
+            numStats++;
+    }
 
-    // Lề trái cố định cho các label
-    float leftMargin = panelDescription->getContentSize().width * 0.1f;
+    const int cols     = 4;                                       // Số cột cố định là 4
+    const int rows     = (numStats + cols - 1) / cols;            // Tính số hàng
+    float iconSpacingX = panel->getContentSize().width * 0.093f;  // Khoảng cách ngang
+    float iconSpacingY = panel->getContentSize().height * 0.03f;  // Khoảng cách dọc
+    float panelLeft    = panel->getPositionX() - panel->getContentSize().width / 2.4f;
+    float startY       = panel->getPositionY() + panel->getContentSize().height / 2.5f - iconSpacingY;
+    float startX       = panelLeft + iconSpacingX;
+
+    float leftMargin = panelDescription->getContentSize().width * 0.06f;
+    int index        = 0;
 
     for (const auto& item : shopItems)
     {
@@ -280,9 +289,12 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
         }
 
         statButton->setScale(1.5f);
-        float buttonX =
-            startX + (statButton->getContentSize().width * 1.5f + iconSpacingX) * index;  // Adjusted for scale
-        statButton->setPosition(buttonX, startY);
+        int col            = index % cols;
+        int row            = index / cols;
+        float buttonWidth  = statButton->getContentSize().width * 1.5f;  // Điều chỉnh theo scale
+        float buttonHeight = statButton->getContentSize().height * 1.5f;
+        statButton->setPosition(
+            Vec2(startX + col * (buttonWidth + iconSpacingX), startY - row * (buttonHeight + iconSpacingY)));
 
         // Callback chọn stat
         statButton->setCallback([this, name = item.name, panelDescription, shopData](Object* sender) {
@@ -329,6 +341,7 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
         if (dynamic_cast<Label*>(child))
             child->setVisible(false);
 }
+
 void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, bool isMaxLevel)
 {
     auto shopData      = ShopSystem::getInstance();
@@ -344,14 +357,14 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
     }
 
     int level             = shopData->getLevel("Stat", name);
-    int levelValue        = shopData->getStatLevelValue("Stat", name);
+    float buffValue       = shopData->getShopBuff(name) * 100.0f;  // Chuyển thành phần trăm để hiển thị
     int cost              = shopData->getCost("Stat", name);
-    int levelLimit        = shopData->getLevelLimit("Stat", name);  // Lấy level tối đa
+    int levelLimit        = shopData->getLevelLimit("Stat", name);
     std::string levelText = isMaxLevel ? "Max" : StringUtils::format("%d/%d", level, levelLimit);
 
     nameLabel->setString(StringUtils::format("Stat: %s", name.c_str()));
     levelLabel->setString(StringUtils::format("Level: %s", levelText.c_str()));
-    increaseLabel->setString(StringUtils::format("Increase: %d", levelValue));
+    increaseLabel->setString(StringUtils::format("Bonus: +%.1f Percent", buffValue));
     costLabel->setString(StringUtils::format("Cost: %d", cost));
 
     // Hiển thị label nếu stat đang được chọn
