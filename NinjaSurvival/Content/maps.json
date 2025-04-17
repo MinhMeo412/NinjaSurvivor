@@ -43,7 +43,7 @@
         {
             "name": "Large Map",
             "sprite": "HelloWorld.png",
-            "available": true,
+            "available": false,
             "mapSize": {
                 "width": 8,
                 "height": 8
