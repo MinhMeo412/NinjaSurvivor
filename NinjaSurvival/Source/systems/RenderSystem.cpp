@@ -41,8 +41,8 @@ void RenderSystem::init()
 
     enemyBatchNode      = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
     //bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
-    itemBatchNode = ax::SpriteBatchNode::create("items.png");
-    weaponBatchNode = ax::SpriteBatchNode::create("weapon.png");
+    itemBatchNode = ax::SpriteBatchNode::create("Entity/Items/items.png");
+    weaponBatchNode = ax::SpriteBatchNode::create("Entity/Weapons/weapon.png");
     numberBatchNode = ax::SpriteBatchNode::create("number.png");
 
     scene->addChild(enemyBatchNode, 3);

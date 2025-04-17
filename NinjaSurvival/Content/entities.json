@@ -14,13 +14,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 50.0,
+                "speed": 40.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 50.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/ninja.plist",
@@ -49,13 +49,13 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "shuriken"
+                "weapon": "sword"
             }
         },
         {
             "type": "player",
             "name": "Master",
-            "available": false,
+            "available": true,
             "profileImage": "Entity/Character/Faceset1.png",
             "components": {
                 "transform": {
@@ -72,7 +72,7 @@
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 100.0
+                    "maxHealth": 70.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/master.plist",
@@ -114,16 +114,16 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 150.0,
+                "speed": 125.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 5.0
+                    "maxHealth": 7.0
                 },
                 "attack": {
-                    "baseDamage": 5.0,
+                    "baseDamage": 7.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -172,16 +172,16 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 120.0,
+                "speed": 100.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 20.0
+                    "maxHealth": 15.0
                 },
                 "attack": {
-                    "baseDamage": 5.0,
+                    "baseDamage": 15.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -294,7 +294,7 @@
                     "maxHealth": 5.0
                 },
                 "attack": {
-                    "baseDamage": 1.0,
+                    "baseDamage": 7.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -337,7 +337,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./coin"
                 }
             }
@@ -352,7 +352,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./greenGem"
                 }
             }
@@ -367,7 +367,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./blueGem"
                 }
             }
@@ -382,7 +382,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./redGem"
                 }
             }
@@ -397,7 +397,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./heart"
                 }
             }
@@ -412,7 +412,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./bomb"
                 }
             }
@@ -427,7 +427,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./magnet"
                 }
             }
@@ -442,7 +442,7 @@
                     "y": 0.0
                 },
                 "sprite": {
-                    "plist": "items.plist",
+                    "plist": "Entity/Items/items.plist",
                     "gameSceneFrame": "./chest"
                 }
             }
@@ -461,7 +461,7 @@
                     "vy": 0.0
                 },
                 "sprite": {
-                    "plist": "weapon.plist",
+                    "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./sword"
                 },
                 "hitbox": {
@@ -489,7 +489,7 @@
                     "vy": 0.0
                 },
                 "sprite": {
-                    "plist": "weapon.plist",
+                    "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./shuriken"
                 },
                 "hitbox": {
@@ -519,7 +519,7 @@
                 },
                 "speed": 300.0,
                 "sprite": {
-                    "plist": "weapon.plist",
+                    "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./kunai"
                 },
                 "hitbox": {
@@ -527,7 +527,7 @@
                     "height": 5.0
                 },
                 "attack": {
-                    "baseDamage": 5.0,
+                    "baseDamage": 7.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,

@@ -99,32 +99,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
 
     int numEnemies;  // Số enemy spawn
     int minute = elapsedTime / 60;
-    numEnemies = 2 + minute;
-
-    // if (elapsedTime < 30)  // 0-1 phút
-    //{
-    //     numEnemies = 2 + rand() % 2;  // 2-3 quái
-    // }
-    // else if (elapsedTime < 60)  // 0-1 phút
-    //{
-    //     numEnemies = 3 + rand() % 3;  // 3-5 quái
-    // }
-    // else if (elapsedTime < 180)  // 1-3 phút
-    //{
-    //     numEnemies = 5 + rand() % 4;  // 5-8 quái
-    // }
-    // else if (elapsedTime < 420)  // 3-7 phút
-    //{
-    //     numEnemies = 10 + rand() % 6;  // 10-15 quái
-    // }
-    // else if (elapsedTime < 600)  // 7-10 phút
-    //{
-    //     numEnemies = 20 + rand() % 11;  // 20-30 quái
-    // }
-    // else  // >10 phút
-    //{
-    //     numEnemies = 35 + rand() % 16;  // 35-50 quái
-    // }
+    numEnemies = 3 + minute;
 
     // Giới hạn spawn
     if (livingEnemyCount < maxEnemies)
@@ -137,7 +112,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     }
 
     // Điều chỉnh tỷ lệ spawn khi boss xuất hiện (hoặc cho = 0 để ko spawn)
-    float spawnRateMultiplier = isBossActive ? 0.3f : 1.0f;
+    float spawnRateMultiplier = isBossActive ? 0.25f : 1.0f;
     numEnemies                = static_cast<int>(numEnemies * spawnRateMultiplier);
 
     // Tỷ lệ spawn từng loại quái
@@ -203,12 +178,12 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
         {
             if (auto health = healthMgr.getComponent(enemy))
             {
-                health->maxHealth *= 2.0f;
+                health->maxHealth *= 3.0f;
                 health->currentHealth = health->maxHealth;
             }
             if (auto speed = speedMgr.getComponent(enemy))
             {
-                speed->speed = std::min(speed->speed * 2.0f, 300.0f);
+                speed->speed = std::min(speed->speed * 1.5f, 500.0f);
             }
         }
 
@@ -218,69 +193,34 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
 
 void SpawnSystem::spawnBoss(float elapsedTime)
 {
-    if (static_cast<int>(elapsedTime) % 300 == 0 && elapsedTime > 0)
-    {  // Mỗi 5 phút
+    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
+    { 
         TransformComponent* playerTransform = transformMgr.getComponent(playerEntity);
         if (!playerTransform)
             return;
         ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
 
         Entity boss = spawnEntity("enemy", "Slime", playerPos);  // dùng tạm Slime làm boss
+        bossSpawnCount++;
         if (boss)
         {
-            if (elapsedTime < 610)  // boss tại phút 10
+            auto health = healthMgr.getComponent(boss);
+            auto speed  = speedMgr.getComponent(boss);
+            auto attack = attackMgr.getComponent(boss);
+            if (health) // +50% hp mỗi lần spawn
             {
-                auto health = healthMgr.getComponent(boss);
-                if (health)
-                {
-                    health->maxHealth     = health->maxHealth * 1.2;
-                    health->currentHealth = health->maxHealth;
-                }
-                if (auto speed = speedMgr.getComponent(boss))
-                {
-                    speed->speed = std::min(speed->speed * 1.2f, 200.0f);
-                }
-                if (auto attack = attackMgr.getComponent(boss))
-                {
-                    attack->baseDamage *= 1.5f;
-                }
+                health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
+                health->currentHealth = health->maxHealth;
             }
-            else if (elapsedTime < 910)  // boss tại phút 15
+            if (speed) // +20% speed mỗi lần spawn
             {
-                auto health = healthMgr.getComponent(boss);
-                if (health)
-                {
-                    health->maxHealth     = health->maxHealth * 1.5;
-                    health->currentHealth = health->maxHealth;
-                }
-                if (auto speed = speedMgr.getComponent(boss))
-                {
-                    speed->speed = std::min(speed->speed * 1.5f, 200.0f);
-                }
-                if (auto attack = attackMgr.getComponent(boss))
-                {
-                    attack->baseDamage *= 2.0f;
-                }
+                float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                speed->speed         = std::min(speedCalculate, 120.0f);
             }
-            else  // boss tại phút 15 trở đi
+            if (attack)// +20% attack mỗi lần spawn
             {
-                auto health = healthMgr.getComponent(boss);
-                if (health)
-                {
-                    health->maxHealth =
-                        health->maxHealth * (2 + (elapsedTime - 1200) / 300);  // Boss trâu hơn theo thời gian
-                    health->currentHealth = health->maxHealth;
-                }
-                if (auto speed = speedMgr.getComponent(boss))
-                {
-                    speed->speed = std::min(speed->speed * 1.5f, 200.0f);
-                }
-                if (auto attack = attackMgr.getComponent(boss))
-                {
-                    attack->baseDamage *= 2.0f;
-                }
+                attack->baseDamage   = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
             }
-
             isBossActive = true;
         }
     }
@@ -313,7 +253,8 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
             animationComp->currentState = "idle";
         }
 
-        if (elapsedTime > 300 && elapsedTime < 600)  // 5-10 phút
+
+        if (elapsedTime > 180 && elapsedTime < 300)  // 5-10 phút
         {
             if (auto health = healthMgr.getComponent(entity))
             {
@@ -321,11 +262,19 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
                 health->currentHealth = health->maxHealth;
             }
         }
-        else if (elapsedTime > 600 && elapsedTime < 900)  // 10-15 phút
+        else if (elapsedTime > 300 && elapsedTime < 600)  // 5-10 phút
         {
             if (auto health = healthMgr.getComponent(entity))
             {
                 health->maxHealth *= 3.0f;
+                health->currentHealth = health->maxHealth;
+            }
+        }
+        else if (elapsedTime > 600 && elapsedTime < 900)  // 10-15 phút
+        {
+            if (auto health = healthMgr.getComponent(entity))
+            {
+                health->maxHealth *= 4.0f;
                 health->currentHealth = health->maxHealth;
             }
             if (auto attack = attackMgr.getComponent(entity))
@@ -337,12 +286,12 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
         {
             if (auto health = healthMgr.getComponent(entity))
             {
-                health->maxHealth *= 4.0f;
+                health->maxHealth *= 5.0f;
                 health->currentHealth = health->maxHealth;
             }
             if (auto speed = speedMgr.getComponent(entity))
             {
-                speed->speed = std::min(speed->speed * 1.5f, 300.0f);
+                speed->speed = std::min(speed->speed * 1.5f, 500.0f);
             }
             if (auto attack = attackMgr.getComponent(entity))
             {

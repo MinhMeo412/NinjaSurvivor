@@ -32,10 +32,13 @@ bool GameScene::init()
     systemManager->initSystems(this, gameWorld.get(), uiLayer);
 
     //Update
-    systemManager->update(0.0f); //Force update 1 lần
-    uiLayer->update(0.0f); //Force update 1 lần
+    //for (int i = 0; i < 10; i++)
+    {
+        systemManager->update(0.0f);  // Force update 1 lần
+    }
+    uiLayer->update(0.0f);  // Force update 1 lần
 
-    this->scheduleOnce(AX_SCHEDULE_SELECTOR(GameScene::startUpdate), 1.0f); //Delay 1s = với loading scene
+    this->scheduleOnce(AX_SCHEDULE_SELECTOR(GameScene::startUpdate), 1.0f); //Delay 1s
 
     return true;
 }

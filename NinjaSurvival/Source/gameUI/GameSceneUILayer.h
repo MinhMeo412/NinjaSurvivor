@@ -14,7 +14,7 @@ public:
     void increaseCoin(float coin);
     void increaseEnemyKillCount();
 
-    float collectedCoin = 0;
+    int getCollectedCoin() { return static_cast<int>(collectedCoin); }
 
 private:
     ax::MenuItemImage* pauseButton;
@@ -25,6 +25,7 @@ private:
     ax::Sprite* xpBar;
     ax::Sprite* xpBarUnder;
 
+    float collectedCoin = 0;
     ax::Label* coinLabel = nullptr;
 
     ax::Label* levelLabel = nullptr;

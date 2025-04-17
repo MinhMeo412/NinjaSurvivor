@@ -575,17 +575,17 @@ void WeaponSystem::upgradeKunai(std::string weaponName, int level)
     {
         // Giảm CD
         auto cooldown = cooldownMgr.getComponent(kunaiEntity);
-        cooldown->cooldownDuration -= 0.1;
+        cooldown->cooldownDuration -= 0.10;
         break;
     }
     case 3:
     {
         // Giảm CD
         auto cooldown = cooldownMgr.getComponent(kunaiEntity);
-        cooldown->cooldownDuration -= 0.1;
+        cooldown->cooldownDuration -= 0.15;
         // Tăng dame
         auto attack = attackMgr.getComponent(kunaiEntity);
-        attack->baseDamage += 3;
+        attack->baseDamage += 2;
         break;
     }
     case 4:
@@ -602,7 +602,7 @@ void WeaponSystem::upgradeKunai(std::string weaponName, int level)
         cooldown->cooldownDuration -= 0.25;
         // Tăng dame
         auto attack = attackMgr.getComponent(kunaiEntity);
-        attack->baseDamage += 4;
+        attack->baseDamage += 3;
         break;
     }
     default:

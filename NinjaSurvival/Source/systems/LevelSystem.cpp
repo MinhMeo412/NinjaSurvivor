@@ -29,13 +29,7 @@ void LevelSystem::levelUp()
     level     = level + 1;
     currentXP = currentXP - neededXP;
 
-    float growthMultiplier = 1.0f;
-    if (level >= 30)
-        growthMultiplier = 1.6f;
-    else if (level >= 20)
-        growthMultiplier = 1.4f;
-    else if (level >= 10)
-        growthMultiplier = 1.2f;
+    float growthMultiplier = 1.0f + (0.1 * static_cast<int>(level / 4)); //Tăng 10% mỗi 4 level
 
     neededXP = 5 * (level + 1) * growthMultiplier;
     AXLOG("Level: %d", level);

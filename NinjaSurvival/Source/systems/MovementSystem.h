@@ -91,7 +91,7 @@ public:
     std::priority_queue<BatchScore, std::vector<BatchScore>, std::greater<BatchScore>> batchQueue;  // Min-heap
     std::unordered_map<int, BatchScore*> batchScoreMap;  // Ánh xạ batchId tới BatchScore
     int currentBatchIndex        = 0;                    // Batch hiện tại được xử lý trong frame
-    static const int BATCH_COUNT = 10;                   // Số batch cố định
+    static const int BATCH_COUNT = 5;                   // Số batch cố định
 
     // Batch Management
     void initializeBatches();
