@@ -102,7 +102,7 @@ void WeaponSystem::initializePlayerWeapon(Entity player)
     }
     else
     {
-        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll", );
+        AXLOG("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  nulllllllllllllllllllllllllllllllllllll" );
     }
 }
 

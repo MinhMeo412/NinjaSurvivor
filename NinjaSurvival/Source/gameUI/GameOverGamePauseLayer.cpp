@@ -2,6 +2,7 @@
 #include "GameOverGamePauseLayer.h"
 #include "scenes/MainScene.h"
 #include "scenes/GameScene.h"
+#include "systems/ShopSystem.h"
 #include "AudioManager.h"
 #include "systems/ShopSystem.h"
 #include "GameSceneUILayer.h"
@@ -124,8 +125,12 @@ void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
 
 void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
 {
+<<<<<<< Updated upstream
     // Vô hiệu hóa toàn bộ sự kiện đầu vào
     _director->getEventDispatcher()->setEnabled(false);
+=======
+    Director::getInstance()->getEventDispatcher()->setEnabled(false);
+>>>>>>> Stashed changes
 
     // Get the GameScene (parent)
     auto gameScene = this->getParent();
@@ -175,6 +180,7 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
     AudioManager::getInstance()->stopSound("gamebackground");  // Dừng âm thanh của game
 
+<<<<<<< Updated upstream
     // Xóa layer
     this->removeFromParentAndCleanup(true);
 
@@ -184,4 +190,27 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     this->scheduleOnce([this](float) { Director::getInstance()->getEventDispatcher()->setEnabled(true); },
                        TRANSITION_TIME,
                        "enableInput");
+=======
+    this->removeFromParentAndCleanup(true);  // Xóa layer
+
+    // Push scene mới
+    auto scene = utils::createInstance<MainScene>();
+    Director::getInstance()->pushScene(scene);
+
+    // Lưu tham chiếu đến scene cũ
+    Scene* gameScene = SystemManager::getInstance()->getCurrentScene();
+    gameScene->retain();  // Giữ scene cũ để tránh bị giải phóng sớm
+
+    // Lên lịch để pop scene cũ và cleanup
+    scene->scheduleOnce([gameScene](float) {
+        if (gameScene)
+        {
+            gameScene->onExit();   // Gọi onExit
+            gameScene->cleanup();  // Gọi cleanup
+            gameScene->release();  // Giải phóng
+        }
+        AXLOG("Xóa gameSccene");
+        Director::getInstance()->getEventDispatcher()->setEnabled(true);
+    }, 0.5f, "pop_old_scene");
+>>>>>>> Stashed changes
 }

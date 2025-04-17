@@ -16,6 +16,10 @@ public:
 
     float collectedCoin = 0;
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 private:
     ax::MenuItemImage* pauseButton;
 

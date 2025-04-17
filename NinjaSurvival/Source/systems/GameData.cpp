@@ -371,9 +371,13 @@ void GameData::syncStatsWithShopSystem()
                 components["health"].HasMember("maxHealth"))
                 templ.health = HealthComponent{static_cast<float>(components["health"]["maxHealth"].GetDouble())};
             if (components.HasMember("attack") && components["attack"].IsObject() &&
-                components["attack"].HasMember("baseDamage"))
+                components["attack"].HasMember("damageMultiplier"))
                 templ.attack =
+<<<<<<< Updated upstream
                     AttackComponent{static_cast<float>(components["attack"]["baseDamage"].GetDouble()), 0.0f, 1.0f};
+=======
+                    AttackComponent{static_cast<float>(components["attack"]["damageMultiplier"].GetDouble()), 1.0f};
+>>>>>>> Stashed changes
             if (components.HasMember("speed") && components["speed"].IsFloat())
                 templ.speed = SpeedComponent{static_cast<float>(components["speed"].GetFloat())};
             if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
@@ -411,12 +415,12 @@ void GameData::syncStatsWithShopSystem()
             // Cập nhật Attack
             if (templ.attack.has_value() && baseTempl.attack.has_value())
             {
-                float baseDamage     = baseTempl.attack->baseDamage;
+                float baseDamage     = baseTempl.attack->damageMultiplier;
                 int attackLevelValue = shop->getStatLevelValue("Stat", "Attack");
                 templ.attack         = AttackComponent{baseDamage + static_cast<float>(attackLevelValue),
                                                templ.attack->flatBonus, templ.attack->damageMultiplier};
                 AXLOG("Đồng bộ Attack cho %s: cơ bản=%f, tăng=%d, cuối=%f", name.c_str(), baseDamage, attackLevelValue,
-                      templ.attack->baseDamage);
+                      templ.attack->damageMultiplier);
             }
 
             // Cập nhật Speed
