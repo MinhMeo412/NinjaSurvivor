@@ -176,7 +176,7 @@ void ShopScene::menuBuyCallback(Object* sender)
 
     if (currentCoins < cost)
     {
-        auto errorLabel = Label::createWithTTF("You so poor :)))!", "fonts/Pixelpurl-0vBPP.ttf", 20);
+        auto errorLabel = Label::createWithTTF("Không đủ coin!", "fonts/Pixelpurl-0vBPP.ttf", 20);
         if (errorLabel)
         {
             errorLabel->setPosition(visibleSize / 2);
@@ -213,7 +213,7 @@ void ShopScene::menuBuyCallback(Object* sender)
         }
 
         // Hiển thị thông báo thành công
-        auto successLabel = Label::createWithTTF(StringUtils::format("%s Upgraded!", selectedStatName.c_str()),
+        auto successLabel = Label::createWithTTF(StringUtils::format("Đã nâng cấp %s!", selectedStatName.c_str()),
                                                  "fonts/Pixelpurl-0vBPP.ttf", 20);
         if (successLabel)
         {

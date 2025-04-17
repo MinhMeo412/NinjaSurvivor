@@ -4,11 +4,10 @@
 struct AttackComponent
 {
     float baseDamage;
-    float flatBonus;
     float damageMultiplier;
 
-    AttackComponent(float base = 0.0f, float bonus = 0.0f, float multiplier = 0.0f)
-        : baseDamage(base), flatBonus(bonus), damageMultiplier(multiplier)
+    AttackComponent(float base = 0.0f, float multiplier = 0.0f)
+        : baseDamage(base), damageMultiplier(multiplier)
     {}
 };
 

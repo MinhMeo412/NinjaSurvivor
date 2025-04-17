@@ -47,7 +47,7 @@ bool GameSceneUILayer::init()
                                          AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
     float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2 - 10;  // Góc phải
     float pauseY = safeOrigin.y + safeArea.size.height * 2 / 3;
-    pauseButton->setScale(1.8);  // 2/3 từ dưới lên
+    pauseButton->setScale(2);  // 2/3 từ dưới lên
     pauseButton->setPosition(Vec2(pauseX, pauseY));
 
     // Tạo menu
@@ -92,14 +92,14 @@ bool GameSceneUILayer::init()
         return false;
     }
     float coinLabelX = safeOrigin.x + safeArea.size.width - coinLabel->getContentSize().width -
-                       coinSprite->getContentSize().width - 17;  // Margin 20
-    float coinY = 640 - 20;                                      // Dưới thanh XP
+                       coinSprite->getContentSize().width - 20;  // Margin 20
+    float coinY = xpY - 30;                                      // Dưới thanh XP
     coinLabel->setPosition(coinLabelX, coinY);
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     this->addChild(coinLabel, 5);
 
     coinSprite->setPosition(
-        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 7,
+        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 5,
         coinY);                  // Margin 5 giữa label và sprite
     coinSprite->setScale(2);  
     this->addChild(coinSprite, 5);

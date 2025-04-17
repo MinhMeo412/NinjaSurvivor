@@ -2,10 +2,7 @@
 #include "GameOverGamePauseLayer.h"
 #include "scenes/MainScene.h"
 #include "scenes/GameScene.h"
-#include "systems/ShopSystem.h"
 #include "AudioManager.h"
-#include "systems/ShopSystem.h"
-#include "GameSceneUILayer.h"
 
 using namespace ax;
 
@@ -125,72 +122,12 @@ void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
 
 void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
 {
-<<<<<<< Updated upstream
-    // Vô hiệu hóa toàn bộ sự kiện đầu vào
-    _director->getEventDispatcher()->setEnabled(false);
-=======
     Director::getInstance()->getEventDispatcher()->setEnabled(false);
->>>>>>> Stashed changes
-
-    // Get the GameScene (parent)
-    auto gameScene = this->getParent();
-    if (gameScene)
-    {
-        // Find GameSceneUILayer among the children of GameScene
-        GameSceneUILayer* uiLayer = nullptr;
-        for (auto* child : gameScene->getChildren())
-        {
-            uiLayer = dynamic_cast<GameSceneUILayer*>(child);
-            if (uiLayer)
-                break;
-        }
-
-        if (uiLayer)
-        {
-            // Get collectedCoin from GameSceneUILayer
-            float collectedCoin = uiLayer->collectedCoin;
-
-            // Update coins in ShopSystem
-            auto shopSystem = ShopSystem::getInstance();
-            int currentCoins = shopSystem->getCoins();
-            int newCoins = currentCoins + static_cast<int>(collectedCoin);
-            shopSystem->setCoins(newCoins);
-
-            AXLOG("Saved %d collected coins to ShopSystem. Total coins: %d", static_cast<int>(collectedCoin), newCoins);
-        }
-        else
-        {
-            AXLOG("Error: Could not find GameSceneUILayer to retrieve collectedCoin");
-        }
-
-        // Lên lịch kích hoạt lại EventDispatcher trên GameScene
-        gameScene->scheduleOnce([this](float) {
-            _director->getEventDispatcher()->setEnabled(true);
-            AXLOG("EventDispatcher re-enabled after transition");
-        }, TRANSITION_TIME, "enableInput");
-    }
-    else
-    {
-        AXLOG("Error: Could not find GameScene parent");
-        // Nếu không tìm thấy GameScene, kích hoạt lại ngay để tránh khóa ứng dụng
-        _director->getEventDispatcher()->setEnabled(true);
-    }
-
-    // Play button click sound
+    
+    // music click
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
-    AudioManager::getInstance()->stopSound("gamebackground");  // Dừng âm thanh của game
+    AudioManager::getInstance()->stopSound("gamebackground");  // dừng âm thanh của game
 
-<<<<<<< Updated upstream
-    // Xóa layer
-    this->removeFromParentAndCleanup(true);
-
-    // Chuyển về MainScene với hiệu ứng chuyển cảnh
-    auto scene = utils::createInstance<MainScene>();
-    Director::getInstance()->replaceScene(scene);
-    this->scheduleOnce([this](float) { Director::getInstance()->getEventDispatcher()->setEnabled(true); },
-                       TRANSITION_TIME,
-                       "enableInput");
-=======
     this->removeFromParentAndCleanup(true);  // Xóa layer
 
     // Push scene mới
@@ -201,16 +138,16 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     Scene* gameScene = SystemManager::getInstance()->getCurrentScene();
     gameScene->retain();  // Giữ scene cũ để tránh bị giải phóng sớm
 
+    // Do trên android xóa scene quá lâu nên k sử dụng replace
     // Lên lịch để pop scene cũ và cleanup
     scene->scheduleOnce([gameScene](float) {
         if (gameScene)
         {
-            gameScene->onExit();   // Gọi onExit
+            gameScene->onExit();  // Gọi onExit
             gameScene->cleanup();  // Gọi cleanup
             gameScene->release();  // Giải phóng
         }
         AXLOG("Xóa gameSccene");
         Director::getInstance()->getEventDispatcher()->setEnabled(true);
     }, 0.5f, "pop_old_scene");
->>>>>>> Stashed changes
 }

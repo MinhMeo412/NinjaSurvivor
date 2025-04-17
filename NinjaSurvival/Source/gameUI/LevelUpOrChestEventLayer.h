@@ -7,17 +7,15 @@
 class LevelUpOrChestEventLayer : public ax::Layer
 {
 public:
-    static LevelUpOrChestEventLayer* create(bool isLevelUp,
-                                            const std::vector<std::pair<std::string,int>>& upgradeList);
+    static LevelUpOrChestEventLayer* create(bool isLevelUp, const std::unordered_map<std::string, int>& upgradeList);
 
-    LevelUpOrChestEventLayer(bool isLevelUp, const std::vector<std::pair<std::string, int>>& upgradeList);
+    LevelUpOrChestEventLayer(bool isLevelUp, const std::unordered_map<std::string, int>& upgradeList);
 
     bool init() override;
 
-
 private:
     bool isLevelUp;
-    std::vector<std::pair<std::string, int>> upgradeList;
+    std::unordered_map<std::string, int> upgradeList;
     
     ax::Menu* selectionMenu;
     std::string selectedUpgrade;

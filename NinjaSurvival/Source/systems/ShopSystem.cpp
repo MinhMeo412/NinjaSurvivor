@@ -89,14 +89,9 @@ bool ShopSystem::createSaveGame()
         {"Stat", "SpawnRate", false, 0, 0, 50, 10, 0.1f, 10.0f},      // Spawn Rate: +10% mỗi cấp (10 cấp)
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}};
 
-        /*{"entities", "hello", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
-        {"entities", "what's up", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
-        {"entities", "Yolo", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
-        {"entities", "blabla", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},*/
-
-        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt}};
     shopDataVersion++;
     return saveToFile(filePath);
 }
@@ -367,6 +362,30 @@ void ShopSystem::syncMapsWithGameData()
             data.available = maps[data.name].available;
         }
     }
+}
+
+void ShopSystem::syncCoinsWithGameData(float coinMultiplier)
+{
+    for (auto& data : shopData)
+    {
+        if (data.type == "Coin")
+        {
+            if (data.levelValue.has_value())
+            {
+                int currentCoins   = data.levelValue.value();
+                int increasedCoins = static_cast<int>(currentCoins * coinMultiplier);
+                data.levelValue    = currentCoins + increasedCoins;
+                AXLOG("Coin tăng với hệ số %.2f: %d -> %d", coinMultiplier, currentCoins, data.levelValue.value());
+            }
+            else
+            {
+                data.levelValue = 0;
+            }
+            shopDataVersion++;
+            break;
+        }
+    }
+    saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
 }
 
 int ShopSystem::getCoins() const

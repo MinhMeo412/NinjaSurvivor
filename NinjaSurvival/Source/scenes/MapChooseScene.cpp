@@ -40,13 +40,16 @@ void MapChooseScene::menuPlayCallback(Object* sender)
         AXLOG("Error: No map selected");
         return;
     }
+
     _director->getEventDispatcher()->setEnabled(false);
+
+    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
+    AudioManager::getInstance()->stopSound("background");
+
     GameData::getInstance()->setSelectedMap(selectedMapName);
     auto gameScene    = utils::createInstance<GameScene>();
     auto loadingScene = GameLoadingScene::create();
     loadingScene->setNextScene(gameScene);
-    AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
-    AudioManager::getInstance()->stopSound("background");
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, loadingScene));
     this->scheduleOnce([this](float) { _director->getEventDispatcher()->setEnabled(true); }, TRANSITION_TIME,
                        "enableInput");
@@ -236,9 +239,9 @@ void MapChooseScene::updateMapUI(MenuItemSprite* item,
 }
 
 void MapChooseScene::setupMapButtons(Node* panel,
-                                          MenuItemSprite* playButton,
-                                          MenuItemSprite* buyButton,
-                                          Vector<MenuItem*>& menuItems)
+                                     MenuItemSprite* playButton,
+                                     MenuItemSprite* buyButton,
+                                     Vector<MenuItem*>& menuItems)
 {
     auto gameData    = GameData::getInstance();
     const auto& maps = gameData->getMaps();
@@ -248,17 +251,13 @@ void MapChooseScene::setupMapButtons(Node* panel,
         return;
     }
 
-    // Tạo mapOrder từ MapData
-    std::vector<std::pair<std::string, int>> mapOrder;
-    int index = 0;
-    for (const auto& [name, mapData] : maps)
-    {
-        mapOrder.emplace_back(name, index++);
-    }
+    // Sắp xếp map theo tên để đảm bảo thứ tự nhất quán
+    std::vector<std::pair<std::string, MapData>> sortedMaps(maps.begin(), maps.end());
+    std::sort(sortedMaps.begin(), sortedMaps.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
 
     // Thiết lập lưới: 1 cột
     const int cols    = 1;
-    const int numMaps = static_cast<int>(maps.size());
+    const int numMaps = static_cast<int>(sortedMaps.size());
     const int rows    = (numMaps + cols - 1) / cols;
 
     // Tính khoảng cách dựa trên kích thước panel
@@ -266,26 +265,10 @@ void MapChooseScene::setupMapButtons(Node* panel,
     // Đặt startY sát đỉnh panel
     float startY = panel->getPositionY() + panel->getContentSize().height * 1 / 3 - iconSpacingY;
 
-    for (const auto& [name, map] : maps)
+    int index = 0;
+    for (const auto& pair : sortedMaps)
     {
-        // Tìm index từ mapOrder
-        int index = -1;
-        for (const auto& pair : mapOrder)
-        {
-            if (pair.first == name)
-            {
-                index = pair.second;
-                break;
-            }
-        }
-
-        // Bỏ qua nếu không tìm thấy (trường hợp này khó xảy ra vì mapOrder được tạo từ maps)
-        if (index == -1)
-        {
-            AXLOG("Cảnh báo: Map %s không có trong mapOrder, bỏ qua", name.c_str());
-            continue;
-        }
-
+        const auto& map = pair.second;
         auto button =
             Utils::createMapButton(map.sprite, map.name, map.available, selectedMapName, selectedMapItem, playButton);
         if (!button)
@@ -331,5 +314,6 @@ void MapChooseScene::setupMapButtons(Node* panel,
         float posY = startY - row * (button->getContentSize().height + iconSpacingY);
         button->setPosition(Vec2(posX, posY));
         menuItems.pushBack(button);
+        index++;
     }
 }
