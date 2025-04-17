@@ -51,7 +51,6 @@ public:
 
     void syncCharactersWithGameData();
     void syncMapsWithGameData();
-    void syncCoinsWithGameData(float coinMultiplier);
 
     int getShopDataVersion() const { return shopDataVersion; }
 
