@@ -86,7 +86,7 @@ void ShopScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("coin.png");
+    auto coinSprite = Sprite::create("UI/coin.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");
@@ -278,7 +278,7 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
         updateStatInfo(item.name, panelDescription, isMaxLevel);
 
         // Tạo nút stat
-        std::string spritePath = item.name + ".png";
+        std::string spritePath = "UIShop/" + item.name + ".png";
         std::string statValue  = StringUtils::format(
             "Lv.%s", isMaxLevel ? "Max" : StringUtils::format("%d", item.level.value_or(0)).c_str());
         auto statButton = Utils::createStatButton(spritePath, statValue);
@@ -357,14 +357,44 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
     }
 
     int level             = shopData->getLevel("Stat", name);
-    float buffValue       = shopData->getShopBuff(name) * 100.0f;  // Chuyển thành phần trăm để hiển thị
+    float currentBuff     = shopData->getShopBuff(name);
     int cost              = shopData->getCost("Stat", name);
     int levelLimit        = shopData->getLevelLimit("Stat", name);
     std::string levelText = isMaxLevel ? "Max" : StringUtils::format("%d/%d", level, levelLimit);
 
+    // Tính levelValue tiếp theo
+    float nextBuff;
+    std::string bonusText;
+    if (name == "RerollWeapon")
+    {
+        nextBuff = static_cast<float>(level + 1);  // levelValue tiếp theo = level + 1
+        if (isMaxLevel)
+        {
+            bonusText = StringUtils::format("Bonus: %d", static_cast<int>(currentBuff));
+        }
+        else
+        {
+            bonusText =
+                StringUtils::format("Bonus: +%d->%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+        }
+    }
+    else
+    {
+        nextBuff = (level + 1) *
+                   shopData->getValueIncrement("Stat", name);  // levelValue tiếp theo = (level + 1) * valueIncrement
+        if (isMaxLevel)
+        {
+            bonusText = StringUtils::format("Bonus: x%.1f", currentBuff + 1.0f);
+        }
+        else
+        {
+            bonusText = StringUtils::format("Bonus: x%.1f->1.1f", currentBuff + 1.0f, nextBuff + 1.0f);
+        }
+    }
+
     nameLabel->setString(StringUtils::format("Stat: %s", name.c_str()));
     levelLabel->setString(StringUtils::format("Level: %s", levelText.c_str()));
-    increaseLabel->setString(StringUtils::format("Bonus: +%.1f Percent", buffValue));
+    increaseLabel->setString(bonusText);
     costLabel->setString(StringUtils::format("Cost: %d", cost));
 
     // Hiển thị label nếu stat đang được chọn

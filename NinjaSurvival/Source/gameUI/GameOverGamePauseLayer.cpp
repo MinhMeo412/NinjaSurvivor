@@ -65,7 +65,7 @@ void GameOverGamePauseLayer::createUI()
     // Tạo label và sprite cho coin
     coinLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
     
-    auto coinSprite = Sprite::create("coin.png");
+    auto coinSprite = Sprite::create("UI/coin.png");
     
     float coinLabelX = safeOrigin.x + safeArea.size.width - coinLabel->getContentSize().width -
                        coinSprite->getContentSize().width - 17;  // Margin 20
@@ -82,7 +82,7 @@ void GameOverGamePauseLayer::createUI()
 
     // Enemy kill count label
     enemyKillCountLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    auto skullSprite    = Sprite::create("skull.png");
+    auto skullSprite    = Sprite::create("UI/skull.png");
     
     float killLabelX = coinLabelX;  // Cùng cột với coinLabel
     float killY      = coinY - 30;  // Dưới coinLabel
@@ -96,10 +96,10 @@ void GameOverGamePauseLayer::createUI()
     skullSprite->setScale(0.8f);  // Thu nhỏ nếu cần
     this->addChild(skullSprite, 5);
 
-    //timerLabel = ax::Label::createWithTTF(std::to_string(static_cast<float>(timeTemp->getElapsedTime())),
-    //                                      "fonts/Pixelpurl-0vBPP.ttf", 24);
-    //timerLabel->setPosition(ax::Vec2(180, 620));  // Xem lại vị trí theo UI
-    //this->addChild(timerLabel, 5);             // Gán vào uiLayer
+    timerLabel = ax::Label::createWithTTF("00:00", "fonts/Pixelpurl-0vBPP.ttf", 24);
+    timerLabel->setPosition(ax::Vec2(180, 620));  // Xem lại vị trí theo UI
+    this->addChild(timerLabel, 5);             // Gán vào uiLayer
+    setTimeTemp();
 
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
@@ -210,13 +210,6 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
         AXLOG("Lỗi: Không tìm thấy currentScene");
     }
 
-    // Kiểm tra collectedCoin không âm
-    if (collectedCoin < 0)
-    {
-        AXLOG("Cảnh báo: collectedCoin âm (%d), đặt về 0", collectedCoin);
-        collectedCoin = 0;
-    }
-
     // Cập nhật số coin trong ShopSystem
     auto shopSystem  = ShopSystem::getInstance();
     float currentCoins = shopSystem->getCoins();
@@ -243,4 +236,18 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
         AXLOG("Xóa gameSccene");
         Director::getInstance()->getEventDispatcher()->setEnabled(true);
     }, 0.5f, "pop_old_scene");
+}
+void GameOverGamePauseLayer::setTimeTemp()
+{
+    auto currentScene = SystemManager::getInstance()->getCurrentScene();
+    auto uiLayer    = currentScene->getChildByName<GameSceneUILayer*>("UILayer");
+
+    auto timeSystem = SystemManager::getInstance()->getSystem<TimeSystem>();
+    float timeSet   = timeSystem->getElapsedTime();
+
+    int minutes = static_cast<int>(timeSet) / 60;
+    int seconds = static_cast<int>(timeSet) % 60;
+
+    // %02d in ra số nguyên d với ít nhất 2 chữ số (bổ sung số 0 nếu thiếu)
+    timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
 }

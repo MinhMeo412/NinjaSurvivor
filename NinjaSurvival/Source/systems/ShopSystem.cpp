@@ -3,6 +3,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "systems/SystemManager.h"
+#include "systems/LevelSystem.h"
 
 using namespace rapidjson;
 
@@ -32,6 +34,7 @@ ShopSystem* ShopSystem::getInstance()
                 statsLoaded = true;
                 // Đồng bộ ngay sau khi khởi tạo
                 GameData::getInstance()->syncStatsWithShopSystem();
+                instance->syncRerollCountWithLevelSystem();
             }
             else
             {
@@ -190,6 +193,10 @@ bool ShopSystem::upgradeStat(const std::string& name)
             if (data.name == "RerollWeapon")
             {
                 data.levelValue = static_cast<float>(data.level.value());  // RerollWeapon: levelValue = level
+                // Lưu rerollCount tạm thời
+                pendingRerollCount = 1 + static_cast<int>(data.levelValue.value());
+                AXLOG("Đã cập nhật RerollWeapon: levelValue=%.0f, pendingRerollCount=%d", data.levelValue.value(),
+                      pendingRerollCount.value());
             }
             else
             {
@@ -298,10 +305,15 @@ bool ShopSystem::loadSaveGame()
     syncMapsWithGameData();
     GameData::getInstance()->syncStatsWithShopSystem();
 
+    // Lưu rerollCount tạm thời
+    float rerollWeaponLevelValue = getStatLevelValue("Stat", "RerollWeapon");
+    pendingRerollCount           = 1 + static_cast<int>(rerollWeaponLevelValue);
+    AXLOG("Đã tải RerollWeapon levelValue=%.0f, pendingRerollCount=%d", rerollWeaponLevelValue,
+          pendingRerollCount.value());
+
     AXLOG("Đã nạp shopData từ savegame.json và đồng bộ với GameData");
     return true;
 }
-
 void ShopSystem::syncCharactersWithGameData()
 {
     auto gameData  = GameData::getInstance();
@@ -377,6 +389,24 @@ void ShopSystem::syncCoinsWithGameData(float coinMultiplier)
         }
     }
     saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
+}
+
+void ShopSystem::syncRerollCountWithLevelSystem()
+{
+    if (pendingRerollCount.has_value())
+    {
+        auto levelSystem = SystemManager::getInstance()->getSystem<LevelSystem>();
+        if (levelSystem)
+        {
+            levelSystem->setRerollCount(pendingRerollCount.value());
+            AXLOG("Đã đồng bộ rerollCount=%d với LevelSystem", pendingRerollCount.value());
+            pendingRerollCount.reset();
+        }
+        else
+        {
+            AXLOG("Lỗi: LevelSystem vẫn chưa được khởi tạo khi đồng bộ rerollCount");
+        }
+    }
 }
 
 int ShopSystem::getCoins() const
