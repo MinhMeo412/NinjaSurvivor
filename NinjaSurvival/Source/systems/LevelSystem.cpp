@@ -270,7 +270,7 @@ void LevelSystem::chooseWeapon()
 {
     std::unordered_map<std::string, int> upgradeList = upgradeGenerator(true);
 
-    auto gameScene                       = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
+    auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
     if (gameScene)
     {
         auto levelUpLayer = LevelUpOrChestEventLayer::create(true, upgradeList);  // isLevelUp = true
@@ -280,7 +280,8 @@ void LevelSystem::chooseWeapon()
             ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
             levelUpLayer->setPosition(uiLayerPos);
             gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            gameScene->unscheduleUpdate();          // Dừng update
+            //gameScene->unscheduleUpdate();  // Dừng update
+            SystemManager::getInstance()->setUpdateState(false);
         }
     }
 }

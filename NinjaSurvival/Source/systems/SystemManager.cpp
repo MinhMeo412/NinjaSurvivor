@@ -35,6 +35,8 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
     gameWorld    = world;
     sceneLayer   = uiLayer;
 
+    canUpdate = true;
+
     if (!gameWorld)
     {
         AXLOG("Error: GameWorld is null in SystemManager");
@@ -78,6 +80,10 @@ void SystemManager::update(float dt)
 
     for (auto& system : systems)
     {
+        if (!canUpdate)
+        {
+            break;
+        }
         system->update(dt);
     }
 

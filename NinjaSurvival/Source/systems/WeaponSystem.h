@@ -76,7 +76,7 @@ private:
     std::unordered_map<std::string, UpgradeFunc> upgradeWeapon;
     std::unordered_map<std::string, UpgradeFunc> upgradeBuff;
 
-    Entity playerEntity = 0;             // Entity của player để gắn vị trí vũ khí
+    Entity playerEntity = 0;     
     std::vector<Entity> weaponPool;      // Pool chứa các entity vũ khí tái sử dụng
     std::vector<Entity> tempWeaponPool;  // Pool chứa các entity vũ khí không tái sử dụng
 
@@ -88,6 +88,14 @@ private:
     Entity createKunai(std::string weaponName, bool alreadyHave);
     Entity kunaiEntity;
     Entity createTempKunai(std::string weaponName); // Tạo các tempEntityWeapon
+    //Entity createBigKunai(std::string weaponName, bool alreadyHave);
+    //std::vector<Entity> bigKunaiList;
+    //Entity createExplosionKunai(std::string weaponName, bool alreadyHave);
+    //std::vector<Entity> explosionKunaiList;
+    //Entity createSpinner(std::string weaponName, bool alreadyHave);
+    //std::vector<Entity> spinnerList;
+    //Entity createLightningScroll(std::string weaponName, bool alreadyHave);
+    //std::vector<Entity> lightningScrollList;
 
     // Update weapon mỗi frame
     void updateSword(Entity weapon, float dt);

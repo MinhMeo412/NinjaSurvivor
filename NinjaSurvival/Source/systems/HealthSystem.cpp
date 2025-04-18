@@ -39,7 +39,8 @@ void HealthSystem::init()
                 ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
                 pauseLayer->setPosition(uiLayerPos);
                 gameScene->addChild(pauseLayer, 1000);  // Thêm layer
-                gameScene->unscheduleUpdate();          // Dừng update
+                //gameScene->unscheduleUpdate();          // Dừng update
+                SystemManager::getInstance()->setUpdateState(false);
             }
         }
     };

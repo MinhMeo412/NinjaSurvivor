@@ -4,8 +4,8 @@
 Entity EntityFactory::createEntity(const std::string& type, const std::string& name)
 {
     auto gameData     = GameData::getInstance();
+    //AXLOG("Type: %s  -  Name: %s", type.c_str(), name.c_str());
     const auto& templ = gameData->getEntityTemplates().at(type).at(name);
-
     Entity entity = entityManager.createEntity();
 
     if (!templ.type.empty() && !templ.name.empty())

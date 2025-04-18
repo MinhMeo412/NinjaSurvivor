@@ -66,6 +66,7 @@ private:
                             int maxCount,
                             float chance);
     void spawnRandomItems();
+    int lastSpawnTime = 0;
     bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
     void setRandomMapPosition(Entity entity);
 };

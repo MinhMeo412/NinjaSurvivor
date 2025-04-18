@@ -51,7 +51,7 @@ GameData* GameData::getInstance()
     }
     else
     {
-        AXLOG("GameData instance đã tồn tại");
+        //AXLOG("GameData instance đã tồn tại");
     }
     return instance.get();
 }

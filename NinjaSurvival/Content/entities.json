@@ -533,6 +533,36 @@
                 "cooldown": 1.0,
                 "duration": 2.0
             }
+        },
+        {
+            "type": "weapon_projectile",
+            "name": "big_kunai",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 1.0,
+                    "vy": 0.0
+                },
+                "speed": 150.0,
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./big_kunai"
+                },
+                "hitbox": {
+                    "width": 10.0,
+                    "height": 10.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 4.0,
+                "duration": 5.0
+            }
         }
     ]
 }

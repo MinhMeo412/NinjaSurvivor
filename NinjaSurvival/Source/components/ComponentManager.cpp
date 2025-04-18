@@ -37,19 +37,3 @@ template class ComponentManager<SpeedComponent>;
 template class ComponentManager<WeaponInventoryComponent>; 
 template class ComponentManager<DurationComponent>;
 
-// 
-//template class ComponentManager<AttackAreaComponent>; bỏ
-
-//template class ComponentManager<AttackSpeedComponent>; bỏ
-//template class ComponentManager<CoinComponent>; bỏ
-
-//template class ComponentManager<DropRateComponent>;
-
-//template class ComponentManager<GrowthComponent>; 
-
-//template class ComponentManager<ProjectileNumberComponent>; bỏ
-//template class ComponentManager<RecoveryComponent>;
- 
-//template class ComponentManager<WeaponComponent>; bỏ
-
-//template class ComponentManager<XPComponent>; bỏ
