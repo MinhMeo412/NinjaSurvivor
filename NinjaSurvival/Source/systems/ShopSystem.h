@@ -14,7 +14,7 @@ struct ShopData
     std::string name;
     bool available;
     std::optional<int> level;
-    std::optional<int> levelValue;
+    std::optional<float> levelValue;
     std::optional<int> cost;
     std::optional<int> levelLimit;
     std::optional<float> valueIncrease;
@@ -45,7 +45,8 @@ public:
     int getLevelLimit(const std::string& type, const std::string& name) const;
     float getValueIncrease(const std::string& type, const std::string& name) const;
     float getValueIncrement(const std::string& type, const std::string& name) const;
-    int getStatLevelValue(const std::string& type, const std::string& name) const;
+    float getStatLevelValue(const std::string& type, const std::string& name) const;
+    float getShopBuff(const std::string& buffName) const;
 
     bool upgradeStat(const std::string& name);
 

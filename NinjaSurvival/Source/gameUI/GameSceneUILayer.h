@@ -13,8 +13,10 @@ public:
 
     void increaseCoin(float coin);
     void increaseEnemyKillCount();
+    void bossAlert();
 
     int getCollectedCoin() { return static_cast<int>(collectedCoin); }
+
 
 private:
     ax::MenuItemImage* pauseButton;

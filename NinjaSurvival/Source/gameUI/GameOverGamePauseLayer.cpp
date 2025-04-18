@@ -1,8 +1,11 @@
 #include "Utils.h"
 #include "GameOverGamePauseLayer.h"
+#include "GameSceneUILayer.h"
 #include "scenes/MainScene.h"
 #include "scenes/GameScene.h"
 #include "AudioManager.h"
+#include "systems/ShopSystem.h"
+#include "systems/TimeSystem.h"
 
 using namespace ax;
 
@@ -42,6 +45,10 @@ bool GameOverGamePauseLayer::init()
 
 void GameOverGamePauseLayer::createUI()
 {
+    Vec2 origin      = _director->getVisibleOrigin();
+    Rect safeArea    = _director->getSafeAreaRect();
+    Vec2 safeOrigin  = safeArea.origin;
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // Tạo panel sprite tương ứng với trạng thái (Game Over hoặc Paused)
@@ -54,6 +61,45 @@ void GameOverGamePauseLayer::createUI()
     }
     panel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
     this->addChild(panel, 20);  // z-order 20
+
+    // Tạo label và sprite cho coin
+    coinLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
+    
+    auto coinSprite = Sprite::create("coin.png");
+    
+    float coinLabelX = safeOrigin.x + safeArea.size.width - coinLabel->getContentSize().width -
+                       coinSprite->getContentSize().width - 17;  // Margin 20
+    float coinY = 640 - 20;                                      // Dưới thanh XP
+    coinLabel->setPosition(coinLabelX, coinY);
+    coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    this->addChild(coinLabel, 5);
+
+    coinSprite->setPosition(
+        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 7,
+        coinY);  // Margin 5 giữa label và sprite
+    coinSprite->setScale(2);
+    this->addChild(coinSprite, 5);
+
+    // Enemy kill count label
+    enemyKillCountLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
+    auto skullSprite    = Sprite::create("skull.png");
+    
+    float killLabelX = coinLabelX;  // Cùng cột với coinLabel
+    float killY      = coinY - 30;  // Dưới coinLabel
+    enemyKillCountLabel->setPosition(killLabelX, killY);
+    enemyKillCountLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    this->addChild(enemyKillCountLabel, 5);
+
+    skullSprite->setPosition(
+        killLabelX + enemyKillCountLabel->getContentSize().width / 2 + skullSprite->getContentSize().width / 2 + 5,
+        killY);                   // Margin 5
+    skullSprite->setScale(0.8f);  // Thu nhỏ nếu cần
+    this->addChild(skullSprite, 5);
+
+    //timerLabel = ax::Label::createWithTTF(std::to_string(static_cast<float>(timeTemp->getElapsedTime())),
+    //                                      "fonts/Pixelpurl-0vBPP.ttf", 24);
+    //timerLabel->setPosition(ax::Vec2(180, 620));  // Xem lại vị trí theo UI
+    //this->addChild(timerLabel, 5);             // Gán vào uiLayer
 
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
@@ -131,6 +177,51 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     AudioManager::getInstance()->stopSound("gamebackground");  // dừng âm thanh của game
 
     this->removeFromParentAndCleanup(true);  // Xóa layer
+
+    // Lấy số coin thu thập được từ GameSceneUILayer
+    int collectedCoin = 0;
+    auto currentScene = SystemManager::getInstance()->getCurrentScene();
+    if (currentScene)
+    {
+        auto uiLayer = currentScene->getChildByName<GameSceneUILayer*>("UILayer");
+        if (uiLayer)
+        {
+            collectedCoin = uiLayer->getCollectedCoin();
+        }
+        else
+        {
+            // Nếu không tìm thấy bằng tên, thử tìm trong các node con
+            for (auto* child : currentScene->getChildren())
+            {
+                if ((uiLayer = dynamic_cast<GameSceneUILayer*>(child)))
+                {
+                    collectedCoin = uiLayer->getCollectedCoin();
+                    break;
+                }
+            }
+            if (!uiLayer)
+            {
+                AXLOG("Lỗi: Không tìm thấy GameSceneUILayer");
+            }
+        }
+    }
+    else
+    {
+        AXLOG("Lỗi: Không tìm thấy currentScene");
+    }
+
+    // Kiểm tra collectedCoin không âm
+    if (collectedCoin < 0)
+    {
+        AXLOG("Cảnh báo: collectedCoin âm (%d), đặt về 0", collectedCoin);
+        collectedCoin = 0;
+    }
+
+    // Cập nhật số coin trong ShopSystem
+    auto shopSystem  = ShopSystem::getInstance();
+    float currentCoins = shopSystem->getCoins();
+    float newCoins     = currentCoins + collectedCoin;  // Tính tổng số coin mới
+    shopSystem->setCoins(newCoins);                   // Cập nhật số coin mới
 
     // Push scene mới
     auto scene = utils::createInstance<MainScene>();
