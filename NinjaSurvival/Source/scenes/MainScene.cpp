@@ -27,9 +27,6 @@ bool MainScene::init()
 
     auto background = Sprite::create("UI/background2.png");
     background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-
-    // Điều chỉnh tỷ lệ để phủ kín màn hình
-    background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
     this->addChild(background, 0);
 
     auto titleSprite = Sprite::create("UI/NeoTitle1.png");

@@ -16,6 +16,7 @@ public:
     void bossAlert();
 
     int getCollectedCoin() { return static_cast<int>(collectedCoin); }
+    int getKillCount() { return static_cast<int>(enemyKillCount); }
 
 
 private:

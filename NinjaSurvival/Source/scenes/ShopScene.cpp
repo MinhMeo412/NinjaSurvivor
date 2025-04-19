@@ -389,11 +389,11 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
                    shopData->getValueIncrement("Stat", name);  // levelValue tiếp theo = (level + 1) * valueIncrement
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: x%.1f", currentBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: x%.2f", currentBuff + 1.0f);
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: x%.1f->1.1f", currentBuff + 1.0f, nextBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: x%.2f->%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
         }
     }
 

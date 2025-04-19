@@ -21,6 +21,23 @@ bool MapChooseScene::init()
     }
     SystemManager::getInstance()->resetSystems();
     menuUISetup();
+
+    auto entityTemplates = GameData::getInstance()->getEntityTemplates();
+    for (const auto& [type, innerMap] : entityTemplates)
+    {
+        if (type == "weapon_melee" || type == "weapon_projectile")
+            for (const auto& [name, entity] : innerMap)
+            {
+                if (entity.cooldown)
+                {
+                    AXLOG("Weapon %s có cooldown duration: %f", name.c_str(), entity.cooldown->cooldownDuration);
+                }
+                else
+                {
+                    AXLOG("%s không có cooldown", name.c_str());
+                }
+            }
+    }
     return true;
 }
 
@@ -227,7 +244,7 @@ void MapChooseScene::updateMapUI(MenuItemSprite* item,
         {
             auto shopData = ShopSystem::getInstance();
             int cost      = shopData->getCost("maps", mapName);
-            label->setString(StringUtils::format("Locked\nCost: %d", cost));
+            label->setString(StringUtils::format("Locked - %d", cost));
         }
         label->setVisible(true);
     }

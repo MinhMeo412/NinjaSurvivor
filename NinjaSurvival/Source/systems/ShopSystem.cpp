@@ -80,20 +80,23 @@ bool ShopSystem::createSaveGame()
     }
 
     // Khởi tạo dữ liệu mặc định với levelValue là float (phần trăm)
-    shopData = {
+    shopData =
+    {
         {"Coin", "", false, std::nullopt, 1000.0f, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
-        {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},         // Health: +10% mỗi cấp
-        {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.05f},        // Attack: +5% mỗi cấp
-        {"Stat", "Speed", false, 0, 0.0f, 50, 10, 0.1f, 0.02f},         // Speed: +2% mỗi cấp
-        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: +10% mỗi cấp
-        {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},       // Coin Gain: +10% mỗi cấp
-        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},    // RerollWeapon: +1 mỗi cấp
-        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},  // Reduce Cooldown: +10% mỗi cấp
-        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},      // Spawn Rate: +10% mỗi cấp
+        {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Health: max 10 level, +10% mỗi level
+        {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Attack: max 10 level, +10% mỗi level
+        {"Stat", "Speed", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},            // Speed: max 5 level, +10% mỗi level
+        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},          // XP Gain: max 5 level, +10% mỗi level
+        {"Stat", "CoinGain", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},        // Coin Gain: max 10 level, +10% mỗi level
+        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
+        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},  // Reduce Cooldown: max 5 level, +10% mỗi level
+        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},       // Spawn Rate: max 10 level, +10% mỗi level
+        {"Stat", "LootRange", false, 0, 0.0f, 50, 10, 0.1f, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Map", true, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}};
+        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}
+    };
 
     shopDataVersion++;
     return saveToFile(filePath);
