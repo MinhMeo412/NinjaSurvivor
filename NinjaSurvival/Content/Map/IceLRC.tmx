@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="3" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3LkNwzAMAED3WcV59p/OZYA0gQFa5nPF9YoBPpIY7Y9t2wGAMd4J1gAwySfBGqZ7JVgDX3oRAIAY+ioAAODq82/7DqCCZ4I1XM19JwAAkJ1zJAAmmXAmCauIJwAAoukxob+I9zu8AcId1CgAICMzPwDcSR2COM6emEw9AQCgumpzLPagVFAtrgAAACCKN6yBysyAAMSTW4EOOs8puNuGtTrnE8hGvMF/V8eJOAQA4Az9IzCZHAhAFr81yewXnCdufDuIZL4PgKrUMGAF71rkMPmeS72jmtV5U55mtck1CQAAVtF3A/TnXI/p3P/QSeWcfjYWK/9W6EpNhdnkgPr0V0BV/qcMkIM9QR3de/8DksTBUA==
+  </data>
+ </layer>
+ <layer id="5" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3MFNAzEQBdAUADVA3+kNWkFoxSFSWDbBXv+x3+Hdjfi2x7MD15fL5TrY2+v4NVCDrJzrM2ANPb2H5yl9fYxzJBuz718gizPnljscgG/uAwDgTGoP4J6PgDUAfejLj3Xm7EqlOq/SWtk4S+aStAdla13mO+tI2Kfywn/JEAlG1GCyDxyV9E6Es8yS+0fu+1l+5ioS3tNAH95aQC/qh1sj61dnPZWNmAX92a/eneyRj5r83gD4jTsCIN+zPYK/emP+TgqYie8BUI//icGjRn6Hl9dso7IhF9wjF/2o+TlCTiCLvjBksSdJI5MAm4Tz0N/B0YNcAatx7gEAMJPV5i/U87SQ0OuFqszeAsxHbQQArGZkT3XUu1rNB5nsTVhH6/oj+Rtx8toY59lcyBPAnJzvG29CkrTelxXyXWGNMLszZsLNnQMVmdUG2Oghwbzsb6AV5wnJfIcAYI8+MIxxVo3mrUICbxKS7c3zyG5dPe4/s1+gtoQW1Be59MjytbyH7EUAyKP3sh41+BqSau+9c8YZBJDlC/13qqY=
+  </data>
+ </layer>
+ <layer id="4" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt08ENQjEMBcFc0383UBsIikj0Ze3s5RVgz1qa0Guv9d7nVzP6/G/13edXM+K/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+293yf+uv7Iy99Vd2xj79f5Z/y7/l3/Jv+bf8W/4t/5Z/y7/l3/Jv+bf8W/4t/5Z/y7/l3/Jv+bf8W/4t/5Z/y7/l3/Jv+bf8W/7t8/9n+bf8W/4t/5Z/y7/l3/Jv+bf8W/4t/5Z/e25/Py6f9g==
+  </data>
+ </layer>
+ <layer id="6" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>

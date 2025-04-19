@@ -300,6 +300,9 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
         statButton->setCallback([this, name = item.name, panelDescription, shopData](Object* sender) {
             if (selectedStatItem && selectedStatItem != sender)
             {
+                // Ẩn vòng bo và nhãn của nút trước đó
+                if (auto* oldBorder = selectedStatItem->getChildByName("border"))
+                    oldBorder->setVisible(false);
                 if (auto* oldLabel = dynamic_cast<Label*>(selectedStatItem->getChildByName("label")))
                     oldLabel->setVisible(false);
             }
@@ -324,6 +327,8 @@ void ShopScene::setupStatButtons(Node* panel, Node* panelDescription, Vector<Men
 
             if (selectedStatItem)
             {
+                if (auto* border = selectedStatItem->getChildByName("border"))
+                    border->setVisible(true);
                 if (auto* buttonLabel = dynamic_cast<Label*>(selectedStatItem->getChildByName("label")))
                     buttonLabel->setVisible(true);
             }

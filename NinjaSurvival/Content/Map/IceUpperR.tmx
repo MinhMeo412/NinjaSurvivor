@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="1" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3EsSgjAMAFD2XgU/9z+d445R/qIkzVu8rVOgpEla6S9d1wPASvcAYwB+5xFgDC26BhgDAACfstS4FfLJjLVIlvnDfrcAY4h47ZXvSxQV1gXaI3ZskzE3iki+BsvEG1hHDr7/XokzEJd8GeBYlfOeytfOefSc4XtqAlqnpwcARCAnAaaoy4Ex9lxgO+/N99QtAAypVwFyE8eBqPQfAPLTjwfA//mAI8kvoT32KIDI1DMA8+znAmdTUwIAADCkrw8AAACQk/3/9nimAMcQTwFqsw4Ac5yTAQAAGOdbhUBka/q+vucDVCSH4wz2YwHgP6y5AFShv5FflGcofwKqcB4eIA4xmSnqk3yi1LbUIU7Ms8byLsMZ4YrvtXe17fsffU5niAuwxDwG4GVqPdjar3r9zhOeMcF5
+  </data>
+ </layer>
+ <layer id="3" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2stBwzAMANAOADPA3t0NVuEINGnjNj993uFdenIaS5bkXN8ul+uNr5nfAPb0+X7+GoBx3wHWwDY+5N/UxCK8bin/ZcyPcgJMmXFBX1lnTc5zsshYL7NO1rxagf++BnkTpsQFAMD59JxkpqegupEcPXIfvubuKeu9lfPtV9VceeQ79t0JAAAZZOvfqvYqQH7mANvKdj51YI8fo3Kt0ymun40X8QVk1ynHAzWpx6bk9ly8LzLynR5bsp/WUw8BALfUWFCH2REZRP1eJuq64CwRYkKd+p+5HvSitiejCPUDsB/1KJCBOromZ9BzzNRi6tQviVm4T47OZbS2fOW92gvAI+opnmEWEk+n/o/47Ee21OHMObNXE69wDDMZ2M+e8bXnOWkOA4zq0BMBdFO9Fnz0fPpjYM5S/60mJiL3K8BRqvQP8ibEs6bO3rq/Ny+YkjcZoV/OLUuc22c9Zdmf1CX3QC/OHWDO6LwoY91QZe4fnZkjUYh5AID9VZkvVXkO5ukNAHpzDvCqLWrEv/PySLPzjHc8kJ24g2Xd46RC3VrhGdYyZwQAIlOvEU3m+jnz2qP6AX8BtOI=
+  </data>
+ </layer>
+ <layer id="2" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt09EJACAIRVF/a/9xbLZyiECoc0DuAr4cEasu9cvuupj6a7v/T+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f+/9P7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/vFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF5wAKrgruI=
+  </data>
+ </layer>
+ <layer id="4" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>

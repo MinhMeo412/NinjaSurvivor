@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="6" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2ztywzAMBUD3vop/9z9dxm0mlplEtB6ILbZzIVMkCIDU5Xw6XQCAku4BzwCMs2Z55zrwm0fAcwLrEFOYYWQ/A0j2yf1xJGaKqznvAvnjTN36RtYcUIF9jy0Je5k5OuYW8AwAAKkS8lqO0a0fCeTT52AGuQ7VmLP9xlj/GqAfsX8tabkFwHezzwLEQTpz1rYeMS2b9wMAHMFdFqATZ1isSk+BlclXM4k785n7AHRj7wMAAOCT9LnHqNfZUukOhjXPX/muCoCOKuV5AKxJT4okegPAb6inAACAFHpsxhPgSb9qnPMAAHjPdxkcSW0O8JqaFuqzjoEu1HYA/Yj9wE/UwQDbnM0Dr6ixqMh9dgD2skpPqdr/sJcbb0iibwY1zFqrYgAAsBd5RbYZ70fPharMXf7DHZNeqp0/AaTZow75Ah3XwXY=
+  </data>
+ </layer>
+ <layer id="5" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2kFyAiEQBVAPkJwhObhnS66SheUilUTHgEDz3+KVG61ihGa6G84vp9P5gM+D34N0b6+Xz0oxU2ms1PCxwBhaXOMY/mKNAMghASBN1Vpf/QbjVYm7KuPkf97Nbxn6C/Ptsh9aSwCs7tpbkatCP3JArAEq2aX+vkWeU0/FfdQ6mz/XFdcNAJAlIWdMqDFTVb2nCaOJFVol5AsA/M17gFGcqXx3tJ8h32d3enuM4j1UV3K+mvzsAMynHoV1qJ1poa4A6GvlfXXlsQHQ14xzL+8ZmEu/NkvC/YaEZ0ynr11f9fyv+vgxvwAArE1OCjyb/to89nho1xpHI+NQzAMAu3I35z65YA27ztOuz0Ut7iYDwIVzOejrVkwl10Kr59+JvaTEZwYeZ68YKzlXAHjU6jUGAABAOufQ/hdgXy3nGfd+23uftO/ubcRZpjXEb5yjk8ZdhmzmH0gizwMAoLcePWZ3ptegXoC5RvQp9UJhDmfy7eQpP9nTIY+4ZxVyG4Dn8s73X3BMhV7BF7/G72I=
+  </data>
+ </layer>
+ <layer id="4" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt08ENwjAUBcFcof9qApQWwPTgKEY7K/3DO9uz37btMe457jVun7y1dsd4o/e4z++t7vO31m62d/7/K/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/3dn+7bX32f7ttffV/8/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m3+bf5t/m377+/9n82/zb/Nv82/zb/Nv82/zb/Nv82/zb/Nv82/P2Fxf/Ylk=
+  </data>
+ </layer>
+ <layer id="3" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>

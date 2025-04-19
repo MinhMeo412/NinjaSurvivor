@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="1" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3TkSwjAMBVB6rhKW+5+OoWAmDbsTf9mveL2SiSVZNsNyPBwWAACaOwXEAC1dA2Kgr0tADIzvHBBDMrl4Xsm9pfoAmZLzBqypIwAAAACMwJxrDq3Oa52LAwDVpPYvqXF5TqAq+aaN6nOiZ/OP6s8FPbnTOwd5EgAAoB2zSgAAetKPQlvOSwEA2IpeEwDge2bgAP/zGyKSmI/woM8D6EtNhnlY71RgdgGMSn4DAIB9tPpvLmAc7iS8Z26RJ/1MR71lZr5/qE1vyN702mwlfc8APenZx6a2Amv3nF9xn6eXY1afrteK6xpoR53sz77L+wKAETgrgPHZPwLUYoZCD/YF3m01ciWfsga3474CwJz0YaTT/wEAAADAa8l3SpNjYw7OwQF+cwOyq8Fk
+  </data>
+ </layer>
+ <layer id="3" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3EtSwzAMAFAOAGeAg/ds9CrQDcMnwzgf25L8Fm/DgjqxLSly2tvz09MNPr2+zB/DHm+Tx3sPcA/I7X3jb9ZVfFvzRn4tOTBbnoSzZq95ORF+UoNcZ/azZFSZ4q455GpiLMBf8i0968Mz/7tXv6JlTGqGeGb3rzjHnurjividqUfAWqzN9Zhz4EHdDwD7yJ3Ab3qxYzhfpQJ1xJh7cHevv1SLneb1GtXWBbXMrK1nfHbvuDb6LPDqz5sR9+UagFy89+KewQhqRIB9KtYb1XJBtetxD+NxDkEPPfKL931Yzd41v0K+k7OAI3rHjt41itgHVFCxB1nxmqhhT22izohNLwyOqZSjK11LNnIkAHDECue1ACsT5wEAAFhJrzNTZ7EAfOd7yFxBfRFP65nKqP3qjAc4YyvP9M493iHnP9YfAAC0Gdk3VEezRV8SAKjMOT1ALVnjetZxE4OeHg/eOXbPR4rcM448tiMyxPgIdUy1ec86D+RgvwCtrogX8tMxGWrAjORAOMceAioR0wBq8PxMK2uFFahx89E/JxIxpI19C8fYO2QkN+biuX+cKHsjyjg4L9v3MdQ1ufndW8wnQF8fl4Pu5w==
+  </data>
+ </layer>
+ <layer id="2" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt10FqwlAARdFMhbqAdv+raPdhV9PSTpwIYoJfks89F8pDVBCaE7+Xt2X5/v+72OS+n5fl42yru/f1Z/m3/Fv+Lf+Wf8u/5d/yb/m3/Fv+Lf+Wf8u/5d/yb/m3/Fv+Lf+Wfzuf/8/Tsnyd9v8ctd37+rvuz////ve0/+eo7d7Xn+Xf8n9vnQva/p0L2v5t27/l3/JvX+t/7Tl79OvsMfyvPWePfp09hv+jrvtI+/vffWQf/7fuHjm89zy/x9617h45vPc8v8feZ937fp97n3Xv+33ufZVbrufYV7nleo4d5fX6fueFuXaU1+v7nRfm2q1u1/7O3/p49H1ob1ez7Fa3a3/nb308+j60t6tZ9tb/6NWxu/U/enXs+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lfjvx3/7fhvx387/tvx347/dvy3478d/+34b8d/O/7b8d+O/3b8t+O/Hf/t+G/Hfzv+2/Hfjv92/Lf7A8CTTNY=
+  </data>
+ </layer>
+ <layer id="4" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>
