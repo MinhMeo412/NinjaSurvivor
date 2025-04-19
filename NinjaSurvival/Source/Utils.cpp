@@ -95,7 +95,7 @@ ax::MenuItemSprite* createCharacterButton(const std::string& spritePath,
     auto drawNode = ax::DrawNode::create();
     drawNode->drawRect(ax::Vec2(0, 0),
                        ax::Vec2(characterItem->getContentSize().width, characterItem->getContentSize().height),
-                       ax::Color4F::RED);
+                       ax::Color4F::GREEN, 1.5f);
     drawNode->setVisible(false);
     characterItem->addChild(drawNode, 3, "border");
 
@@ -150,15 +150,16 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
     auto mapItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
 
     std::string displayName = available ? buttonName : "Locked";
-    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Marker Felt.ttf", 35);
-    mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height *2/3);
+    auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Pixelpurl-0vBPP.ttf", 35);
+    mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height + (mapLabel->getContentSize().height / 2));
+    mapLabel->setColor(ax::Color3B::BLACK);
     // mapLabel->setScale(3);
     mapLabel->setVisible(false);
     mapItem->addChild(mapLabel, 3, "label");
 
     auto drawNode = ax::DrawNode::create();
     drawNode->drawRect(ax::Vec2(0, 0), ax::Vec2(mapItem->getContentSize().width, mapItem->getContentSize().height),
-                       ax::Color4F::RED);
+                       ax::Color4F::GREEN, 1.5f);
     drawNode->setVisible(false);
     mapItem->addChild(drawNode, 3, "border");
 
@@ -204,17 +205,12 @@ ax::MenuItemSprite* Utils::createStatButton(const std::string& spritePath, const
 
     auto statItem = ax::MenuItemSprite::create(normalSprite, selectedSprite, nullptr);
 
-    // auto statLabel = ax::Label::createWithTTF(statValue, "fonts/Marker Felt.ttf", 24);
-    // if (statLabel)
-    //{
-    //     statLabel->setPosition(normalSprite->getContentSize() * 0.5f);
-    //     statLabel->setVisible(false);  // Ẩn nhãn ban đầu
-    //     statItem->addChild(statLabel, 3, "label");
-    // }
-    // else
-    //{
-    //     AXLOG("Failed to create label for stat: %s", statValue.c_str());
-    // }
+    // Tạo viền cho stat button
+    auto drawNode = ax::DrawNode::create();
+    drawNode->drawRect(ax::Vec2(0, 0), ax::Vec2(statItem->getContentSize().width, statItem->getContentSize().height),
+                       ax::Color4F::GREEN, 1.5f);
+    drawNode->setVisible(false);
+    statItem->addChild(drawNode, 3, "border");
 
     return statItem;
 }

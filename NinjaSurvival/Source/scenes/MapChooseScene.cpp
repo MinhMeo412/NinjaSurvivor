@@ -89,7 +89,7 @@ void MapChooseScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("coin.png");
+    auto coinSprite = Sprite::create("UI/coin.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");
