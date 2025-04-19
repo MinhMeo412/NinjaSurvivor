@@ -11,6 +11,8 @@ struct SpriteComponent
     std::string gameSceneFrameName;
     ax::SpriteBatchNode* batchNode = nullptr;  // Batch node để tối ưu render (không dùng cho player)
 
+    ax::GLProgramState* glProgramState = nullptr;  // Lưu trạng thái shader
+
     SpriteComponent() = default;
     SpriteComponent(const std::string& gameSceneFname, const std::string& plistFile)
         : gameSceneFrameName(gameSceneFname), plist(plistFile) {}

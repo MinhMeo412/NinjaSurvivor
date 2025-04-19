@@ -39,7 +39,8 @@ void HealthSystem::init()
                 ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
                 pauseLayer->setPosition(uiLayerPos);
                 gameScene->addChild(pauseLayer, 1000);  // Thêm layer
-                gameScene->unscheduleUpdate();          // Dừng update
+                //gameScene->unscheduleUpdate();          // Dừng update
+                SystemManager::getInstance()->setUpdateState(false);
             }
         }
     };
@@ -116,6 +117,7 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
                             float damage = calculatePlayerDamage(attack);
                             applyDamage(e, damage);
                             SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
+                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(e);
                             AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
                                     pair.first, health->currentHealth);
 

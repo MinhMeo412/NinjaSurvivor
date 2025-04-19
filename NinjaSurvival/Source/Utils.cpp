@@ -246,5 +246,18 @@ void setVisibleSafe(ax::Node* node, bool visible)
         node->setVisible(visible);
 }
 
+float getRandomFloat(float min, float max)
+{
+    static std::mt19937 rng{std::random_device{}()};  // static để giữ seed 1 lần duy nhất
+    std::uniform_real_distribution<float> dist(min, max);
+    return dist(rng);
+}
+
+int getRandomInt(int min, int max)
+{
+    static std::mt19937 rng{std::random_device{}()};
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(rng);
+}
 
 }  // namespace Utils

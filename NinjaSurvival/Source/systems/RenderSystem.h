@@ -16,15 +16,19 @@ public:
                  ComponentManager<AnimationComponent>& am,
                  ComponentManager<HitboxComponent>& hm,
                  ComponentManager<CooldownComponent>& cdm,
-                 ComponentManager<VelocityComponent>& vm);
+                 ComponentManager<VelocityComponent>& vm,
+                 ComponentManager<DurationComponent>& drm);
 
     void init() override;
     void update(float dt) override;
 
     void onEntityDestroyed(Entity entity);
+    void updateEnemyProjectileSprite(Entity entity);
     void updateSwordEntitySprite(Entity entity);
     void updateShurikenEntitySprite(Entity entity);
     void updateKunaiEntitySprite(Entity entity);
+    void updateBigKunaiEntitySprite(Entity entity);
+
 
     // Hàm để DamageTextSystem gọi
     void setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type);
@@ -38,6 +42,7 @@ private:
     ComponentManager<HitboxComponent>& hitboxMgr;
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
+    ComponentManager<DurationComponent>& durationMgr;
     
 
     ax::Scene* scene                        = nullptr;

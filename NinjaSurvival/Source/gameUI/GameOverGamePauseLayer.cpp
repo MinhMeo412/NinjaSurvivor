@@ -161,7 +161,9 @@ void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
         // music click
         AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
 
-        gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
+        //gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
+
+        SystemManager::getInstance()->setUpdateState(true);
     }
     this->removeFromParentAndCleanup(true);  // Xóa layer
 }

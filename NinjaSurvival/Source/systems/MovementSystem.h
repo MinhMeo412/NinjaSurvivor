@@ -15,7 +15,8 @@ public:
                    ComponentManager<VelocityComponent>& vm,
                    ComponentManager<AnimationComponent>& am,
                    ComponentManager<HitboxComponent>& hm,
-                   ComponentManager<SpeedComponent>& spm);
+                   ComponentManager<SpeedComponent>& spm,
+                   ComponentManager<CooldownComponent>& cdm);
 
     void update(float dt) override;
     void init() override;
@@ -36,6 +37,7 @@ private:
     ComponentManager<AnimationComponent>& animationMgr;
     ComponentManager<HitboxComponent>& hitboxMgr;
     ComponentManager<SpeedComponent>& speedMgr;
+    ComponentManager<CooldownComponent>& cooldownMgr;
 
 
     //Chia weapon ra làm system riêng
@@ -67,7 +69,7 @@ private:
     std::random_device rd;                                  // Seed cho random
     std::mt19937 gen{rd()};                                 // Generator ngẫu nhiên
     std::unordered_map<Entity, float> timers;   // Timer riêng cho ranged enemy
-    std::uniform_real_distribution<float> distance{150.0f, 360.0f}; // Khoảng cách cho ranged enemy với player
+    std::uniform_real_distribution<float> distance{150.0f, 220.0f}; // Khoảng cách cho ranged enemy với player
 
     std::set<Entity> lootedItems;  // Set: danh sách Entity của item đang nhặt
 

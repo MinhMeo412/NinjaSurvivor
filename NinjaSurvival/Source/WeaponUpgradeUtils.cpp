@@ -4,15 +4,17 @@ namespace WeaponUpgradeUtils
 {
 std::string getDescription(const std::string& name, int level)
 {
+    std::string description;
+
     // Weapons
     if (name == "sword")
     {
+        description = "Sword";
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
-            return "Slash to faced direction";
+            description += std::string(" - Level 1") + "\n" + "Slash to faced direction";
+            return description;
         case 2:
             return "Add another backward slash";
         case 3:
@@ -29,8 +31,6 @@ std::string getDescription(const std::string& name, int level)
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Create a shuriken moves around character";
         case 2:
@@ -49,8 +49,6 @@ std::string getDescription(const std::string& name, int level)
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Throw kunai at move direction";
         case 2:
@@ -65,13 +63,29 @@ std::string getDescription(const std::string& name, int level)
             return "No description available";
         }
     }
+    else if (name == "big_kunai")
+    {
+        switch (level)
+        {
+        case 1:
+            return "Throw a big kunai at random direction and bounce off the wall";
+        case 2:
+            return "Reduce CD & Increase size";
+        case 3:
+            return "Increase duration & dame & speed";
+        case 4:
+            return "Increase duration & size";
+        case 5:
+            return "Reduce CD & Increase dame & Add 1 Big Kunai";
+        default:
+            return "No description available";
+        }
+    }
     // Buffs
     else if (name == "attack")
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Increase 10% attack";
         case 2:
@@ -90,8 +104,6 @@ std::string getDescription(const std::string& name, int level)
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Increase 10% health";
         case 2:
@@ -110,8 +122,6 @@ std::string getDescription(const std::string& name, int level)
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Increase 10% speed";
         case 2:
@@ -130,8 +140,6 @@ std::string getDescription(const std::string& name, int level)
     {
         switch (level)
         {
-        case 0:
-            return "";
         case 1:
             return "Increase 10% XP gain";
         case 2:

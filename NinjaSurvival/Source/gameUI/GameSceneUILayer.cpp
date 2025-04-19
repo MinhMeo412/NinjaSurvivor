@@ -242,7 +242,8 @@ void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
             Vec2 layerPos = this->getPosition();
             pauseLayer->setPosition(layerPos);
             gameScene->addChild(pauseLayer, 1000);  // Thêm layer với z-order cao
-            gameScene->unscheduleUpdate();         // Dừng update của GameScene
+            //gameScene->unscheduleUpdate();         // Dừng update của GameScene
+            SystemManager::getInstance()->setUpdateState(false);
         }
     }
 }

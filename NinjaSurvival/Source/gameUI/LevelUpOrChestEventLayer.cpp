@@ -140,7 +140,7 @@ void LevelUpOrChestEventLayer::createUI()
                 }
             }
         });
-
+        
         // Tạo văn bản hiển thị
         std::string displayText = upgrade.first;
         if (upgrade.second > 0)
@@ -347,7 +347,8 @@ void LevelUpOrChestEventLayer::onConfirm(ax::Object* sender)
             AXLOG("Khong co upgrade duoc chon");
         }
 
-        gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
+        //gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
+        SystemManager::getInstance()->setUpdateState(true);
     }
     SystemManager::getInstance()->getSystem<LevelSystem>()->setRerollCount(rerollCount);
     this->removeFromParentAndCleanup(true);  // Xóa layer

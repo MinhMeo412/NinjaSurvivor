@@ -53,6 +53,7 @@ public:
     ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
 
     void isBossAlive(bool isBossActive);
+    const std::vector<Entity> getBossList() const { return bossList; };
 
 private:
     EntityManager& entityManager;
@@ -75,10 +76,12 @@ private:
     Entity playerEntity  = 0;
     float spawnTimer     = 0.0f;
     float spawnInterval  = 2.0f;  // Spawn mỗi 2 giây
-    int maxEnemies       = 250;
+    int maxEnemies       = 300;
     int livingEnemyCount = 0;  // Đếm số enemy đang hoạt động
     bool isBossActive    = false;
     int bossSpawnCount   = 0;
+    std::vector<Entity> bossList;
+    std::vector<std::string> nameList = {"Giant Slime", "Giant Bamboo"};
 
     void spawnEnemies(float elapsedTime);
     void spawnBoss(float elapsedTime);

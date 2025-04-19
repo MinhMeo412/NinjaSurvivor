@@ -18,6 +18,10 @@ public:
     void destroyEntity(Entity entity)
     {
         auto sprite = spriteMgr.getComponent(entity);
+        if (auto hitbox = hitboxMgr.getComponent(entity))
+        {
+            hitboxMgr.removeComponent(entity);
+        }
         if (sprite && sprite->gameSceneFrame)
         {
             // Đánh dấu entity inactive
@@ -32,9 +36,8 @@ public:
                 spriteMgr.removeComponent(entity);
 
             }), nullptr));
-
-            return;
         }
+
     }
 
     void destroyItem(Entity entity)

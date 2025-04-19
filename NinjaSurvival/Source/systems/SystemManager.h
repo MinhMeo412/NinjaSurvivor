@@ -31,6 +31,8 @@ public:
     ax::Scene* getCurrentScene() const { return currentScene; }
     ax::Layer* getSceneLayer() const { return sceneLayer; }
 
+    void setUpdateState(bool update) { canUpdate = update; }
+
 private:
     SystemManager() = default;
     static SystemManager* instance;
@@ -39,6 +41,8 @@ private:
     ax::Scene* currentScene = nullptr;
     ax::Layer* sceneLayer   = nullptr;
     GameWorld* gameWorld = nullptr;
+
+    bool canUpdate = true;
 
     void addSystem(std::unique_ptr<System> system);
     void registerSystem(const std::string& systemType);

@@ -1,5 +1,5 @@
 #include "SpawnSystem.h"
-
+#include "Utils.h"
 #include "SystemManager.h"
 #include "GameData.h"
 #include "EntityFactory.h"
@@ -46,29 +46,31 @@ void SpawnSystem::init()
 
 
     //Test
-    int gridSize = 2;
-    int spacing  = 16;
-    for (int i = 0; i < 4; i++)
-    {
-        Entity entity = factory->createEntity("enemy", "Slime");
-        ax::Vec2 spawnPos(800,1000);
-        if (auto transform = transformMgr.getComponent(entity))
-        {
-            int row      = i / gridSize;  // chỉ số hàng
-            int col      = i % gridSize;  // chỉ số cột
-            transform->x = spawnPos.x + (col * spacing);
-            transform->y = spawnPos.y + (row * spacing);
-        }
-        if (auto spriteComp = spriteMgr.getComponent(entity))
-        {
-            spriteComp->initializeSprite();
-        }
-        if (auto animationComp = animationMgr.getComponent(entity))
-        {
-            animationComp->initializeAnimations();
-            animationComp->currentState = "idle";
-        }
-    }
+    //int gridSize = 2;
+    //int spacing  = 16;
+    //for (int i = 0; i < 4; i++)
+    //{
+    //    Entity entity = factory->createEntity("enemy", "Octopus");
+    //    ax::Vec2 spawnPos(800,1000);
+    //    if (auto transform = transformMgr.getComponent(entity))
+    //    {
+    //        int row      = i / gridSize;  // chỉ số hàng
+    //        int col      = i % gridSize;  // chỉ số cột
+    //        transform->x = spawnPos.x + (col * spacing);
+    //        transform->y = spawnPos.y + (row * spacing);
+    //    }
+    //    if (auto spriteComp = spriteMgr.getComponent(entity))
+    //    {
+    //        spriteComp->initializeSprite();
+    //    }
+    //    if (auto animationComp = animationMgr.getComponent(entity))
+    //    {
+    //        animationComp->initializeAnimations();
+    //        animationComp->currentState = "idle";
+    //    }
+    //}
+
+    //spawnBoss(10);
 }
 
 
@@ -96,7 +98,6 @@ void SpawnSystem::update(float dt)
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
-
     int numEnemies;  // Số enemy spawn
     int minute = elapsedTime / 60;
     numEnemies = 3 + minute;
@@ -112,7 +113,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     }
 
     // Điều chỉnh tỷ lệ spawn khi boss xuất hiện (hoặc cho = 0 để ko spawn)
-    float spawnRateMultiplier = isBossActive ? 0.25f : 1.0f;
+    float spawnRateMultiplier = isBossActive ? 0.5f : 1.0f;
     numEnemies                = static_cast<int>(numEnemies * spawnRateMultiplier);
 
     // Tỷ lệ spawn từng loại quái
@@ -123,27 +124,35 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     }
     else if (elapsedTime < 180)  // 1-3 phút
     {
-        slimeRatio = 0.9f;
+        slimeRatio = 0.8f;
+        snakeRatio = 0.1;
         bearRatio  = 0.1f;
     }
     else if (elapsedTime < 420)  // 3-7 phút
     {
-        slimeRatio = 0.5f;
+        slimeRatio = 0.6f;
         snakeRatio = 0.2f;
-        bearRatio  = 0.3f;
+        bearRatio  = 0.2f;
     }
     else if (elapsedTime < 600)  // 7-10 phút
     {
-        slimeRatio   = 0.3f;
-        snakeRatio   = 0.3f;
+        slimeRatio   = 0.4f;
+        snakeRatio   = 0.2f;
         bearRatio    = 0.3f;
         octopusRatio = 0.1f;
     }
-    else  // >10 phút
+    else if (elapsedTime < 840)  // 10-14 phút
     {
-        snakeRatio   = 0.2f;
+        slimeRatio   = 0.3f;
+        snakeRatio   = 0.1f;
+        bearRatio    = 0.45f;
+        octopusRatio = 0.15f;
+    }
+    else  // >14 phút
+    {
+        snakeRatio   = 0.1f;
         bearRatio    = 0.7f;
-        octopusRatio = 0.1f;
+        octopusRatio = 0.2f;
     }
 
     // Lấy vị trí player
@@ -181,8 +190,9 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
                 health->maxHealth *= 3.0f;
                 health->currentHealth = health->maxHealth;
             }
-            if (auto speed = speedMgr.getComponent(enemy))
+            if (auto name = identityMgr.getComponent(enemy)->name != "Octopus")
             {
+                auto speed   = speedMgr.getComponent(enemy);
                 speed->speed = std::min(speed->speed * 1.5f, 500.0f);
             }
         }
@@ -195,12 +205,14 @@ void SpawnSystem::spawnBoss(float elapsedTime)
 {
     if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
     { 
-        TransformComponent* playerTransform = transformMgr.getComponent(playerEntity);
+        auto playerTransform = transformMgr.getComponent(playerEntity);
         if (!playerTransform)
             return;
         ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
 
-        Entity boss = spawnEntity("enemy", "Slime", playerPos);  // dùng tạm Slime làm boss
+        std::string bossName = nameList[Utils::getRandomInt(0, nameList.size()-1)];
+        Entity boss          = spawnEntity("boss", bossName, playerPos);
+
         bossSpawnCount++;
         if (boss)
         {
@@ -215,13 +227,15 @@ void SpawnSystem::spawnBoss(float elapsedTime)
             if (speed) // +20% speed mỗi lần spawn
             {
                 float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
-                speed->speed         = std::min(speedCalculate, 120.0f);
+                speed->speed         = std::min(speedCalculate, 135.0f);
             }
             if (attack)// +20% attack mỗi lần spawn
             {
                 attack->baseDamage   = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
             }
             isBossActive = true;
+
+            bossList.push_back(boss);
         }
     }
 }
@@ -252,59 +266,33 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
             animationComp->initializeAnimations();
             animationComp->currentState = "idle";
         }
+        if (type != "boss")
+        {
+            auto health = healthMgr.getComponent(entity);
+            auto speed  = speedMgr.getComponent(entity);
+            auto attack = attackMgr.getComponent(entity);
+            auto identity = identityMgr.getComponent(entity);
 
+            int statsMultiplier = elapsedTime / 30; //30s tăng stats enemy 1 lần
 
-        if (elapsedTime > 180 && elapsedTime < 300)  // 5-10 phút
-        {
-            if (auto health = healthMgr.getComponent(entity))
+            health->maxHealth     = health->maxHealth * (1 + (0.5 * statsMultiplier)); //50% mỗi lần tăng
+            health->currentHealth = health->maxHealth;
+
+            attack->baseDamage = attack->baseDamage * (1 + (0.1 * statsMultiplier)); //10% mỗi lần tăng
+
+            if (identity->name != "Octopus")
             {
-                health->maxHealth *= 2.0f;
-                health->currentHealth = health->maxHealth;
+                float speedMultiplier   = std::min(1 + (0.05 * statsMultiplier),2.5); //5% mỗi lần tăng
+                float speedCalculate    = speed->speed * speedMultiplier;
+                speed->speed            = std::min(speedCalculate, 500.0f);
             }
-        }
-        else if (elapsedTime > 300 && elapsedTime < 600)  // 5-10 phút
-        {
-            if (auto health = healthMgr.getComponent(entity))
-            {
-                health->maxHealth *= 3.0f;
-                health->currentHealth = health->maxHealth;
-            }
-        }
-        else if (elapsedTime > 600 && elapsedTime < 900)  // 10-15 phút
-        {
-            if (auto health = healthMgr.getComponent(entity))
-            {
-                health->maxHealth *= 4.0f;
-                health->currentHealth = health->maxHealth;
-            }
-            if (auto attack = attackMgr.getComponent(entity))
-            {
-                attack->baseDamage *= 1.5f;
-            }
-        }
-        else if (elapsedTime > 900)  // >15 phút
-        {
-            if (auto health = healthMgr.getComponent(entity))
-            {
-                health->maxHealth *= 5.0f;
-                health->currentHealth = health->maxHealth;
-            }
-            if (auto speed = speedMgr.getComponent(entity))
-            {
-                speed->speed = std::min(speed->speed * 1.5f, 500.0f);
-            }
-            if (auto attack = attackMgr.getComponent(entity))
-            {
-                attack->baseDamage *= 2.0f;
-            }
+            // Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
+            SystemManager::getInstance()->getSystem<MovementSystem>()->assignEntityToBatch(entity);
+            // Xóa tại HealthSystem
+            // Xóa entity khỏi batch cập nhật di chuyển khi chết
+            // SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(deadEnemyEntity);
         }
     }
-
-    // Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
-    SystemManager::getInstance()->getSystem<MovementSystem>()->assignEntityToBatch(entity);
-    // Xóa tại HealthSystem
-    // Xóa entity khỏi batch cập nhật di chuyển khi chết
-    // SystemManager::getInstance()->getSystem<MovementSystem>()->updateBatchOnDeath(deadEnemyEntity);
 
     return entity;
 }

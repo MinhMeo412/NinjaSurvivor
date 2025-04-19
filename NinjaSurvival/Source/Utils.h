@@ -66,6 +66,10 @@ bool in(const T& value, Args... args)
     return ((value == args) || ...);
 }
 
+//Lấy giá trị ngẫu nhiên
+float getRandomFloat(float min, float max);
+int getRandomInt(int min, int max);
+
 }  // namespace Utils
 
 #endif  // __UTILS_H__

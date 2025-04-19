@@ -409,18 +409,21 @@ void CollisionSystem::weaponCollisionCheck()
             auto entityType = identityMgr.getComponent(entity)->type;
             if (Utils::in(entityType, "enemy", "boss"))
             {
-                auto entityPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);
-                auto entityHitbox = hitboxMgr.getComponent(entity);
-                int entityMaxSize = std::max(static_cast<int>(entityHitbox->defaultSize.width),
-                                             static_cast<int>(entityHitbox->defaultSize.height));
-
-                // Tính khoảng cách thực tế giữa hai tâm
-                float distance          = weaponPos.distance(entityPos);
-                float collisionDistance = (weaponMaxSize + entityMaxSize) / 2.0f;  // Tổng bán kính
-
-                if (distance <= collisionDistance && checkCollision(weapon, entity))
+                if (auto hitbox = hitboxMgr.getComponent(entity))
                 {
-                    onWeaponCollision(weapon, entity);
+                    auto entityPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);
+                    auto entityHitbox = hitboxMgr.getComponent(entity);
+                    int entityMaxSize = std::max(static_cast<int>(entityHitbox->defaultSize.width),
+                                                 static_cast<int>(entityHitbox->defaultSize.height));
+
+                    // Tính khoảng cách thực tế giữa hai tâm
+                    float distance          = weaponPos.distance(entityPos);
+                    float collisionDistance = (weaponMaxSize + entityMaxSize) / 2.0f;  // Tổng bán kính
+
+                    if (distance <= collisionDistance && checkCollision(weapon, entity))
+                    {
+                        onWeaponCollision(weapon, entity);
+                    }
                 }
             }
         }
@@ -432,22 +435,35 @@ void CollisionSystem::weaponCollisionCheck()
         auto weaponPos    = ax::Vec2(transformMgr.getComponent(weapon)->x, transformMgr.getComponent(weapon)->y);
         auto entitiesNearby = spatialGrid.getNearbyEntities(weaponPos, 1);
 
-        for (auto& entity : entitiesNearby)
+        if (identityMgr.getComponent(weapon)->name == "kunai")
         {
-            auto entityType = identityMgr.getComponent(entity)->type;
-            if (Utils::in(entityType, "enemy", "boss") && checkCollision(weapon, entity))
+            for (auto& entity : entitiesNearby)
             {
-                if (identityMgr.getComponent(weapon)->name == "kunai")
+                auto entityType = identityMgr.getComponent(entity)->type;
+                if (Utils::in(entityType, "enemy", "boss") && checkCollision(weapon, entity))
                 {
-                    onWeaponCollision(weapon, entity);
-                    SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(weapon);
-                    break;
-                }
-                else
-                {
-                    onWeaponCollision(weapon, entity);
+                    if (identityMgr.getComponent(weapon)->name == "kunai")
+                    {
+                        onWeaponCollision(weapon, entity);
+                        SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(weapon);
+                        break;
+                    }
+                    else
+                    {
+                        onWeaponCollision(weapon, entity);
+                    }
                 }
             }
         }
+        else if (identityMgr.getComponent(weapon)->name == "energy_ball")
+        {
+            auto playerEntity = SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerEntity();
+            if (checkCollision(weapon, playerEntity))
+            {
+                onCollision(playerEntity, weapon);
+                SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(weapon);
+            }
+        }
+        
     }
 }

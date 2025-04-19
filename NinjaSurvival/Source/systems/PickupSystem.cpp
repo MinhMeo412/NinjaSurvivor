@@ -17,7 +17,7 @@ PickupSystem::PickupSystem(EntityManager& em, ComponentManager<IdentityComponent
 void PickupSystem::init()
 {
     PICKUP_RANGE = 50.0f; //+buff
-    TOUCH_RANGE  = 10.0f;
+    TOUCH_RANGE  = 16.0f;
 
     pickupItems = {"greenGem", "blueGem", "redGem", "coin", "heart"};
     touchItems  = {"bomb", "magnet", "chest"};
@@ -63,7 +63,7 @@ void PickupSystem::update(float dt)
         }
     }
 
-   
+    
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -180,7 +180,8 @@ void PickupSystem::applyChest()
             ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
             levelUpLayer->setPosition(uiLayerPos);
             gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            gameScene->unscheduleUpdate();            // Dừng update
+            //gameScene->unscheduleUpdate();            // Dừng update
+            SystemManager::getInstance()->setUpdateState(false);
         }
     }
 }

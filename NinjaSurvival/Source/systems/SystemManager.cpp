@@ -35,6 +35,8 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
     gameWorld    = world;
     sceneLayer   = uiLayer;
 
+    canUpdate = true;
+
     if (!gameWorld)
     {
         AXLOG("Error: GameWorld is null in SystemManager");
@@ -78,6 +80,10 @@ void SystemManager::update(float dt)
 
     for (auto& system : systems)
     {
+        if (!canUpdate)
+        {
+            break;
+        }
         system->update(dt);
     }
 
@@ -127,15 +133,16 @@ void SystemManager::registerSystem(const std::string& systemType)
     else if (systemType == "RenderSystem")
         addSystem(std::make_unique<RenderSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                  gameWorld->getSpriteManager(), gameWorld->getTransformManager(),
-                                                 gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),gameWorld->getCooldownManager(),
-            gameWorld->getVelocityManager()));
+                                                 gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),
+                                                 gameWorld->getCooldownManager(), gameWorld->getVelocityManager(),
+                                                 gameWorld->getDurationManager()));
 
     // Thêm MovementSystem
     else if (systemType == "MovementSystem")
         addSystem(std::make_unique<MovementSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                    gameWorld->getTransformManager(), gameWorld->getVelocityManager(),
                                                    gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),
-                                                   gameWorld->getSpeedManager()));
+                                                   gameWorld->getSpeedManager(), gameWorld->getCooldownManager()));
 
     // Thêm CameraSystem
     else if (systemType == "CameraSystem")
