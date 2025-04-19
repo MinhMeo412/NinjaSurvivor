@@ -239,11 +239,8 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
 }
 void GameOverGamePauseLayer::setTimeTemp()
 {
-    auto currentScene = SystemManager::getInstance()->getCurrentScene();
-    auto uiLayer    = currentScene->getChildByName<GameSceneUILayer*>("UILayer");
-
-    auto timeSystem = SystemManager::getInstance()->getSystem<TimeSystem>();
-    float timeSet   = timeSystem->getElapsedTime();
+    
+    float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
 
     int minutes = static_cast<int>(timeSet) / 60;
     int seconds = static_cast<int>(timeSet) % 60;
