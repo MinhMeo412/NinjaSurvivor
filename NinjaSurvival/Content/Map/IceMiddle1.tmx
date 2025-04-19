@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="1" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3MtuwjAQBVD2/RXa8v9fh7JqVLU8Y+fO5CzOEskCHN+ZMZw/TqczbOQrYA308x2wBniGZ2E+nxHVXALWAEB9n5NeA7AmywIclx4cAB2pceqRSeAx9gpwyzPzIrOl/3nWAgAAVahfAFg4DwBI9dc8yv9R9OOeFgBrj5717q0AAAAAAEmSZ16/16a/SgJ31oAE7iEB75CrAajCmQUAwCzmP+9bZrt614ykRmThe0CCPc87mQW4RyaHMWbn0OS73QDAD3V6b+ormGev/ab2AgAAYBT33KhIz3s/+tEwnrOZDqrMNWQKOnOeAAAAAHA0qT0xvWgAXlVl7kovSdklNd8BY9jzpJLJYKyEPeY3EvAa+Y1kSf2NrWy15zq+N8B8MjQLeRAA+lArQl8Jc5hqPBNJdwX/wcFf
+  </data>
+ </layer>
+ <layer id="3" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt28lxAkEMAEACsGMwgRObnYqL8oeiAO/B7OjoR7+ZnUMjadnLx+l0AVb7CTCGjrLN+3eAMRzh/Gkegbmy3Q9dVIjf/91xGfbe6Hsaovmy5wEAIIUMNTXWkhhm1/r3v2/PA+/0qoe/p78vVsF6Fd5tAgCwXPa66dH4sz/TVnL5+SKuwey+chez5vk+3kXcg6xbwyq67kUxN59H7x+67t8jLD0js777qBqTt8555/lYQszvLdP6d/6WThwjk0xxhTk6x3PoRg7DkfTB4M+zXGtUDubsAbei1XvRxgPsl63OzDZeACA+dQ6Z6B3GIXYAS4gVcd3+H+9Vv0kvqo+la+1c1+A/uRCP+PpaxX6AWAwAAMx0dB26p9dcsSYkHu9D9tHniEn8hNycYQBuybnZSr0LjOaOGuu+Nqwa1zPWwP7vxyP2BUAdGfMTrHFmasux3llLWqt6MtcxmcdOXPYVR8hwnzoLY1Xt9RODehf2c454xh1ej7w3D7G5NvEV6OzaKxQHqeaIHrhzU29NMc9ZWTdgCbnLfBH7i/rT5hSymnGvrTnfo3P06LEmQt4RtU6KvnZZRdhzAO8U9R6DrezpvORZPUTsWwI5iB8c6dpXm5FXyofIRO0Fca09n84ze3V7J5nxec/NvuHp9KxHcl+M9ws98/JM
+  </data>
+ </layer>
+ <layer id="2" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2dkRgCAMBUAqsP8+bcAG+BCVMcduBVwDL2EMAAAAujuPv0cAAAAAc1Fq1ijjAAAgB/kRAADoQO0DUIt7HQAAANapp3OwTwAAcchmADDnjQQAAKAzdTEAfMe7CgAAAEAG+li84fwAABHJKABABjILAAAAAAAAAMRS7S+/2nwAgNpkFwAAAADu0EcCWOPe3MO6AgAAAE/pK+xnjQEAAADo7AJOuhgZ
+  </data>
+ </layer>
+ <layer id="4" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt2dFtwzAMBUBNkEmbrpZmtaYDRBMUqF3BpN4d4H9ZNKRHegwAABjj4zbGfT6ft6tXwhUes+5f83mqf6TvWffXfH7UHwCAoqr0rFXWkaZKz1plHWmq9KxV1gFAL/JjNvkxm/wIACTR+2TT+2TT++zJuZ7NuZ7NuQ4AAMfpp3tYVSf9dA+r6qSf7kGdAOqRobPJ0NlkM/idOzKbOzKbOxIAAPTF6fTF2fTF8P/cq9ncq9ncqwAAAHRijpXt7BzL99Pb2TmWOWg2c1CgMhklm4ySTUYBOpFZssks2WQWAAAAAAAAqGm3f/m7vc9qu/3L3+19VtvtX/5u7wNkkF2yyS7ZZBcAAAD+whwpmzlSNnOkY5yba3TZV+fmGl321bm5hn0FAADO6jJX6KzyHneZK3RWeY/NFdazxwAAAACkewNcmqBR
+  </data>
+ </layer>
+</map>

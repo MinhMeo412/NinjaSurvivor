@@ -1,8 +1,8 @@
 {
     "maps": [
         {
-            "name": "Map",
-            "sprite": "Map/Map.png",
+            "name": "Plains",
+            "sprite": "Map/Plains.png",
             "available": true,
             "mapSize": {
                 "width": 8,
@@ -41,45 +41,44 @@
             ]
         },
         {
-            "name": "Large Map",
-            "sprite": "HelloWorld.png",
+            "name": "Snow Field",
+            "sprite": "Map/SnowField.png",
             "available": false,
             "mapSize": {
                 "width": 8,
                 "height": 8
             },
             "upRightCornerTMXFile": [
-                "Map/URC.tmx"
+                "Map/IceURC.tmx"
             ],
             "downRightCornerTMXFile": [
-                "Map/LRC.tmx"
+                "Map/IceLRC.tmx"
             ],
             "upLeftCornerTMXFile": [
-                "Map/ULC.tmx"
+                "Map/IceULC.tmx"
             ],
             "downLeftCornerTMXFile": [
-                "Map/LLC.tmx"
+                "Map/IceLLC.tmx"
             ],
             "upRearTMXFile": [
-                "Map/UpperR.tmx"
+                "Map/IceUpperR.tmx"
             ],
             "downRearTMXFile": [
-                "Map/LowerR.tmx"
+                "Map/IceLowerR.tmx"
             ],
             "leftRearTMXFile": [
-                "Map/LeftR.tmx"
+                "Map/IceLeftR.tmx"
             ],
             "rightRearTMXFile": [
-                "Map/RightR.tmx"
+                "Map/IceRightR.tmx"
             ],
             "middleTMXFile": [
-                "Map/Middle1.tmx",
-                "Map/Middle2.tmx",
-                "Map/Middle3.tmx",
-                "Map/Middle4.tmx",
-                "Map/Middle5.tmx"
+                "Map/IceMiddle1.tmx",
+                "Map/IceMiddle2.tmx",
+                "Map/IceMiddle3.tmx",
+                "Map/IceMiddle4.tmx",
+                "Map/IceMiddle5.tmx"
             ]
         }
     ]
 }
-
