@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="2" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3T0OgzAMBlB2rkJ/7n+6DiyVKrVIQPnsvOHtRiHBdtJ0madpgQE9A2IArnUPiAG4nrUAVkn58S0gBiBX0nr1b9ZHqrlivsrva4ylcQK2eATEAIne54YaAQAA6tEbA4Bt9L72q3i+wrjTUcW5CAAAI1KTAkAP+nEkSH0PU+MCOJPfpwF7HNkzlIsBrORncD3zsLfK+96VYwe+M78BAICR2BfM464nOIf1DgAA8qmJAQAAADLo0wAA5HvOzsUBdHH2vSrqfDqSBwEAwHjUATW4Pxbgkx4tAB35vsFv3XsZ3Z8PklT87laMGQDgaF1yok57wJ2ehXF5j4/hPypJ1SV/AAAAgNEl1vh6YgBAFc6pZ+aTAADdvQBoKsFg
+  </data>
+ </layer>
+ <layer id="4" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3EtWwzAMAMAeAM4A9+7d4Co8HiugTZvEH0mexWzTNLZkyXV6fblcrgDFvb3OvwfiMj9yM36xfAa4BwCo6L1TzdPrulmpZZ6jBucW+QTakGPp6V6uXnHeWbcAfvsIcA8AK1uxJod7RsaD3nANciwArKPHmQ/nSCAPPR4QQaVcVOm7wDPU/jySaY7I4USUKYZmiv67lvwC/TjDCXBO9DqKbdZB2EfOg/n27HWJ2Txjxf79v8h1nLHfp1WusocMaziTM+SJmCKv6QDwV8t+zxo49/kzh/1KIJuRa48cCZCTPsXeOwD5PNqb1Z/lYawAaGn1/tYexxzV5516jV7Mrf7P1TMGYCT9yG2z1+PZn08t5hNwhBoBAKiu8jvG+kCgF/mF0aqf7YEjxAX8Jy6AGfRHrMz8B1qQS1iVHhaAW/ac2e15vleNtpZZdYkz6lCbGId+xBcrO1K76m8AICdruGcOlfXq7cUxI9ibAvhR+T9KyO+7LrRmAwCwZev8hfediGD0PGzVQ525jtibM2aM9QVv2a2O
+  </data>
+ </layer>
+ <layer id="3" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt09EJACAIRVF/3X+bmq2oIQIJzwG5C/giAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4H8jI2Zq1657W9u2+v/U/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/rX+/9T+1f7V/tX+1f7V/tX+1f7V/tX+1f7V/tX+9V0POG15PA==
+  </data>
+ </layer>
+ <layer id="5" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>

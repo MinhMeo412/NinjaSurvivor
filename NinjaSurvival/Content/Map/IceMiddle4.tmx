@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ <tileset firstgid="1" source="AssestMap.tsx"/>
+ <layer id="1" name="GroundLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3Dl2wjAQAFD6XIWQ3P90VCkocIwtWbP84jfwMPazlpmR7PvX7Xanre8A5wAAAJX9vvlcLM4R2g1AfD8b3z1OHvvs7wEAAACuop49h/oQAABnvdvLNIqYNR75GeS3tRcFoLJOcUynawXqyxi/Godfqe+Mp40BURmfAIAt0WKFjDUH6pi93wYyiDYvcB1jIFfb0+b2rGUYtwDiM1bXZ//BcWphvUW5/1HOg/zM+ePolzCGvsRKM/OkvcceOTfrT1BD9b5c/fqANdQ7qGp12179/wAAACvJiZhBuwKgO3MhQA/eh0AE4g46Mv4CM414/sa7DoDV5AkAdJf52c4jdY+s15v1vAEAAEaztgQAAPVZF+ET8kSoQ3/mT+a20PUZnsz3jP/Zaw0AAFQjjwUAYEvX9Z5PiasB4BrmXKjnzF4c+Qow2hPGfcFg
+  </data>
+ </layer>
+ <layer id="4" name="DecorationLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJzt3Ety2zAMANBM180Z2svl2G3u0M++k11rq7Il8QOAb/FWzngcWQIBEPTb68vLG1O8f273Xj8/zf9/zvje8BpE9jXAZ8jsW8L7ZJV7GwCY43fS/B8Y40uD9/gxIM4crfXO9FFa9l4AyEGuDMAIag3gGSP6Kz2MjnF71+nXxmtZ52PoY+seoQ35DhyjJ8VKjuS5GWc/4ZYYP8eo2ftKNUWLWRG4yrmZdirFp1X5Dsnq6N6Gui8Wfd0Ybp8j50xZTa/93LP5lWcQAPoww0ULz/QVss5hAkRQtSZunYeYC2GPvvs5z8yw/O9vzL/kpEYEOCZarq7/wt/MgcYULW6cpcZaQ9Z15WPPQp/o3orz0Fnv4ZX4jvqrsGavGL+imnE/OeNAFVdr9ArxPAJ7IES3te6N6PGJMQAAPFJpFnB0X1p/iy0VexSV4kRV9tDvRZ/hObNHZl5sXeIwHHemNtjrp195DqOvSbO1zGMq5uIAwL/kVvse9Q5m5Ut66QBAC5FywWr5TaRrC9Dbx169s8+wjux5jngF9GTuNK+Kv9GSfc0G7pnlm6fiOlGNdY+enD0BgDa9db/ZxgzOkKNezGOl2kuf73lb+cOqvTrxbOx1jBKTzLjAc8RIKukxe6Q25tbR81viLMzTuwaOUvsA98ykc8UKPaVqv0nAOdlqlWyfN7Meee4KsRWiWHU/eDazfbXZJ2CkR3mvuSnIQx10nX2Y8awztHQkDu7Vspn72Z4pIKJRcVU/hVtXaqQ/d6y06Q==
+  </data>
+ </layer>
+ <layer id="2" name="CollisionLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+ <layer id="3" name="OverlayLayer" width="128" height="128">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoADwAB
+  </data>
+ </layer>
+</map>
