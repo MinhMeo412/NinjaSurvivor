@@ -43,12 +43,17 @@ private:
     // Xử lý sub-stepping
     ax::Vec2 subSteppingHandle(Entity entity, float dt);
 
+    //Các hàm di chuyển của weapon
+    void moveEnemyProjectile(Entity entity, float dt);
+
     void moveSwordWeapon(Entity entity, float dt);
     int swordCountInFrame = 0; //Biến tạm để xử lý hướng sword
 
     void moveShurikenWeapon(Entity entity, float dt);
 
     void moveKunaiWeapon(Entity entity, float dt);
+
+    void moveBigKunaiWeapon(Entity entity, float dt);
 
     
 };

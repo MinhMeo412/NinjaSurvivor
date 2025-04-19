@@ -12,7 +12,8 @@ RenderSystem::RenderSystem(EntityManager& em,
                            ComponentManager<AnimationComponent>& am,
                            ComponentManager<HitboxComponent>& hm,
                            ComponentManager<CooldownComponent>& cdm,
-                           ComponentManager<VelocityComponent>& vm)
+                           ComponentManager<VelocityComponent>& vm,
+                           ComponentManager<DurationComponent>& drm)
     : entityManager(em)
     , identityMgr(im)
     , spriteMgr(sm)
@@ -21,6 +22,7 @@ RenderSystem::RenderSystem(EntityManager& em,
     , hitboxMgr(hm)
     , cooldownMgr(cdm)
     , velocityMgr(vm)
+    , durationMgr(drm)
 {}
 
 void RenderSystem::init()
@@ -79,17 +81,21 @@ void RenderSystem::addSpriteToScene(Entity entity)
     {
         if (sprite->gameSceneFrame->getParent() != scene)
         {
-            scene->addChild(sprite->gameSceneFrame, 3);
+            scene->addChild(sprite->gameSceneFrame, 4);
         }
     }
     else if (identity->type == "enemy")
     {
         sprite->setBatchNode(enemyBatchNode);
     }
-    //else if (identity->type == "boss")
-    //{
-    //    sprite->setBatchNode(bossBatchNode);
-    //}
+    else if (identity->type == "boss")
+    {
+        //sprite->setBatchNode(bossBatchNode);
+        if (sprite->gameSceneFrame->getParent() != scene)
+        {
+            scene->addChild(sprite->gameSceneFrame, 4);
+        }
+    }
     else if (identity->type == "item")
     {
         sprite->setBatchNode(itemBatchNode);
@@ -99,6 +105,10 @@ void RenderSystem::addSpriteToScene(Entity entity)
         sprite->setBatchNode(weaponBatchNode);
     }
     else if (identity->type == "weapon_projectile")
+    {
+        sprite->setBatchNode(weaponBatchNode);
+    }
+    else if (identity->type == "enemy_projectile")
     {
         sprite->setBatchNode(weaponBatchNode);
     }
@@ -129,6 +139,12 @@ void RenderSystem::update(float dt)
             continue;
         }
 
+        if (identityMgr.getComponent(entity)->name == "energy_ball")
+        {
+            updateEnemyProjectileSprite(entity);
+            continue;
+        }
+
         if (identityMgr.getComponent(entity)->name == "sword")
         {  // Không tự động update sword
             continue;
@@ -145,7 +161,13 @@ void RenderSystem::update(float dt)
             updateKunaiEntitySprite(entity);
             continue;
         }
-  
+
+        if (identityMgr.getComponent(entity)->name == "big_kunai")
+        {
+            updateBigKunaiEntitySprite(entity);
+            continue;
+        }
+
 
 
         updateEntitySprite(entity, dt);
@@ -154,7 +176,7 @@ void RenderSystem::update(float dt)
 
 
 
-    updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+    //updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -258,9 +280,25 @@ void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::st
         AXLOG("Error: Sprite is null in setSpriteBatchNodeForSprite");
         return;
     }
-    if (type == "number")
+    if (type == "number" || type == "hit_effect")
     {
         numberBatchNode->addChild(sprite);
+    }
+}
+
+// Hình ảnh enemy projectile (kiểu Conditional)
+void RenderSystem::updateEnemyProjectileSprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto duration  = durationMgr.getComponent(entity);
+
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+    sprite->gameSceneFrame->setScale(transform->scale);
+
+    if (duration->duration <= 0)
+    {
+        SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(entity);
     }
 }
 
@@ -346,5 +384,40 @@ void RenderSystem::updateKunaiEntitySprite(Entity entity)
     if (cooldown->cooldownTimer <= 0)
     {
         SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyItem(entity);
+    }
+}
+
+void RenderSystem::updateBigKunaiEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+
+    sprite->gameSceneFrame->setScale(transform->scale);
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+    auto angleRadians = std::atan2(vel->vy, -vel->vx);
+    // Chuyển sang độ và điều chỉnh
+    float angleDegrees = angleRadians * 180.0f / M_PI - 90.0f;
+
+    // Đảm bảo góc nằm trong khoảng [0, 360)
+    if (angleDegrees >= 360.0f)
+    {
+        angleDegrees -= 360.0f;
+    }
+    else if (angleDegrees < 0.0f)
+    {
+        angleDegrees += 360.0f;
+    }
+    sprite->gameSceneFrame->setRotation(angleDegrees);
+
+    if (cooldown->cooldownTimer > cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(255);
+    }
+    else if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(0);
     }
 }

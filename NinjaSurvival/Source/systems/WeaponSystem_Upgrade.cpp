@@ -10,6 +10,7 @@
 #include "GameData.h"
 
 // Weapons
+//Sword
 void WeaponSystem::upgradeSword(std::string weaponName, int level)
 {
     if (weaponName != "sword")
@@ -73,6 +74,7 @@ void WeaponSystem::upgradeSword(std::string weaponName, int level)
     }
 }
 
+//Shuriken
 void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
 {
     if (weaponName != "shuriken")
@@ -155,6 +157,7 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
     }
 }
 
+//Kunai
 void WeaponSystem::upgradeKunai(std::string weaponName, int level)
 {
     if (weaponName != "kunai")
@@ -201,7 +204,108 @@ void WeaponSystem::upgradeKunai(std::string weaponName, int level)
     }
 }
 
+//Big kunai
+void WeaponSystem::upgradeBigKunai(std::string weaponName, int level)
+{
+    if (weaponName != "big_kunai")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        for (auto bigKunai : bigKunaiList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(bigKunai);
+            cooldown->cooldownDuration -= 1.0;
+            //Tăng size
+            auto transform = transformMgr.getComponent(bigKunai);
+            auto hitbox    = hitboxMgr.getComponent(bigKunai);
+            transform->scale += 0.25;
+            hitbox->defaultSize *= 1.25;
+        }
+        break;
+    }
+    case 3:
+    {
+        for (auto bigKunai : bigKunaiList)
+        {
+            // Tăng duration
+            auto duration = durationMgr.getComponent(bigKunai);
+            duration->duration += 1.0;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(bigKunai);
+            attack->baseDamage += 5;
+            // Tăng speed
+            auto speed = speedMgr.getComponent(bigKunai);
+            speed->speed += 100;
+        }
+        break;
+    }
+    case 4:
+    {
+        for (auto bigKunai : bigKunaiList)
+        {
+            // Tăng duration
+            auto duration = durationMgr.getComponent(bigKunai);
+            duration->duration += 1.0;
+            // Tăng size
+            auto transform = transformMgr.getComponent(bigKunai);
+            auto hitbox    = hitboxMgr.getComponent(bigKunai);
+            transform->scale += 0.25;
+            hitbox->defaultSize *= 1.2;
+        }
+        break;
+    }
+    case 5:
+    {
+        for (auto bigKunai : bigKunaiList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(bigKunai);
+            cooldown->cooldownDuration -= 1.0;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(bigKunai);
+            attack->baseDamage += 5;
+        }
+
+        // Thêm 1 big kunai
+        auto inventBigKunai = bigKunaiList[0];
+        auto it = createWeapon.find(weaponName);
+        auto newBigKunai = it->second(weaponName, true);
+        weaponPool.push_back(newBigKunai);
+        auto cooldown   = cooldownMgr.getComponent(newBigKunai);
+        auto duration   = durationMgr.getComponent(newBigKunai);
+        auto attack     = attackMgr.getComponent(newBigKunai);
+        auto hitbox     = hitboxMgr.getComponent(newBigKunai);
+        auto transform  = transformMgr.getComponent(newBigKunai);
+        auto speed      = speedMgr.getComponent(newBigKunai);
+
+        auto stCooldown  = cooldownMgr.getComponent(inventBigKunai);
+        auto stDuration  = durationMgr.getComponent(inventBigKunai);
+        auto stAttack    = attackMgr.getComponent(inventBigKunai);
+        auto stHitbox    = hitboxMgr.getComponent(inventBigKunai);
+        auto stTransform = transformMgr.getComponent(inventBigKunai);
+        auto stSpeed     = speedMgr.getComponent(inventBigKunai);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
+        duration->duration         = stDuration->duration;
+        attack->baseDamage         = stAttack->baseDamage;
+        hitbox->defaultSize        = stHitbox->defaultSize;
+        transform->scale           = stTransform->scale;
+        speed->speed               = stSpeed->speed;
+
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 // Buffs
+//Attack
 void WeaponSystem::upgradeAttack(std::string buffName, int level)
 {
     if (buffName != "attack")
@@ -244,6 +348,7 @@ void WeaponSystem::upgradeAttack(std::string buffName, int level)
     }
 }
 
+//Health
 void WeaponSystem::upgradeHealth(std::string buffName, int level)
 {
     if (buffName != "health")
@@ -335,6 +440,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
     }
 }
 
+//Speed
 void WeaponSystem::upgradeSpeed(std::string buffName, int level)
 {
     if (buffName != "speed")
@@ -406,6 +512,7 @@ void WeaponSystem::upgradeSpeed(std::string buffName, int level)
     }
 }
 
+//XPGain
 void WeaponSystem::upgradeXPGain(std::string buffName, int level)
 {
     if (buffName != "xp_gain")
@@ -447,3 +554,19 @@ void WeaponSystem::upgradeXPGain(std::string buffName, int level)
         break;
     }
 }
+
+//Pickup Range
+
+
+//Reduce receive damage
+
+
+//Coin gain
+
+
+//Recovery
+
+
+//Curse (increase attack - increase receive damage)
+
+

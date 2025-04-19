@@ -9,8 +9,42 @@
 #include "SystemManager.h"
 #include "GameData.h"
 
+//Enemy projectile
+Entity WeaponSystem::createEnemyProjectile(std::string weaponName, Entity attacker)
+{
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
+    Entity weapon = factory->createEntity(type, weaponName);
 
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto trans = transformMgr.getComponent(weapon);
+    auto velocity   = velocityMgr.getComponent(weapon);
+    auto duration   = durationMgr.getComponent(weapon);
+    auto attack   = attackMgr.getComponent(weapon);
+
+    trans->x = transformMgr.getComponent(attacker)->x;
+    trans->y = transformMgr.getComponent(attacker)->y;
+
+    attack->baseDamage = attackMgr.getComponent(attacker)->baseDamage;
+
+    // Tính vector hướng từ attacker đến player
+    auto playerTrans = transformMgr.getComponent(playerEntity);
+    ax::Vec2 vel = ax::Vec2(playerTrans->x - trans->x, playerTrans->y - trans->y).getNormalized();
+    velocity->vx = vel.x;
+    velocity->vy = vel.y;
+
+    tempWeaponPool.push_back(weapon);
+
+    return weapon;
+}
+
+//Sword
 Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
 {
     if (!alreadyHave)
@@ -29,7 +63,7 @@ Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
 
     Entity weapon = factory->createEntity(type, weaponName);
 
-    auto* sprite = spriteMgr.getComponent(weapon);
+    auto sprite = spriteMgr.getComponent(weapon);
     if (sprite)
     {
         sprite->initializeSprite();
@@ -40,6 +74,7 @@ Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
     return weapon;
 }
 
+//Shuriken
 Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
 {
     if (!alreadyHave)
@@ -58,7 +93,7 @@ Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
 
     Entity weapon = factory->createEntity(type, weaponName);
 
-    auto* sprite = spriteMgr.getComponent(weapon);
+    auto sprite = spriteMgr.getComponent(weapon);
     if (sprite)
     {
         sprite->initializeSprite();
@@ -69,7 +104,7 @@ Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
     return weapon;
 }
 
-// Chỉ tạo mẫu để đưa vào pool làm tham khảo
+//Kunai - Chỉ tạo mẫu để đưa vào pool làm tham khảo
 Entity WeaponSystem::createKunai(std::string weaponName, bool alreadyHave)
 {
     if (!alreadyHave)
@@ -88,14 +123,14 @@ Entity WeaponSystem::createKunai(std::string weaponName, bool alreadyHave)
 
     Entity weapon = factory->createEntity(type, weaponName);
 
-    auto* sprite = spriteMgr.getComponent(weapon);
+    auto sprite = spriteMgr.getComponent(weapon);
     if (sprite)
     {
         sprite->initializeSprite();
     }
 
     // Không va chạm
-    auto* hitbox = hitboxMgr.getComponent(weapon);
+    auto hitbox = hitboxMgr.getComponent(weapon);
     if (hitbox)
     {
         hitbox->size = ax::Size(0, 0);
@@ -106,8 +141,49 @@ Entity WeaponSystem::createKunai(std::string weaponName, bool alreadyHave)
     return weapon;
 }
 
+//Sub func cho Kunai
 Entity WeaponSystem::createTempKunai(std::string weaponName) 
 {
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
+
+    Entity weapon = factory->createEntity(type, weaponName);
+
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto cooldown = cooldownMgr.getComponent(weapon);
+    auto duration = durationMgr.getComponent(weapon);
+    cooldown->cooldownTimer = duration->duration;
+
+    auto transform = transformMgr.getComponent(weapon);
+    transform->x   = transformMgr.getComponent(playerEntity)->x + (rand() % 11 - 5);
+    transform->y   = transformMgr.getComponent(playerEntity)->y + (rand() % 11 - 5);
+
+    auto vel = velocityMgr.getComponent(weapon);
+    vel->vx  = velocityMgr.getComponent(kunaiEntity)->vx;
+    vel->vy  = velocityMgr.getComponent(kunaiEntity)->vy;
+
+    return weapon;
+}
+
+//Big Kunai
+Entity WeaponSystem::createBigKunai(std::string weaponName, bool alreadyHave)
+{
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "big_kunai";
+            it->second = 1;
+        }
+    }
     const auto& templ = GameData::getInstance()->getEntityTemplates();
     std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
@@ -119,17 +195,10 @@ Entity WeaponSystem::createTempKunai(std::string weaponName)
         sprite->initializeSprite();
     }
 
-    auto* cooldown = cooldownMgr.getComponent(weapon);
-    auto* duration = durationMgr.getComponent(weapon);
-    cooldown->cooldownTimer = duration->duration;
+    auto cooldown          = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
 
-    auto* transform = transformMgr.getComponent(weapon);
-    transform->x   = transformMgr.getComponent(playerEntity)->x + (rand() % 11 - 5);
-    transform->y   = transformMgr.getComponent(playerEntity)->y + (rand() % 11 - 5);
-
-    auto* vel = velocityMgr.getComponent(weapon);
-    vel->vx  = velocityMgr.getComponent(kunaiEntity)->vx;
-    vel->vy  = velocityMgr.getComponent(kunaiEntity)->vy;
+    bigKunaiList.push_back(weapon);
 
     return weapon;
 }

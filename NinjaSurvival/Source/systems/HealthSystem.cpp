@@ -117,6 +117,7 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
                             float damage = calculatePlayerDamage(attack);
                             applyDamage(e, damage);
                             SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
+                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(e);
                             AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
                                     pair.first, health->currentHealth);
 

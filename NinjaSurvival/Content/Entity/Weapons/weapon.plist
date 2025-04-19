@@ -19,6 +19,21 @@
     <key>textureRotated</key>
     <false/>
    </dict>
+   <key>./energy_ball</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{12,12}</string>
+    <key>spriteSourceSize</key>
+    <string>{14,14}</string>
+    <key>textureRect</key>
+    <string>{{42,50},{12,12}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
    <key>./explosion_kunai</key>
    <dict>
     <key>aliases</key>
@@ -45,7 +60,7 @@
     <key>spriteSourceSize</key>
     <string>{6,13}</string>
     <key>textureRect</key>
-    <string>{{42,50},{6,13}}</string>
+    <string>{{60,32},{6,13}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -100,7 +115,7 @@
    <key>format</key>
    <integer>3</integer>
    <key>size</key>
-   <string>{61,65}</string>
+   <string>{68,64}</string>
    <key>textureFileName</key>
    <string>weapon.png</string>
   </dict>

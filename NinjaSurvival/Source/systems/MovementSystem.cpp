@@ -16,8 +16,16 @@ MovementSystem::MovementSystem(EntityManager& em,
                                ComponentManager<VelocityComponent>& vm,
                                ComponentManager<AnimationComponent>& am,
                                ComponentManager<HitboxComponent>& hm,
-                               ComponentManager<SpeedComponent>& spm)
-    : entityManager(em), identityMgr(im), transformMgr(tm), velocityMgr(vm), animationMgr(am), hitboxMgr(hm), speedMgr(spm)
+                               ComponentManager<SpeedComponent>& spm,
+                               ComponentManager<CooldownComponent>& cdm)
+    : entityManager(em)
+    , identityMgr(im)
+    , transformMgr(tm)
+    , velocityMgr(vm)
+    , animationMgr(am)
+    , hitboxMgr(hm)
+    , speedMgr(spm)
+    , cooldownMgr(cdm)
 {
     // Khai báo các kiểu di chuyển
     // Kiểu di chuyển của player
@@ -28,6 +36,8 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     // Enemy_Octopus
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
+    // Boss
+    movementStrategies["boss"]          = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
 }
 
 void MovementSystem::init()
@@ -49,15 +59,26 @@ void MovementSystem::update(float dt)
     if (!collisionSystem)
         return;// Thoát nếu không có CollisionSystem
 
-    // Xử lý player riêng biệt
+    // Xử lý player và boss
     auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
     if (spawnSystem)
     {
+        // Xử lý player
         Entity player = spawnSystem->getPlayerEntity();
         updateEntityMovement(player, dt);
+
+        // Xử lý boss
+        auto bossList = spawnSystem->getBossList();
+        if (!bossList.empty())
+        {
+            for (auto& boss : spawnSystem->getBossList())
+            {
+                updateEntityMovement(boss, dt);
+            }
+        }
     }
 
-    // Xử lý một batch của kẻ thù mỗi frame
+    // Xử lý một batch enemy mỗi frame
     if (!enemyBatches.empty())
     {
         processBatch(currentBatchIndex, dt);
@@ -88,10 +109,9 @@ void MovementSystem::updateEntityMovement(Entity entity, float dt)
     if (auto identity = identityMgr.getComponent(entity))
     {
         // Nếu là player hoặc item, dùng type làm key; nếu không, kết hợp type và name (cần update thêm, viết lại cho rõ khi thêm boss, projectile)
-        key = (identity->type == "player" || identity->type == "item") ? identity->type
-                                                                         : identity->type + "_" + identity->name;
+        key = (Utils::in(identity->type, "player", "item", "boss")) ? identity->type : identity->type + "_" + identity->name;
 
-        if (Utils::not_in(key, "item", "weapon_melee", "weapon_projectile"))  // Không cần chạy với key này
+        if (Utils::not_in(key, "item", "weapon_melee", "weapon_projectile", "enemy_projectile"))  // Không cần chạy với key này
         {
             // Tìm hàm di chuyển qua key
             auto it = movementStrategies.find(key);
@@ -224,7 +244,7 @@ void MovementSystem::moveRangedEnemy(Entity entity, float dt)
     isOutOfView(entity);
 
     // Timer kiểm tra vị trí (lưu trong MovementSystem)
-    timers[entity] += dt;
+    timers[entity] += (dt * BATCH_COUNT);
 
     // Lấy vị trí player từ SpawnSystem
     auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
@@ -264,6 +284,12 @@ void MovementSystem::moveRangedEnemy(Entity entity, float dt)
         {   
             velocity->vx = 0.0f;
             velocity->vy = 0.0f;
+            if (cooldownMgr.getComponent(entity)->cooldownTimer <= 0)
+            {
+                SystemManager::getInstance()->getSystem<WeaponSystem>()->createEnemyProjectile("energy_ball", entity);
+                cooldownMgr.getComponent(entity)->cooldownTimer = cooldownMgr.getComponent(entity)->cooldownDuration;
+            }
+            
         }
         timers[entity] = 0.0f;  // Reset timer
     }

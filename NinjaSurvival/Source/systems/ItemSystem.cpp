@@ -14,40 +14,40 @@ void ItemSystem::init()
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr,
                                               weaponInventoryMgr, durationMgr);
 
-    int num = 1000;
-    for (int i = 0; i < num; i++)
-    {
-         Entity item = factory->createEntity("item", "chest");
-         if (auto spriteComp = spriteMgr.getComponent(item))
-         {
-             spriteComp->initializeSprite();
-         }
-         auto transform = transformMgr.getComponent(item);
-         if (!transform)
-             continue;
-         // Tính toán vị trí dựa trên số thứ tự i
-         float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-         float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-         transform->x = 1000 + offsetX;
-         transform->y = 1000 + offsetY;
-    }
+    //int num = 1000;
+    //for (int i = 0; i < num; i++)
+    //{
+    //     Entity item = factory->createEntity("item", "chest");
+    //     if (auto spriteComp = spriteMgr.getComponent(item))
+    //     {
+    //         spriteComp->initializeSprite();
+    //     }
+    //     auto transform = transformMgr.getComponent(item);
+    //     if (!transform)
+    //         continue;
+    //     // Tính toán vị trí dựa trên số thứ tự i
+    //     float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //     float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //     transform->x = 1000 + offsetX;
+    //     transform->y = 1000 + offsetY;
+    //}
 
-     for (int i = 0; i < num; i++)
-    {
-         Entity item = factory->createEntity("item", "greenGem");
-         if (auto spriteComp = spriteMgr.getComponent(item))
-         {
-             spriteComp->initializeSprite();
-         }
-         auto transform = transformMgr.getComponent(item);
-         if (!transform)
-             continue;
-         // Tính toán vị trí dựa trên số thứ tự i
-         float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-         float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-         transform->x = 1000 + offsetX;
-         transform->y = 1500 + offsetY;
-     }
+    //for (int i = 0; i < num; i++)
+    //{
+    //     Entity item = factory->createEntity("item", "greenGem");
+    //     if (auto spriteComp = spriteMgr.getComponent(item))
+    //     {
+    //         spriteComp->initializeSprite();
+    //     }
+    //     auto transform = transformMgr.getComponent(item);
+    //     if (!transform)
+    //         continue;
+    //     // Tính toán vị trí dựa trên số thứ tự i
+    //     float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //     float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //     transform->x = 1000 + offsetX;
+    //     transform->y = 1500 + offsetY;
+    //}
 
     // Entity item = factory->createEntity("item", "magnet");
     // if (auto spriteComp = spriteMgr.getComponent(item))
@@ -115,7 +115,7 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
         redGemRatio   = 0.0f;
     }
 
-    float randVal = static_cast<float>(rand()) / RAND_MAX;
+    float randVal = dist(rng);
     if (isBoss)
     {
         if (1)  // 100% rớt gem
@@ -134,7 +134,7 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
     }
     else
     {
-        float dropChance = static_cast<float>(rand()) / RAND_MAX;
+        float dropChance = dist(rng);
         if (dropChance < 0.8f)  // 80% rớt gem
         {
             if (randVal < greenGemRatio)
@@ -146,7 +146,7 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
         }
 
         spawnSingleItem(position, "coin", 0.15f);   // 15% coin
-        spawnSingleItem(position, "heart", 0.03f);  // 3% heart
+        spawnSingleItem(position, "heart", 0.01f);  // 1% heart
         spawnSingleItem(position, "bomb", 0.005f);  // 0.5% bomb
     }
 }
@@ -154,7 +154,7 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
 // Spawn một item với tỷ lệ
 void ItemSystem::spawnSingleItem(const ax::Vec2& position, const std::string& name, float chance)
 {
-    if (static_cast<float>(rand()) / RAND_MAX < chance)
+    if (dist(rng) < chance)
     {
         Entity item = factory->createEntity("item", name);
 
@@ -176,7 +176,7 @@ void ItemSystem::spawnMultipleItems(const ax::Vec2& position,
                                     int maxCount,
                                     float chance)
 {
-    if (static_cast<float>(rand()) / RAND_MAX < chance)
+    if (dist(rng) < chance)
     {
         int count = minCount + rand() % (maxCount - minCount + 1);
         for (int i = 0; i < count; ++i)
@@ -204,7 +204,7 @@ void ItemSystem::spawnRandomItems()
     int itemsToSpawn = rand() % 10 + 1;  // 1-10 item mỗi lần
     for (int i = 0; i < itemsToSpawn; ++i)
     {
-        float chance = static_cast<float>(rand()) / RAND_MAX;
+        float chance = dist(rng);
         std::string name;
         if (chance < 0.2f)
             name = "bomb";  // 20%

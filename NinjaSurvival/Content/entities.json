@@ -14,7 +14,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 200.0,
+                "speed": 40.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -49,7 +49,7 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "sword"
+                "weapon": "kunai"
             }
         },
         {
@@ -181,7 +181,7 @@
                     "maxHealth": 15.0
                 },
                 "attack": {
-                    "baseDamage": 15.0,
+                    "baseDamage": 10.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -236,7 +236,7 @@
                     "maxHealth": 5.0
                 },
                 "attack": {
-                    "baseDamage": 5.0,
+                    "baseDamage": 3.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -285,7 +285,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 150.0,
+                "speed": 125.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
@@ -294,10 +294,10 @@
                     "maxHealth": 5.0
                 },
                 "attack": {
-                    "baseDamage": 7.0,
+                    "baseDamage": 5.0,
                     "damageMultiplier": 0.0
                 },
-                "cooldown": 1.0,
+                "cooldown": 2.0,
                 "sprite": {
                     "plist": "Entity/Enemy/enemy.plist",
                     "gameSceneFrame": "./octopus_down0"
@@ -325,6 +325,193 @@
                     },
                     "frameDuration": 0.2
                 }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Giant Slime",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 25.0,
+                "hitbox": {
+                    "width": 52.0,
+                    "height": 32.0
+                },
+                "health": {
+                    "maxHealth": 600.0
+                },
+                "attack": {
+                    "baseDamage": 20.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/giant_slime.plist",
+                    "gameSceneFrame": "./giant_slime_idle0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./giant_slime_idle0",
+                            "./giant_slime_idle1",
+                            "./giant_slime_idle2",
+                            "./giant_slime_idle3",
+                            "./giant_slime_idle4"
+                        ],
+                        "moveRight": [
+                            "./giant_slime_idle0",
+                            "./giant_slime_idle1",
+                            "./giant_slime_idle2",
+                            "./giant_slime_idle3",
+                            "./giant_slime_idle4"
+                        ],
+                        "moveLeft": [
+                            "./giant_slime_idle0",
+                            "./giant_slime_idle1",
+                            "./giant_slime_idle2",
+                            "./giant_slime_idle3",
+                            "./giant_slime_idle4"
+                        ],
+                        "idle": [
+                            "./giant_slime_idle0",
+                            "./giant_slime_idle1",
+                            "./giant_slime_idle2",
+                            "./giant_slime_idle3",
+                            "./giant_slime_idle4"
+                        ]
+                    },
+                    "frameDuration": 0.1
+                }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Giant Bamboo",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 25.0,
+                "hitbox": {
+                    "width": 52.0,
+                    "height": 62.0
+                },
+                "health": {
+                    "maxHealth": 600.0
+                },
+                "attack": {
+                    "baseDamage": 20.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/giant_bamboo.plist",
+                    "gameSceneFrame": "./giant_bamboo0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./giant_bamboo0",
+                            "./giant_bamboo1",
+                            "./giant_bamboo2",
+                            "./giant_bamboo3",
+                            "./giant_bamboo4",
+                            "./giant_bamboo5",
+                            "./giant_bamboo6",
+                            "./giant_bamboo7",
+                            "./giant_bamboo8",
+                            "./giant_bamboo9",
+                            "./giant_bamboo10",
+                            "./giant_bamboo11"
+                        ],
+                        "moveRight": [
+                            "./giant_bamboo0",
+                            "./giant_bamboo1",
+                            "./giant_bamboo2",
+                            "./giant_bamboo3",
+                            "./giant_bamboo4",
+                            "./giant_bamboo5",
+                            "./giant_bamboo6",
+                            "./giant_bamboo7",
+                            "./giant_bamboo8",
+                            "./giant_bamboo9",
+                            "./giant_bamboo10",
+                            "./giant_bamboo11"
+                        ],
+                        "moveLeft": [
+                            "./giant_bamboo0",
+                            "./giant_bamboo1",
+                            "./giant_bamboo2",
+                            "./giant_bamboo3",
+                            "./giant_bamboo4",
+                            "./giant_bamboo5",
+                            "./giant_bamboo6",
+                            "./giant_bamboo7",
+                            "./giant_bamboo8",
+                            "./giant_bamboo9",
+                            "./giant_bamboo10",
+                            "./giant_bamboo11"
+                        ],
+                        "idle": [
+                            "./giant_bamboo0",
+                            "./giant_bamboo1",
+                            "./giant_bamboo2",
+                            "./giant_bamboo3",
+                            "./giant_bamboo4",
+                            "./giant_bamboo5",
+                            "./giant_bamboo6",
+                            "./giant_bamboo7",
+                            "./giant_bamboo8",
+                            "./giant_bamboo9",
+                            "./giant_bamboo10",
+                            "./giant_bamboo11"
+                        ]
+                    },
+                    "frameDuration": 0.08
+                }
+            }
+        },
+        {
+            "type": "enemy_projectile",
+            "name": "energy_ball",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 1.0,
+                    "vy": 0.0
+                },
+                "speed": 70.0,
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./energy_ball"
+                },
+                "hitbox": {
+                    "width": 10.0,
+                    "height": 10.0
+                },
+                "attack": {
+                    "baseDamage": 5.0,
+                    "damageMultiplier": 0.0
+                },
+                "duration": 4.0
             }
         },
         {
@@ -553,15 +740,15 @@
                     "gameSceneFrame": "./big_kunai"
                 },
                 "hitbox": {
-                    "width": 10.0,
-                    "height": 10.0
+                    "width": 15.0,
+                    "height": 15.0
                 },
                 "attack": {
-                    "baseDamage": 10.0,
+                    "baseDamage": 15.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
-                "duration": 5.0
+                "duration": 3.0
             }
         }
     ]

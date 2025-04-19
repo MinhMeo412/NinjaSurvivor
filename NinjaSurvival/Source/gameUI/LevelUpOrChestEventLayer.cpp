@@ -140,7 +140,7 @@ void LevelUpOrChestEventLayer::createUI()
                 }
             }
         });
-
+        
         // Tạo văn bản hiển thị
         std::string displayText = upgrade.first;
         if (upgrade.second > 0)

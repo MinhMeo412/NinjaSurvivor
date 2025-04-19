@@ -15,16 +15,21 @@ void WeaponSystem::init()
     createWeapon["sword"]       = [this](std::string weaponName, bool alreadyHave) { return createSword(weaponName, alreadyHave); };
     createWeapon["shuriken"]    = [this](std::string weaponName, bool alreadyHave) { return createShuriken(weaponName, alreadyHave); };
     createWeapon["kunai"]       = [this](std::string weaponName, bool alreadyHave) { return createKunai(weaponName, alreadyHave); };
+    createWeapon["big_kunai"]   = [this](std::string weaponName, bool alreadyHave) { return createBigKunai(weaponName, alreadyHave); };
 
     // Khai báo các kiểu update weapon
+    updateWeapon["energy_ball"] = [this](Entity weapon, float dt) { updateEnemyProjectile(weapon, dt); };
     updateWeapon["sword"]       = [this](Entity weapon, float dt) { updateSword(weapon, dt); };
     updateWeapon["shuriken"]    = [this](Entity weapon, float dt) { updateShuriken(weapon, dt); };
     updateWeapon["kunai"]       = [this](Entity weapon, float dt) { updateKunai(weapon, dt); };
+    updateWeapon["big_kunai"]   = [this](Entity weapon, float dt) { updateBigKunai(weapon, dt); };
+
 
     // Khai báo các kiểu upgrade weapon
     upgradeWeapon["sword"]      = [this](std::string weaponName, int level) { upgradeSword(weaponName, level); };
     upgradeWeapon["shuriken"]   = [this](std::string weaponName, int level) { upgradeShuriken(weaponName, level); };
     upgradeWeapon["kunai"]      = [this](std::string weaponName, int level) { upgradeKunai(weaponName, level); };
+    upgradeWeapon["big_kunai"]  = [this](std::string weaponName, int level) { upgradeBigKunai(weaponName, level); };
 
     // Khai báo các kiểu upgrade buff
     upgradeBuff["attack"]       = [this](std::string buffName, int level) { upgradeAttack(buffName, level); };

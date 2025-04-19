@@ -69,6 +69,11 @@ private:
     int lastSpawnTime = 0;
     bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
     void setRandomMapPosition(Entity entity);
+
+    std::mt19937 rng{std::random_device{}()};              
+    std::uniform_real_distribution<float> dist{0.0f, 1.0f};
+
+    //Xem xét thêm 1 loại item có thể nâng cấp chỉ số nhân vật vĩnh viễn
 };
 
 

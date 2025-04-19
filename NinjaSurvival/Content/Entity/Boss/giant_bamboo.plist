@@ -4,168 +4,183 @@
  <dict>
   <key>frames</key>
   <dict>
-   <key>./hit</key>
+   <key>./giant_bamboo0</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-3}</string>
     <key>spriteSize</key>
-    <string>{5,5}</string>
+    <string>{48,52}</string>
     <key>spriteSourceSize</key>
-    <string>{5,5}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{27,10},{5,5}}</string>
+    <string>{{104,0},{48,52}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n0</key>
+   <key>./giant_bamboo1</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-3}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,51}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{18,0},{7,8}}</string>
+    <string>{{154,0},{48,51}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n1</key>
+   <key>./giant_bamboo10</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{1,0}</string>
+    <string>{0,-6}</string>
     <key>spriteSize</key>
-    <string>{5,8}</string>
+    <string>{48,46}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{27,0},{5,8}}</string>
+    <string>{{0,109},{48,46}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n2</key>
+   <key>./giant_bamboo11</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-4}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,50}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{0,20},{7,8}}</string>
+    <string>{{154,106},{48,50}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n3</key>
+   <key>./giant_bamboo2</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{1,2}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{50,52}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{18,10},{7,8}}</string>
+    <string>{{52,55},{50,52}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n4</key>
+   <key>./giant_bamboo3</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{1,2}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{50,53}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{9,20},{7,8}}</string>
+    <string>{{52,0},{50,53}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n5</key>
+   <key>./giant_bamboo4</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-6}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,46}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{18,20},{7,8}}</string>
+    <string>{{50,109},{48,46}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n6</key>
+   <key>./giant_bamboo5</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-4}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,50}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{0,0},{7,8}}</string>
+    <string>{{154,106},{48,50}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n7</key>
+   <key>./giant_bamboo6</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-3}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,52}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{9,0},{7,8}}</string>
+    <string>{{104,54},{48,52}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n8</key>
+   <key>./giant_bamboo7</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{0,-3}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{48,51}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{0,10},{7,8}}</string>
+    <string>{{154,53},{48,51}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
-   <key>./n9</key>
+   <key>./giant_bamboo8</key>
    <dict>
     <key>aliases</key>
     <array/>
     <key>spriteOffset</key>
-    <string>{0,0}</string>
+    <string>{-1,2}</string>
     <key>spriteSize</key>
-    <string>{7,8}</string>
+    <string>{50,52}</string>
     <key>spriteSourceSize</key>
-    <string>{7,8}</string>
+    <string>{62,62}</string>
     <key>textureRect</key>
-    <string>{{9,10},{7,8}}</string>
+    <string>{{0,55},{50,52}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./giant_bamboo9</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{-1,2}</string>
+    <key>spriteSize</key>
+    <string>{50,53}</string>
+    <key>spriteSourceSize</key>
+    <string>{62,62}</string>
+    <key>textureRect</key>
+    <string>{{0,0},{50,53}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -175,9 +190,9 @@
    <key>format</key>
    <integer>3</integer>
    <key>size</key>
-   <string>{34,30}</string>
+   <string>{204,158}</string>
    <key>textureFileName</key>
-   <string>number.png</string>
+   <string>giant_bamboo.png</string>
   </dict>
  </dict>
 </plist>
