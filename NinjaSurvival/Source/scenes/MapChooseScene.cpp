@@ -117,11 +117,12 @@ void MapChooseScene::menuUISetup()
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
     float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
     float posY            = safeOrigin.y + safeSize.height - marginY;
-    coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
-    coinLabel->setAlignment(TextHAlignment::LEFT);
+    coinLabel->setPosition(startPosX + coinLabelWidth / 2.5, posY);
+    coinLabel->setAnchorPoint(Vec2(0, 0.5));
+    coinLabel->setAlignment(ax::TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
-    coinSprite->setPosition(startPosX + coinLabelWidth + 10.0f + coinSpriteWidth / 2, posY);
-    coinSprite->setScale(3);
+    coinSprite->setPosition(startPosX + coinLabelWidth + coinSprite->getContentSize().width * 2, posY);
+    coinSprite->setScale(1.5f);
     this->addChild(coinSprite, 5, "coinSprite");
 
     Vector<MenuItem*> menuItems;

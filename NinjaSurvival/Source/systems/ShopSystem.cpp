@@ -94,6 +94,7 @@ bool ShopSystem::createSaveGame()
         {"Stat", "LootRange", false, 0, 0.0f, 50, 10, 0.1f, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
+        {"entities", "Deidara", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Map", true, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}
     };

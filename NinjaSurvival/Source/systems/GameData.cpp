@@ -441,7 +441,7 @@ void GameData::syncStatsWithShopSystem()
                 // Cập nhật Cooldown cho player (như trước)
                 else 
                 {
-                    AXLOG("không tìm thấy type weapon_melee, weapon_projectile");
+                    AXLOG("Lỗi: không cooldown được type weapon_melee, weapon_projectile");
                 }
             }
         }

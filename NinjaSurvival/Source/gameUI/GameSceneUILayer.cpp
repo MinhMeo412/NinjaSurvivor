@@ -32,22 +32,24 @@ bool GameSceneUILayer::init()
     Rect safeArea    = _director->getSafeAreaRect();
     Vec2 safeOrigin  = safeArea.origin;
 
+    // Nền mờ trên (giữ nguyên như mã bạn cung cấp)
     auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
-    backgroundUpper->setContentSize(Size(360, 300));  // Kích thước nền mờ
-    backgroundUpper->setPosition(Vec2(0, 580));       // Vị trí trên màn hình
+    backgroundUpper->setContentSize(Size(360, 300));
+    backgroundUpper->setPosition(Vec2(0, 580));
     this->addChild(backgroundUpper, 0);
 
+    // Nền mờ dưới (giữ nguyên như mã bạn cung cấp)
     auto backgroundLower = LayerColor::create(Color4B(0, 0, 0, 180));
     backgroundLower->setContentSize(Size(360, 300));
-    backgroundLower->setPosition(Vec2(0, -300));     
+    backgroundLower->setPosition(Vec2(0, -300));
     this->addChild(backgroundLower, 0);
 
     // Nút Pause
     pauseButton  = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
                                          AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
-    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2 - 10;  // Góc phải
-    float pauseY = safeOrigin.y + safeArea.size.height * 2 / 3;
-    pauseButton->setScale(2);  // 2/3 từ dưới lên
+    float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2 - 10;
+    float pauseY = safeOrigin.y + (safeArea.size.height * 2 / 3) - 10;  // Đặt sát mép trên safeArea
+    pauseButton->setScale(2);
     pauseButton->setPosition(Vec2(pauseX, pauseY));
 
     // Tạo menu
@@ -69,17 +71,18 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo xpBar hoặc xpBarUnder");
         return false;
     }
-    xpBar->setAnchorPoint(Vec2(0, 0.5f));                                                  // Cố định bên trái
-    xpBarUnder->setAnchorPoint(Vec2(0, 0.5f));                                             // Cố định bên trái
-    float xpY = safeOrigin.y + safeArea.size.height - xpBar->getContentSize().height / 2;  // Sát mép trên
-    float xpX = safeOrigin.x;                                                              // Căn trái
+    xpBar->setAnchorPoint(Vec2(0, 0.5f));
+    xpBarUnder->setAnchorPoint(Vec2(0, 0.5f));
+    float xpY = safeOrigin.y + safeArea.size.height -
+                xpBar->getContentSize().height / 2;  // Đặt sát mép trên safeArea, đồng bộ với GameOverGamePauseLayer
+    float xpX = safeOrigin.x;
     xpBar->setPosition(xpX, xpY);
     xpBarUnder->setPosition(xpX, xpY);
     this->addChild(xpBar, 2);
     this->addChild(xpBarUnder, 1);
 
     // Tạo label và sprite cho coin
-    coinLabel     = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
+    coinLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
     if (!coinLabel)
     {
         AXLOG("Không thể tạo coinLabel");
@@ -91,37 +94,37 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo coinSprite");
         return false;
     }
-    float coinLabelX = safeOrigin.x + safeArea.size.width - coinLabel->getContentSize().width -
-                       coinSprite->getContentSize().width - 17;  // Margin 20
-    float coinY = 640 - 20;                                      // Dưới thanh XP
-    coinLabel->setPosition(coinLabelX, coinY);
+    float coinY = xpY - 20;  // Dưới xpBar 30 pixel, đồng bộ với GameOverGamePauseLayer
+    coinLabel->setAnchorPoint(Vec2(1, 0.5));
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    float coinLabelX = safeOrigin.x + safeArea.size.width - coinSprite->getContentSize().width - 17;
+    coinLabel->setPosition(coinLabelX, coinY);
+    coinSprite->setPosition(coinLabelX + coinSprite->getContentSize().width / 2 + 7, coinY);
+    coinSprite->setScale(0.8);
     this->addChild(coinLabel, 5);
-
-    coinSprite->setPosition(
-        coinLabelX + coinLabel->getContentSize().width / 2 + coinSprite->getContentSize().width / 2 + 7,
-        coinY);  // Margin 5 giữa label và sprite
-    coinSprite->setScale(2);
     this->addChild(coinSprite, 5);
 
     // Enemy kill count label
     enemyKillCountLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    auto skullSprite    = Sprite::create("UI/skull.png");
+    if (!enemyKillCountLabel)
+    {
+        AXLOG("Không thể tạo enemyKillCountLabel");
+        return false;
+    }
+    auto skullSprite = Sprite::create("UI/skull.png");
     if (!skullSprite)
     {
         AXLOG("Không thể tạo skullSprite");
         return false;
     }
-    float killLabelX = coinLabelX;  // Cùng cột với coinLabel
-    float killY      = coinY - 30;  // Dưới coinLabel
-    enemyKillCountLabel->setPosition(killLabelX, killY);
+    float killY = coinY - 20;  // Dưới coinLabel 30 pixel, đồng bộ với GameOverGamePauseLayer
+    enemyKillCountLabel->setAnchorPoint(Vec2(1, 0.5));
     enemyKillCountLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    float killLabelX = coinLabelX;
+    enemyKillCountLabel->setPosition(killLabelX, killY);
+    skullSprite->setPosition(killLabelX + skullSprite->getContentSize().width / 2 + 7, killY);
+    skullSprite->setScale(0.8f);
     this->addChild(enemyKillCountLabel, 5);
-
-    skullSprite->setPosition(
-        killLabelX + enemyKillCountLabel->getContentSize().width / 2 + skullSprite->getContentSize().width / 2 + 5,
-        killY);                   // Margin 5
-    skullSprite->setScale(0.8f);  // Thu nhỏ nếu cần
     this->addChild(skullSprite, 5);
 
     // Vị trí theo camera
@@ -140,15 +143,15 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo hpBarRed hoặc hpBarGray");
         return false;
     }
-    hpBarRed->setAnchorPoint(Vec2(0, 0.5f));   // Cố định bên trái
-    hpBarGray->setAnchorPoint(Vec2(0, 0.5f));  // Cố định bên trái
+    hpBarRed->setAnchorPoint(Vec2(0, 0.5f));
+    hpBarGray->setAnchorPoint(Vec2(0, 0.5f));
     this->addChild(hpBarRed, 2);
     this->addChild(hpBarGray, 1);
 
-
     // Level label
     levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    levelLabel->setPosition(ax::Vec2(180, xpBar->getPosition().y - 40));  // Xem lại vị trí
+    levelLabel->setPosition(
+        ax::Vec2(safeOrigin.x + safeArea.size.width / 2, xpY - 40));  // Căn giữa ngang, dưới xpBar 40 pixel
     this->addChild(levelLabel, 5);
 
     return true;
