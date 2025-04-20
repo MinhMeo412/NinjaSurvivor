@@ -21,6 +21,23 @@ bool MapChooseScene::init()
     }
     SystemManager::getInstance()->resetSystems();
     menuUISetup();
+
+    auto entityTemplates = GameData::getInstance()->getEntityTemplates();
+    for (const auto& [type, innerMap] : entityTemplates)
+    {
+        if (type == "weapon_melee" || type == "weapon_projectile")
+            for (const auto& [name, entity] : innerMap)
+            {
+                if (entity.cooldown)
+                {
+                    AXLOG("Weapon %s có cooldown duration: %f", name.c_str(), entity.cooldown->cooldownDuration);
+                }
+                else
+                {
+                    AXLOG("%s không có cooldown", name.c_str());
+                }
+            }
+    }
     return true;
 }
 
@@ -100,11 +117,12 @@ void MapChooseScene::menuUISetup()
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
     float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
     float posY            = safeOrigin.y + safeSize.height - marginY;
-    coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
-    coinLabel->setAlignment(TextHAlignment::LEFT);
+    coinLabel->setPosition(startPosX + coinLabelWidth / 2.5, posY);
+    coinLabel->setAnchorPoint(Vec2(0, 0.5));
+    coinLabel->setAlignment(ax::TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
-    coinSprite->setPosition(startPosX + coinLabelWidth + 10.0f + coinSpriteWidth / 2, posY);
-    coinSprite->setScale(3);
+    coinSprite->setPosition(startPosX + coinLabelWidth + coinSprite->getContentSize().width * 2, posY);
+    coinSprite->setScale(1.5f);
     this->addChild(coinSprite, 5, "coinSprite");
 
     Vector<MenuItem*> menuItems;
@@ -227,7 +245,7 @@ void MapChooseScene::updateMapUI(MenuItemSprite* item,
         {
             auto shopData = ShopSystem::getInstance();
             int cost      = shopData->getCost("maps", mapName);
-            label->setString(StringUtils::format("Locked\nCost: %d", cost));
+            label->setString(StringUtils::format("Locked - %d", cost));
         }
         label->setVisible(true);
     }
