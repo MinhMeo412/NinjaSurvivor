@@ -36,6 +36,7 @@ private:
                                                   float baseY,
                                                   float xPos,
                                                   Node* parent);
+    void updateCoinLabel(int newCoinValue);
 };
 
 #endif  // __CHARACTER_CHOOSE_SCENE_H__

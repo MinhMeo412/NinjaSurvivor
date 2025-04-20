@@ -92,18 +92,25 @@ void ShopScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinSprite");
         return;
     }
-    float coinLabelWidth  = coinLabel->getContentSize().width;
-    float coinSpriteWidth = coinSprite->getContentSize().width;
-    float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
-    float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
+    // Tính toán vị trí cố định cho coinSprite (căn phải trong vùng an toàn)
+    float coinSpriteWidth = coinSprite->getContentSize().width * 1.5f;  // Nhân với scale
+    float coinSpritePosX  = safeOrigin.x + safeSize.width - marginX - coinSpriteWidth / 2.0f;
     float posY            = safeOrigin.y + safeSize.height - marginY;
-    coinLabel->setPosition(startPosX + coinLabelWidth / 2.5, posY);
-    coinLabel->setAnchorPoint(Vec2(0, 0.5));
-    coinLabel->setAlignment(ax::TextHAlignment::LEFT);
-    this->addChild(coinLabel, 5, "coinLabel");
-    coinSprite->setPosition(startPosX + coinLabelWidth + coinSprite->getContentSize().width * 2, posY);
+
+    // Đặt vị trí và scale cho coinSprite
+    coinSprite->setPosition(coinSpritePosX, posY);
     coinSprite->setScale(1.5f);
     this->addChild(coinSprite, 5, "coinSprite");
+
+    // Tính toán vị trí cho coinLabel (mép phải cố định ngay trước coinSprite)
+    float spacing       = 5.0f;  // Khoảng cách giữa coinLabel và coinSprite
+    float coinLabelPosX = coinSpritePosX - coinSpriteWidth / 2.0f - spacing;  // Mép phải của coinLabel
+
+    // Đặt thuộc tính cho coinLabel
+    coinLabel->setAnchorPoint(Vec2(1.0f, 0.5f));  // Điểm neo ở mép phải
+    coinLabel->setPosition(coinLabelPosX, posY);
+    coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
+    this->addChild(coinLabel, 5, "coinLabel");
 
     // Vẽ viền debug cho safeArea
     auto drawNode = DrawNode::create();
@@ -208,10 +215,8 @@ void ShopScene::menuBuyCallback(Object* sender)
         updateStatInfo(selectedStatName, getChildByName("panelDescription"), isMaxLevel);
         buyButton->setVisible(!isMaxLevel);
 
-        if (auto* coinLabel = dynamic_cast<Label*>(getChildByName("coinLabel")))
-        {
-            coinLabel->setString(StringUtils::format("%d", shopData->getCoins()));
-        }
+        // Cập nhật coinLabel
+        updateCoinLabel(shopData->getCoins());
 
         // Hiển thị thông báo thành công
         auto successLabel = Label::createWithTTF(StringUtils::format("%s Upgraded!", selectedStatName.c_str()),
@@ -384,17 +389,29 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
                 StringUtils::format("Bonus: +%d -> +%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
+    else if (name == "ReduceCooldown")
+    {
+        nextBuff = (level + 1) * shopData->getValueIncrement("Stat", name);  // tăng giá trị theo cấp
+        if (isMaxLevel)
+        {
+            bonusText = StringUtils::format("Bonus: %.0f%%", currentBuff * 100);
+        }
+        else
+        {
+            bonusText = StringUtils::format("Bonus: %.0f%% -> %.0f%%", currentBuff * 100, nextBuff * 100);
+        }
+    }
     else
     {
         nextBuff = (level + 1) *
                    shopData->getValueIncrement("Stat", name);  // levelValue tiếp theo = (level + 1) * valueIncrement
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: x%.2f", currentBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: %.0f%%", currentBuff * 100);
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: x%.2f -> x%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: %.0f%% -> %.0f%%", currentBuff * 100, nextBuff * 100);
         }
     }
 
@@ -431,4 +448,26 @@ Label* ShopScene::createStatLabel(const std::string& name,
     label->setVisible(false);
     parent->addChild(label, 4, tag + name);
     return label;
+}
+
+void ShopScene::updateCoinLabel(int newCoinValue)
+{
+    auto coinLabel  = dynamic_cast<ax::Label*>(this->getChildByName("coinLabel"));
+    auto coinSprite = dynamic_cast<ax::Sprite*>(this->getChildByName("coinSprite"));
+    if (!coinLabel || !coinSprite)
+    {
+        AXLOG("Lỗi: Không tìm thấy coinLabel hoặc coinSprite");
+        return;
+    }
+
+    // Cập nhật giá trị coin
+    coinLabel->setString(StringUtils::format("%d", newCoinValue));
+
+    // Cập nhật vị trí coinLabel để giữ mép phải cố định
+    float coinSpriteWidth = coinSprite->getContentSize().width * coinSprite->getScaleX();
+    float coinSpritePosX  = coinSprite->getPositionX();
+    float spacing         = 5.0f;
+    float coinLabelPosX   = coinSpritePosX - coinSpriteWidth / 2.0f - spacing;
+
+    coinLabel->setPosition(coinLabelPosX, coinLabel->getPositionY());
 }

@@ -23,6 +23,7 @@ private:
     void setupStatButtons(ax::Node* panel, ax::Node* panelDescription, ax::Vector<ax::MenuItem*>& menuItems);
     void updateStatInfo(const std::string& name, ax::Node* panelDescription, bool isMaxLevel);
     ax::Label* createStatLabel(const std::string& name, const std::string& tag, float baseY, float xPos, Node* parent);
+    void updateCoinLabel(int newCoinValue);
 };
 
 #endif  // __SHOP_SCENE_H__

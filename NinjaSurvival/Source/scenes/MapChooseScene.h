@@ -31,6 +31,7 @@ private:
                      bool isAvailable,
                      ax::MenuItemSprite* playButton,
                      ax::MenuItemSprite* buyButton);
+    void updateCoinLabel(int newCoinValue);
 };
 
 #endif  // __MAP_CHOOSE_SCENE_H__

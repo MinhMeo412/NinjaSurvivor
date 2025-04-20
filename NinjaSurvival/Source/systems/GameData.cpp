@@ -382,69 +382,70 @@ void GameData::syncStatsWithShopSystem()
     // Cập nhật entityTemplates
     for (auto& [type, templates] : entityTemplates)
     {
-        if (type != "player")
+        if (type != "player" && type != "weapon_melee" && type != "weapon_projectile")
+        {
+            AXLOG("Bỏ qua type không được hỗ trợ: %s", type.c_str());
             continue;
+        }
 
         for (auto& [name, templ] : templates)
         {
-            if (baseTemplates["player"].find(name) == baseTemplates["player"].end())
+            if (baseTemplates[type].find(name) == baseTemplates[type].end())
             {
-                AXLOG("Lỗi: Không tìm thấy %s trong entities.json", name.c_str());
+                AXLOG("Lỗi: Không tìm thấy %s trong entities.json cho type %s", name.c_str(), type.c_str());
                 continue;
             }
-            auto& baseTempl = baseTemplates["player"][name];
+            auto& baseTempl = baseTemplates[type][name];
 
-            // Cập nhật Health
-            if (templ.health.has_value() && baseTempl.health.has_value())
+            // Cập nhật Health 
+            if (type == "player" && templ.health.has_value() && baseTempl.health.has_value())
             {
                 float baseHealth = baseTempl.health->maxHealth;
                 float healthBuff = shop->getStatLevelValue("Stat", "Health");
                 templ.health     = HealthComponent{baseHealth + baseHealth * healthBuff};
-                AXLOG("Đồng bộ Health cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseHealth, healthBuff,
-                      templ.health->maxHealth);
+                AXLOG("Đồng bộ Health cho %s (%s): cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
+                      baseHealth, healthBuff, templ.health->maxHealth);
             }
 
-            // Cập nhật Attack
-            if (templ.attack.has_value() && baseTempl.attack.has_value())
-            {
-                float baseMultiplier           = baseTempl.attack->damageMultiplier;  // Lấy damageMultiplier cơ bản
-                float attackBuff               = shop->getStatLevelValue("Stat", "Attack");
-                templ.attack->damageMultiplier =
-                    baseMultiplier + (baseMultiplier * attackBuff);  // Cập nhật damageMultiplier
-                AXLOG("Đồng bộ Attack cho %s: baseMultiplier=%.2f, attackBuff=%.2f, damageMultiplier=%.2f",
-                      name.c_str(), baseMultiplier, attackBuff, templ.attack->damageMultiplier);
-            }
 
-            // Cập nhật Speed
-            if (templ.speed.has_value() && baseTempl.speed.has_value())
+            // Cập nhật Speed 
+            if (type == "player" && templ.speed.has_value() && baseTempl.speed.has_value())
             {
                 float baseSpeed = baseTempl.speed->speed;
                 float speedBuff = shop->getStatLevelValue("Stat", "Speed");
                 templ.speed     = SpeedComponent{baseSpeed + baseSpeed * speedBuff};
-                AXLOG("Đồng bộ Speed cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseSpeed, speedBuff,
-                      templ.speed->speed);
+                AXLOG("Đồng bộ Speed cho %s (%s): cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
+                      baseSpeed, speedBuff, templ.speed->speed);
             }
 
-            // Cập nhật Cooldown
+            // kéo sâu xuống entities.json check
+            // Cập nhật Cooldown 
             if (templ.cooldown.has_value() && baseTempl.cooldown.has_value())
             {
                 float baseCooldown = baseTempl.cooldown->cooldownDuration;
                 float cooldownBuff = shop->getStatLevelValue("Stat", "ReduceCooldown");
 
-                // Áp dụng giảm cooldown chỉ cho weapon_melee và weapon_projectile
                 if (type == "weapon_melee" || type == "weapon_projectile")
                 {
                     templ.cooldown = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
                     AXLOG("Đồng bộ Cooldown cho %s (%s): cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
                           baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
                 }
-                // Cập nhật Cooldown cho player (như trước)
-                else 
+                else
                 {
-                    AXLOG("Lỗi: không cooldown được type weapon_melee, weapon_projectile");
+                    AXLOG("Lỗi: Type %s không được hỗ trợ cho Cooldown", type.c_str());
+                }
+                // Cập nhật Attack
+                if (type == "weapon_melee" || type == "weapon_projectile")
+                {
+                    float baseMultiplier           = baseTempl.attack->damageMultiplier;
+                    float attackBuff               = shop->getStatLevelValue("Stat", "Attack");
+                    templ.attack->damageMultiplier = baseMultiplier + baseMultiplier * attackBuff;
+                    AXLOG("Đồng bộ Attack cho %s (%s): baseMultiplier=%.2f, attackBuff=%.2f, damageMultiplier=%.2f",
+                          name.c_str(), type.c_str(), baseMultiplier, attackBuff, templ.attack->damageMultiplier);
                 }
             }
-        }
+        }   
     }
 
     lastShopSyncVersion = shop->getShopDataVersion();
