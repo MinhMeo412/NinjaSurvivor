@@ -13,7 +13,7 @@ void MapSystem::init()
     std::string selectedMapName = gameData->getSelectedMap();
     if (selectedMapName.empty())
     {
-        AXLOG("MapSystem: No selected map in GameData");
+        //AXLOG("MapSystem: No selected map in GameData");
         return;
     }
 
@@ -95,7 +95,7 @@ void MapSystem::loadNextChunk(float dt)
     {
         isLoadingChunks = false;
         Director::getInstance()->getScheduler()->unschedule("chunk_loader", this);
-        AXLOG("MapSystem: All chunks loaded asynchronously");
+        //AXLOG("MapSystem: All chunks loaded asynchronously");
         return;
     }
 
@@ -140,7 +140,7 @@ void MapSystem::loadChunk(const Vec2& chunkPos)
 
     if (tmxFile.empty())
     {
-        AXLOG("MapSystem: No valid TMX file for chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
+        //AXLOG("MapSystem: No valid TMX file for chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
         return;
     }
 
@@ -148,7 +148,7 @@ void MapSystem::loadChunk(const Vec2& chunkPos)
     if (!chunk.tiledMap)
     {
         drawCollisionOutline(chunk);
-        AXLOG("MapSystem: Failed to load TMX file %s", tmxFile.c_str());
+        //AXLOG("MapSystem: Failed to load TMX file %s", tmxFile.c_str());
         return;
     }
 
@@ -164,7 +164,7 @@ void MapSystem::loadChunk(const Vec2& chunkPos)
     // Vẽ viền ngay sau khi load chunk
     drawCollisionOutline(chunk);
 
-    AXLOG("Loaded chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
+    //AXLOG("Loaded chunk (%d, %d)", (int)chunkPos.x, (int)chunkPos.y);
 }
 
 std::string MapSystem::getRandomTMXFile(const std::vector<std::string>& tmxFiles)
@@ -365,7 +365,7 @@ void MapSystem::drawCollisionOutline(Chunk& chunk)
         }
         drawNode->setTag(999);
         chunk.tiledMap->addChild(drawNode, 10);
-        AXLOG("Drew collision outline for chunk (%d, %d)", (int)chunk.gridPos.x, (int)chunk.gridPos.y);
+        //AXLOG("Drew collision outline for chunk (%d, %d)", (int)chunk.gridPos.x, (int)chunk.gridPos.y);
     }
 }
 

@@ -135,3 +135,27 @@ void WeaponSystem::updateBigKunai(Entity weapon, float dt)
         hitbox->size = ax::Size(0, 0);
     }
 }
+
+// Spinner
+void WeaponSystem::updateSpinner(Entity weapon, float dt)
+{
+    auto cooldown = cooldownMgr.getComponent(weapon);
+    auto duration = durationMgr.getComponent(weapon);
+    auto hitbox   = hitboxMgr.getComponent(weapon);
+    auto transform = transformMgr.getComponent(weapon);
+
+    if (cooldown->cooldownTimer == 0)
+    {
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->moveSpinnerWeapon(weapon, dt);
+        cooldown->cooldownTimer = duration->duration + cooldown->cooldownDuration;
+        hitbox->size = hitbox->defaultSize;
+        // Xử lý hình ảnh
+        SystemManager::getInstance()->getSystem<RenderSystem>()->updateSpinnerEntitySprite(weapon);
+    }
+    else if (cooldown->cooldownTimer <= cooldown->cooldownDuration && hitbox->size.width > 0)
+    {
+        hitbox->size = ax::Size(0, 0);
+        // Xử lý hình ảnh
+        SystemManager::getInstance()->getSystem<RenderSystem>()->updateSpinnerEntitySprite(weapon);
+    }
+}

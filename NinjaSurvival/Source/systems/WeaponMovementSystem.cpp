@@ -5,6 +5,7 @@
 #include "CleanupSystem.h"
 #include "WeaponSystem.h"
 #include "SystemManager.h"
+#include "Utils.h"
 
 WeaponMovementSystem::WeaponMovementSystem(EntityManager& em,
                                ComponentManager<IdentityComponent>& im,
@@ -21,6 +22,7 @@ WeaponMovementSystem::WeaponMovementSystem(EntityManager& em,
     movementStrategies["weapon_melee_shuriken"]         = [this](Entity e, float dt) { moveShurikenWeapon(e, dt); };
     movementStrategies["weapon_projectile_kunai"]       = [this](Entity e, float dt) { moveKunaiWeapon(e, dt); };
     movementStrategies["weapon_projectile_big_kunai"]   = [this](Entity e, float dt) { moveBigKunaiWeapon(e, dt); };
+
 
 }
 
@@ -231,18 +233,6 @@ void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
     if (!playerTransform)
         return;
 
-    // Đếm số shuriken trong weaponPool có type là shuriken
-    auto weaponPool   = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
-    int shurikenCount = 0;
-    for (size_t i = 0; i < weaponPool.size(); ++i)
-    {
-        auto identity = identityMgr.getComponent(weaponPool[i]);
-        if (identity && identity->name == "shuriken")
-        {
-            shurikenCount++;
-        }
-    }
-
     // Các thông số cho chuyển động tròn 
     float radius             = hitbox->defaultSize.x * 2;      // Bán kính quỹ đạo
     const float angularSpeed = 0.67f * 3.14159f; // Tốc độ góc (1 vòng/giây)
@@ -345,3 +335,29 @@ void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
         vel->vy      = -vel->vy;  // Đảo ngược vận tốc y
     }
 }
+
+//Spinner
+void WeaponMovementSystem::moveSpinnerWeapon(Entity entity, float dt)
+{
+    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+    if (!spawnSystem || !collisionSystem)
+        return;
+
+    auto enemiesInView = collisionSystem->getEnemyEntitiesInView(spawnSystem->getPlayerPosition());
+
+    auto transform = transformMgr.getComponent(entity);
+    if (!enemiesInView.empty())
+    {
+        int index = Utils::getRandomInt(0, enemiesInView.size() - 1);
+        auto enemyPos = transformMgr.getComponent(enemiesInView[index]);
+        transform->x   = enemyPos->x;
+        transform->y   = enemyPos->y;
+    }
+    else
+    {
+        transform->x = spawnSystem->getPlayerPosition().x + Utils::getRandomFloat(-150, 150);
+        transform->y = spawnSystem->getPlayerPosition().y + Utils::getRandomFloat(-300, 300);
+    }
+}
+

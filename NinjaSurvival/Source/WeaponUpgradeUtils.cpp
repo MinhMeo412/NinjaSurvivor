@@ -74,9 +74,27 @@ std::string getDescription(const std::string& name, int level)
         case 3:
             return "Increase duration & dame & speed";
         case 4:
-            return "Increase duration & size";
+            return "Increase duration & Size";
         case 5:
             return "Reduce CD & Increase dame & Add 1 Big Kunai";
+        default:
+            return "No description available";
+        }
+    }
+    else if (name == "spinner")
+    {
+        switch (level)
+        {
+        case 1:
+            return "Summon deadly shuriken at random enemy and deals damage";
+        case 2:
+            return "Reduce CD";
+        case 3:
+            return "Add 1 Spinner & Increase duration";
+        case 4:
+            return "Increase duration & Reduce CD";
+        case 5:
+            return "Add 1 Spinner & Increase dame & Size";
         default:
             return "No description available";
         }

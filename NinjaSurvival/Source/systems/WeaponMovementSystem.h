@@ -21,6 +21,7 @@ public:
 
     // Hàm tính lại góc cho tất cả shuriken
     void recalculateShurikenAngles(const std::vector<Entity>& shurikenList);
+    void moveSpinnerWeapon(Entity entity, float dt);
 
 private:
     EntityManager& entityManager;
@@ -54,8 +55,6 @@ private:
     void moveKunaiWeapon(Entity entity, float dt);
 
     void moveBigKunaiWeapon(Entity entity, float dt);
-
-    
 };
 
 #endif  // __WEAPON_MOVEMENT_SYSTEM_H__

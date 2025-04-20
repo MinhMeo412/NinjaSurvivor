@@ -1,4 +1,5 @@
 #include "SpawnSystem.h"
+#include "ShopSystem.h"
 #include "Utils.h"
 #include "SystemManager.h"
 #include "GameData.h"
@@ -7,10 +8,12 @@
 #include "TimeSystem.h"
 #include "CollisionSystem.h"
 #include "MovementSystem.h"
+#include "gameUI/GameSceneUILayer.h"
 
 
 void SpawnSystem::init()
 {
+    spawnRate = 1 + ShopSystem::getInstance()->getShopBuff("SpawnRate");
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr, durationMgr);
@@ -46,29 +49,29 @@ void SpawnSystem::init()
 
 
     //Test
-    //int gridSize = 2;
-    //int spacing  = 16;
-    //for (int i = 0; i < 4; i++)
-    //{
-    //    Entity entity = factory->createEntity("enemy", "Octopus");
-    //    ax::Vec2 spawnPos(800,1000);
-    //    if (auto transform = transformMgr.getComponent(entity))
-    //    {
-    //        int row      = i / gridSize;  // chỉ số hàng
-    //        int col      = i % gridSize;  // chỉ số cột
-    //        transform->x = spawnPos.x + (col * spacing);
-    //        transform->y = spawnPos.y + (row * spacing);
-    //    }
-    //    if (auto spriteComp = spriteMgr.getComponent(entity))
-    //    {
-    //        spriteComp->initializeSprite();
-    //    }
-    //    if (auto animationComp = animationMgr.getComponent(entity))
-    //    {
-    //        animationComp->initializeAnimations();
-    //        animationComp->currentState = "idle";
-    //    }
-    //}
+    int gridSize = 2;
+    int spacing  = 16;
+    for (int i = 0; i < 4; i++)
+    {
+        Entity entity = factory->createEntity("enemy", "Octopus");
+        ax::Vec2 spawnPos(800,1000);
+        if (auto transform = transformMgr.getComponent(entity))
+        {
+            int row      = i / gridSize;  // chỉ số hàng
+            int col      = i % gridSize;  // chỉ số cột
+            transform->x = spawnPos.x + (col * spacing);
+            transform->y = spawnPos.y + (row * spacing);
+        }
+        if (auto spriteComp = spriteMgr.getComponent(entity))
+        {
+            spriteComp->initializeSprite();
+        }
+        if (auto animationComp = animationMgr.getComponent(entity))
+        {
+            animationComp->initializeAnimations();
+            animationComp->currentState = "idle";
+        }
+    }
 
     //spawnBoss(10);
 }
@@ -88,19 +91,19 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    if (spawnTimer >= spawnInterval)
-    {
-        spawnEnemies(elapsedTime);
-        spawnBoss(elapsedTime);
-        spawnTimer = 0.0f;  // Reset timer
-    }
+    //if (spawnTimer >= spawnInterval)
+    //{
+    //    spawnEnemies(elapsedTime);
+    //    spawnBoss(elapsedTime);
+    //    spawnTimer = 0.0f;  // Reset timer
+    //}
 }
 
 void SpawnSystem::spawnEnemies(float elapsedTime)
 {
     int numEnemies;  // Số enemy spawn
     int minute = elapsedTime / 60;
-    numEnemies = 3 + minute;
+    numEnemies = (3 + minute) * spawnRate;
 
     // Giới hạn spawn
     if (livingEnemyCount < maxEnemies)
@@ -203,7 +206,7 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
 
 void SpawnSystem::spawnBoss(float elapsedTime)
 {
-    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
+    //if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
     { 
         auto playerTransform = transformMgr.getComponent(playerEntity);
         if (!playerTransform)
@@ -238,6 +241,9 @@ void SpawnSystem::spawnBoss(float elapsedTime)
             bossList.push_back(boss);
         }
     }
+
+    // Gọi cảnh báo boss
+    dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
 }
 
 void SpawnSystem::isBossAlive(bool isBossActive)
@@ -301,7 +307,7 @@ ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& play
 {
     const float VIEW_WIDTH   = 360.0f;   // Chiều rộng view
     const float VIEW_HEIGHT  = 640.0f;  // Chiều cao view
-    const float SPAWN_MARGIN = 300.0f;   // Khoảng cách spawn bên ngoài viền
+    const float SPAWN_MARGIN = 200.0f;   // Khoảng cách spawn bên ngoài viền
 
     // Kích thước vùng spawn (view + margin hai bên)
     const float spawnWidth  = VIEW_WIDTH + 2 * SPAWN_MARGIN;  

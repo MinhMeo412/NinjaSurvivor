@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include "PickupSystem.h"
+#include "ShopSystem.h"
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
 #include "LevelSystem.h"
@@ -18,6 +19,7 @@ void PickupSystem::init()
 {
     PICKUP_RANGE = 50.0f; //+buff
     TOUCH_RANGE  = 16.0f;
+    coinMultiplier = 1 + ShopSystem::getInstance()->getShopBuff("CoinGain");
 
     pickupItems = {"greenGem", "blueGem", "redGem", "coin", "heart"};
     touchItems  = {"bomb", "magnet", "chest"};
@@ -118,7 +120,7 @@ void PickupSystem::applyHeart()
 
 void PickupSystem::applyCoin()
 {
-    float amount   = 1;
+    float amount   = 1 * coinMultiplier;
     auto gameLayer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
     gameLayer->increaseCoin(amount);
 }

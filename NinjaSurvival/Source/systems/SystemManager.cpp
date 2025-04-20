@@ -31,6 +31,9 @@ SystemManager* SystemManager::getInstance()
 
 void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* uiLayer)
 {
+    //Seed random (nếu chưa có)
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
     currentScene = scene;
     gameWorld    = world;
     sceneLayer   = uiLayer;

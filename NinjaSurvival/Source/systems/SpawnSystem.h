@@ -78,6 +78,7 @@ private:
     float spawnInterval  = 2.0f;  // Spawn mỗi 2 giây
     int maxEnemies       = 300;
     int livingEnemyCount = 0;  // Đếm số enemy đang hoạt động
+    float spawnRate      = 0;
     bool isBossActive    = false;
     int bossSpawnCount   = 0;
     std::vector<Entity> bossList;

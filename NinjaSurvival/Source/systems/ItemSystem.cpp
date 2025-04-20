@@ -14,23 +14,23 @@ void ItemSystem::init()
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr,
                                               weaponInventoryMgr, durationMgr);
 
-    //int num = 1000;
-    //for (int i = 0; i < num; i++)
-    //{
-    //     Entity item = factory->createEntity("item", "chest");
-    //     if (auto spriteComp = spriteMgr.getComponent(item))
-    //     {
-    //         spriteComp->initializeSprite();
-    //     }
-    //     auto transform = transformMgr.getComponent(item);
-    //     if (!transform)
-    //         continue;
-    //     // Tính toán vị trí dựa trên số thứ tự i
-    //     float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-    //     float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-    //     transform->x = 1000 + offsetX;
-    //     transform->y = 1000 + offsetY;
-    //}
+    int num = 1000;
+    for (int i = 0; i < num; i++)
+    {
+         Entity item = factory->createEntity("item", "chest");
+         if (auto spriteComp = spriteMgr.getComponent(item))
+         {
+             spriteComp->initializeSprite();
+         }
+         auto transform = transformMgr.getComponent(item);
+         if (!transform)
+             continue;
+         // Tính toán vị trí dựa trên số thứ tự i
+         float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+         float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+         transform->x = 1000 + offsetX;
+         transform->y = 1000 + offsetY;
+    }
 
     //for (int i = 0; i < num; i++)
     //{

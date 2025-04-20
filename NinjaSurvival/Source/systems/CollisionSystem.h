@@ -21,6 +21,9 @@ public:
     ax::Vec2 resolvePosition(Entity entity, const ax::Vec2& newPos);
     // Kiểm tra va chạm giữa entity và collision tile tại vị trí cụ thể
     bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
+
+    std::vector<Entity> getEnemyEntitiesInView(const ax::Vec2& pos);
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -38,6 +41,7 @@ private:
         void clear();                                       // Xóa toàn bộ entity trong lưới
         void insert(Entity entity, const ax::Vec2& pos);    // Thêm entity vào ô tương ứng
         std::vector<Entity> getNearbyEntities(const ax::Vec2& pos, int radius);  // Lấy các entity gần vị trí
+        std::vector<Entity> getViewEntities(const ax::Vec2& pos);  // Lấy các entity trong view
     };
 
     SpatialGrid spatialGrid; // Khởi tạo lưới

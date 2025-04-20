@@ -53,6 +53,7 @@ public:
     void syncCharactersWithGameData();
     void syncMapsWithGameData();
     void syncCoinsWithGameData(float coinMultiplier);
+    void syncRerollCountWithLevelSystem();
 
     int getShopDataVersion() const { return shopDataVersion; }
 
@@ -61,6 +62,7 @@ private:
     std::vector<ShopData> shopData;
     int shopDataVersion = 0;  // Theo dõi thay đổi dữ liệu
     std::string readFileContent(const std::string& filename);
+    std::optional<int> pendingRerollCount;
 };
 
 #endif

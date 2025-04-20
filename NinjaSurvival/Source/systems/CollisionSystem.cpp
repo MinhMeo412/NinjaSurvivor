@@ -72,7 +72,7 @@ void CollisionSystem::update(float dt)
     }
 
     // Kiểm tra va chạm giữa player và các entity khác
-    auto entitiesNearby = spatialGrid.getNearbyEntities(spawnSystem->getPlayerPosition(),1); //Va chạm với boss có hitbox lớn bị miss
+    auto entitiesNearby = spatialGrid.getNearbyEntities(spawnSystem->getPlayerPosition(),2); //Va chạm với boss có hitbox lớn bị miss nếu radius = 1
     for (Entity entity : entitiesNearby)
     {
         auto entityType = identityMgr.getComponent(entity)->type;
@@ -388,6 +388,64 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Ve
     return nearby;  // Trả về danh sách entity gần vị trí
 }
 
+// Lấy danh sách các entity trong view
+std::vector<Entity> CollisionSystem::SpatialGrid::getViewEntities(const ax::Vec2& pos)
+{
+    const float VIEW_WIDTH  = 360.0f;  // Chiều rộng view
+    const float VIEW_HEIGHT = 640.0f;  // Chiều cao view
+
+    std::vector<Entity> nearby;
+
+    // Tìm ô chứa pos
+    int cellX = std::floor(pos.x / cellSize.x);  // Vị trí ô theo trục X
+    int cellY = std::floor(pos.y / cellSize.y);  // Vị trí ô theo trục Y
+
+    // Tính số ô cần duyệt xung quanh, làm tròn xuống và giảm 1 để nhỏ hơn view
+    int radiusX = std::floor(VIEW_WIDTH / (2.0f * cellSize.x)) - 1;   // 11 - 1 = 10
+    int radiusY = std::floor(VIEW_HEIGHT / (2.0f * cellSize.y)) - 2;  // 20 - 2 = 18
+
+    // Tính phạm vi ô cần duyệt
+    int startX = cellX - radiusX;
+    int endX   = cellX + radiusX;
+    int startY = cellY - radiusY;
+    int endY   = cellY + radiusY;
+
+    // Giới hạn trong phạm vi lưới
+    startX = std::max(0, std::min(startX, static_cast<int>(gridSize.x) - 1));
+    endX   = std::max(0, std::min(endX, static_cast<int>(gridSize.x) - 1));
+    startY = std::max(0, std::min(startY, static_cast<int>(gridSize.y) - 1));
+    endY   = std::max(0, std::min(endY, static_cast<int>(gridSize.y) - 1));
+
+    // Duyệt qua các ô trong vùng view
+    for (int ny = startY; ny <= endY; ++ny)
+    {
+        for (int nx = startX; nx <= endX; ++nx)
+        {
+            // Thêm tất cả entity trong ô vào danh sách
+            nearby.insert(nearby.end(), cells[ny][nx].begin(), cells[ny][nx].end());
+        }
+    }
+
+    return nearby;  // Trả về danh sách entity trong vùng view
+}
+
+std::vector<Entity> CollisionSystem::getEnemyEntitiesInView(const ax::Vec2& pos)
+{
+    auto entitiesInView = spatialGrid.getViewEntities(pos);
+
+    std::vector<Entity> enemiesInView;
+
+    for (auto& entity : entitiesInView)
+    {
+        if (Utils::in(identityMgr.getComponent(entity)->type, "enemy", "boss"))
+        {
+            enemiesInView.push_back(entity);
+        }
+    }
+
+    return enemiesInView;
+}
+
 void CollisionSystem::weaponCollisionCheck()
 {
     auto weaponPool = SystemManager::getInstance()->getSystem<WeaponSystem>()->getWeaponEntities();
@@ -464,6 +522,5 @@ void CollisionSystem::weaponCollisionCheck()
                 SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(weapon);
             }
         }
-        
     }
 }

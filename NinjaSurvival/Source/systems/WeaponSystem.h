@@ -95,8 +95,8 @@ private:
     std::vector<Entity> bigKunaiList;
     //Entity createExplosionKunai(std::string weaponName, bool alreadyHave);
     //std::vector<Entity> explosionKunaiList;
-    //Entity createSpinner(std::string weaponName, bool alreadyHave);
-    //std::vector<Entity> spinnerList;
+    Entity createSpinner(std::string weaponName, bool alreadyHave);
+    std::vector<Entity> spinnerList;
     //Entity createLightningScroll(std::string weaponName, bool alreadyHave);
     //std::vector<Entity> lightningScrollList;
 
@@ -107,6 +107,7 @@ private:
     void updateShuriken(Entity weapon, float dt);
     void updateKunai(Entity weapon, float dt);
     void updateBigKunai(Entity weapon, float dt);
+    void updateSpinner(Entity weapon, float dt);
 
     
 
@@ -115,6 +116,7 @@ private:
     void upgradeShuriken(std::string weaponName, int level);
     void upgradeKunai(std::string weaponName, int level);
     void upgradeBigKunai(std::string weaponName, int level);
+    void upgradeSpinner(std::string weaponName, int level);
 
     // Upgrade buff
     void upgradeAttack(std::string buffName, int level);

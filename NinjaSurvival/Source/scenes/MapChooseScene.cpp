@@ -21,6 +21,31 @@ bool MapChooseScene::init()
     }
     SystemManager::getInstance()->resetSystems();
     menuUISetup();
+
+
+    //ShopSystem::getInstance()->getShopBuff("Attack");
+    //ShopSystem::getInstance()->getShopBuff("XPGain");
+    //ShopSystem::getInstance()->getShopBuff("CoinGain");
+    //ShopSystem::getInstance()->getShopBuff("RerollWeapon");
+    ShopSystem::getInstance()->getShopBuff("ReduceCooldown");
+    //ShopSystem::getInstance()->getShopBuff("SpawnRate");
+
+    auto entityTemplates = GameData::getInstance()->getEntityTemplates();
+    for (const auto& [type, innerMap] : entityTemplates)
+    {
+        if (type == "weapon_melee" || type == "weapon_projectile")
+        for (const auto& [name, entity] : innerMap)
+        {
+            if (entity.cooldown)
+            {
+                AXLOG("Weapon %s có cooldown duration: %f", name.c_str(), entity.cooldown->cooldownDuration);
+            }
+            else
+            {
+                AXLOG("%s không có cooldown", name.c_str());
+            }
+        }
+    }
     return true;
 }
 
@@ -89,7 +114,7 @@ void MapChooseScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("coin.png");
+    auto coinSprite = Sprite::create("UI/coin.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");

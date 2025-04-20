@@ -3,6 +3,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "systems/SystemManager.h"
+#include "systems/LevelSystem.h"
 
 using namespace rapidjson;
 
@@ -32,6 +34,7 @@ ShopSystem* ShopSystem::getInstance()
                 statsLoaded = true;
                 // Đồng bộ ngay sau khi khởi tạo
                 GameData::getInstance()->syncStatsWithShopSystem();
+                instance->syncRerollCountWithLevelSystem();
             }
             else
             {
@@ -78,19 +81,19 @@ bool ShopSystem::createSaveGame()
 
     // Khởi tạo dữ liệu mặc định với levelValue là float (phần trăm)
     shopData = {
-        {"Coin", "", false, std::nullopt, 1000.0f, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
-        {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},         // Health: +10% mỗi cấp
-        {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.05f},        // Attack: +5% mỗi cấp
-        {"Stat", "Speed", false, 0, 0.0f, 50, 10, 0.1f, 0.02f},         // Speed: +2% mỗi cấp
-        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: +10% mỗi cấp
-        {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},       // Coin Gain: +10% mỗi cấp
-        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},    // RerollWeapon: +1 mỗi cấp
-        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},  // Reduce Cooldown: +10% mỗi cấp
-        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},      // Spawn Rate: +10% mỗi cấp
+        {"Coin", "", false, std::nullopt, 100000.0f, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
+        {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Health: max 10 level, +10% mỗi level
+        {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Attack: max 10 level, +10% mỗi level
+        {"Stat", "Speed", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},            // Speed: max 5 level, +10% mỗi level
+        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: max 5 level, +10% mỗi level
+        {"Stat", "CoinGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},        // Coin Gain: max 10 level, +10% mỗi level
+        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
+        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},  // Reduce Cooldown: max 5 level, +5% mỗi level
+        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},       // Spawn Rate: max 10 level, +10% mỗi level
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
-        {"entities", "Ninja", true, std::nullopt, std::nullopt, 100, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Map", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Large Map", false, std::nullopt, std::nullopt, 150, std::nullopt, std::nullopt, std::nullopt}};
+        {"entities", "Ninja", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Plains", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
+        {"maps", "Snow Field", false, std::nullopt, std::nullopt, 500, std::nullopt, std::nullopt, std::nullopt}};
 
     shopDataVersion++;
     return saveToFile(filePath);
@@ -190,6 +193,10 @@ bool ShopSystem::upgradeStat(const std::string& name)
             if (data.name == "RerollWeapon")
             {
                 data.levelValue = static_cast<float>(data.level.value());  // RerollWeapon: levelValue = level
+                // Lưu rerollCount tạm thời
+                pendingRerollCount = 1 + static_cast<int>(data.levelValue.value());
+                AXLOG("Đã cập nhật RerollWeapon: levelValue=%.0f, pendingRerollCount=%d", data.levelValue.value(),
+                      pendingRerollCount.value());
             }
             else
             {
@@ -201,8 +208,8 @@ bool ShopSystem::upgradeStat(const std::string& name)
             {
                 int currentCost = data.cost.value();
                 data.cost       = static_cast<int>(currentCost * (1.0f + data.valueIncrease.value()));
-            }
-
+            }//Làm lại cập nhật cost
+            
             // Lưu và đồng bộ
             shopDataVersion++;
             saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
@@ -298,10 +305,15 @@ bool ShopSystem::loadSaveGame()
     syncMapsWithGameData();
     GameData::getInstance()->syncStatsWithShopSystem();
 
+    // Lưu rerollCount tạm thời
+    float rerollWeaponLevelValue = getStatLevelValue("Stat", "RerollWeapon");
+    pendingRerollCount           = 1 + static_cast<int>(rerollWeaponLevelValue);
+    AXLOG("Đã tải RerollWeapon levelValue=%.0f, pendingRerollCount=%d", rerollWeaponLevelValue,
+          pendingRerollCount.value());
+
     AXLOG("Đã nạp shopData từ savegame.json và đồng bộ với GameData");
     return true;
 }
-
 void ShopSystem::syncCharactersWithGameData()
 {
     auto gameData  = GameData::getInstance();
@@ -377,6 +389,24 @@ void ShopSystem::syncCoinsWithGameData(float coinMultiplier)
         }
     }
     saveToFile(ax::FileUtils::getInstance()->getWritablePath() + "savegame.json");
+}
+
+void ShopSystem::syncRerollCountWithLevelSystem()
+{
+    if (pendingRerollCount.has_value())
+    {
+        auto levelSystem = SystemManager::getInstance()->getSystem<LevelSystem>();
+        if (levelSystem)
+        {
+            levelSystem->setRerollCount(pendingRerollCount.value());
+            AXLOG("Đã đồng bộ rerollCount=%d với LevelSystem", pendingRerollCount.value());
+            pendingRerollCount.reset();
+        }
+        else
+        {
+            AXLOG("Lỗi: LevelSystem vẫn chưa được khởi tạo khi đồng bộ rerollCount");
+        }
+    }
 }
 
 int ShopSystem::getCoins() const
@@ -504,6 +534,7 @@ float ShopSystem::getShopBuff(const std::string& buffName) const
     {
         if (data.type == "Stat" && data.name == buffName && data.levelValue.has_value())
         {
+            AXLOG("Buff %s: %f", buffName.c_str(), data.levelValue.value());
             return data.levelValue.value();
         }
     }

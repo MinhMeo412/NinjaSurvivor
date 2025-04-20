@@ -189,7 +189,7 @@ Entity WeaponSystem::createBigKunai(std::string weaponName, bool alreadyHave)
 
     Entity weapon = factory->createEntity(type, weaponName);
 
-    auto* sprite = spriteMgr.getComponent(weapon);
+    auto sprite = spriteMgr.getComponent(weapon);
     if (sprite)
     {
         sprite->initializeSprite();
@@ -203,7 +203,38 @@ Entity WeaponSystem::createBigKunai(std::string weaponName, bool alreadyHave)
     return weapon;
 }
 
+// Spinner
+Entity WeaponSystem::createSpinner(std::string weaponName, bool alreadyHave)
+{
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "spinner";
+            it->second = 1;
+        }
+    }
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
+    Entity weapon = factory->createEntity(type, weaponName);
+
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
+
+    spinnerList.push_back(weapon);
+
+    return weapon;
+}
 
 
 

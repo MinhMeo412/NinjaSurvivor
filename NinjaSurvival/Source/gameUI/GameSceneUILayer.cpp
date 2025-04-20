@@ -85,7 +85,7 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo coinLabel");
         return false;
     }
-    auto coinSprite = Sprite::create("coin.png");
+    auto coinSprite = Sprite::create("UI/coin.png");
     if (!coinSprite)
     {
         AXLOG("Không thể tạo coinSprite");
@@ -106,7 +106,7 @@ bool GameSceneUILayer::init()
 
     // Enemy kill count label
     enemyKillCountLabel = ax::Label::createWithTTF("0", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    auto skullSprite    = Sprite::create("skull.png");
+    auto skullSprite    = Sprite::create("UI/skull.png");
     if (!skullSprite)
     {
         AXLOG("Không thể tạo skullSprite");

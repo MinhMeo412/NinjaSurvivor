@@ -40,7 +40,6 @@ GameData* GameData::getInstance()
             // Đồng bộ dữ liệu từ ShopSystem vào GameData
             shopData->syncCharactersWithGameData();
             shopData->syncMapsWithGameData();
-            instance->syncStatsWithShopSystem();
         }
         else
         {
@@ -408,11 +407,12 @@ void GameData::syncStatsWithShopSystem()
             // Cập nhật Attack
             if (templ.attack.has_value() && baseTempl.attack.has_value())
             {
-                float baseDamage = baseTempl.attack->damageMultiplier;
-                float attackBuff = shop->getStatLevelValue("Stat", "Attack");
-                templ.attack     = AttackComponent{baseDamage + baseDamage * attackBuff, templ.attack->damageMultiplier};
-                AXLOG("Đồng bộ Attack cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseDamage, attackBuff,
-                      templ.attack->damageMultiplier);
+                float baseMultiplier           = baseTempl.attack->damageMultiplier;  // Lấy damageMultiplier cơ bản
+                float attackBuff               = shop->getStatLevelValue("Stat", "Attack");
+                templ.attack->damageMultiplier =
+                    baseMultiplier + (baseMultiplier * attackBuff);  // Cập nhật damageMultiplier
+                AXLOG("Đồng bộ Attack cho %s: baseMultiplier=%.2f, attackBuff=%.2f, damageMultiplier=%.2f",
+                      name.c_str(), baseMultiplier, attackBuff, templ.attack->damageMultiplier);
             }
 
             // Cập nhật Speed
