@@ -49,7 +49,7 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "kunai"
+                "weapon": "spinner"
             }
         },
         {
@@ -145,7 +145,7 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "kunai"
+                "weapon": "sword"
             }
         },
         {
@@ -795,6 +795,35 @@
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
+                "duration": 3.0
+            }
+        },
+        {
+            "type": "weapon_melee",
+            "name": "spinner",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./spinner"
+                },
+                "hitbox": {
+                    "width": 30.0,
+                    "height": 30.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 5.0,
                 "duration": 3.0
             }
         }

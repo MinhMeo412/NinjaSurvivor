@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "ShopSystem.h"
 #include "HealthSystem.h"
 #include "SystemManager.h"
 #include "CameraSystem.h"
@@ -24,8 +25,7 @@ HealthSystem::HealthSystem(EntityManager& em,
 
 void HealthSystem::init()
 {
-    //Seed random cho sát thương
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    attackBuffMultiplier = ShopSystem::getInstance()->getShopBuff("Attack");
 
     // set callback trong init
     onPlayerOutOfHealth = [this]() {
@@ -142,8 +142,8 @@ float HealthSystem::calculateEnemyDamage(const AttackComponent* attack)
 }
 float HealthSystem::calculatePlayerDamage(const AttackComponent* attack)
 {
-    float attackBuffMultiplier = SystemManager::getInstance()->getSystem<WeaponSystem>()->attackBuff;
-    return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1.0f + attackBuffMultiplier) * getRandomFloat(1.0, 1.3);
+    attackBuffMultiplier = SystemManager::getInstance()->getSystem<WeaponSystem>()->attackBuff;
+    return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1.0f + attackBuffMultiplier) * Utils::getRandomFloat(1.0, 1.3);
 }
 
 void HealthSystem::applyDamage(Entity target, float damage)

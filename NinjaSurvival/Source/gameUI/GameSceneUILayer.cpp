@@ -7,12 +7,11 @@
 #include "systems/HealthSystem.h"
 #include "systems/LevelSystem.h"
 
-
 using namespace ax;
 
-GameSceneUILayer* GameSceneUILayer::create()
+GameSceneUILayer *GameSceneUILayer::create()
 {
-    GameSceneUILayer* layer = new (std::nothrow) GameSceneUILayer();
+    GameSceneUILayer *layer = new (std::nothrow) GameSceneUILayer();
     if (layer && layer->init())
     {
         layer->autorelease();
@@ -28,9 +27,9 @@ bool GameSceneUILayer::init()
         return false;
 
     Vec2 visibleSize = _director->getVisibleSize();
-    Vec2 origin      = _director->getVisibleOrigin();
-    Rect safeArea    = _director->getSafeAreaRect();
-    Vec2 safeOrigin  = safeArea.origin;
+    Vec2 origin = _director->getVisibleOrigin();
+    Rect safeArea = _director->getSafeAreaRect();
+    Vec2 safeOrigin = safeArea.origin;
 
     // Nền mờ trên (giữ nguyên như mã bạn cung cấp)
     auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
@@ -45,10 +44,10 @@ bool GameSceneUILayer::init()
     this->addChild(backgroundLower, 0);
 
     // Nút Pause
-    pauseButton  = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
-                                         AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
+    pauseButton = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
+                                        AX_CALLBACK_1(GameSceneUILayer::gamePauseCallback, this), Vec2(0, 0));
     float pauseX = safeOrigin.x + safeArea.size.width - pauseButton->getContentSize().width / 2 - 10;
-    float pauseY = safeOrigin.y + (safeArea.size.height * 2 / 3) - 10;  // Đặt sát mép trên safeArea
+    float pauseY = safeOrigin.y + (safeArea.size.height * 2 / 3) - 10; // Đặt sát mép trên safeArea
     pauseButton->setScale(2);
     pauseButton->setPosition(Vec2(pauseX, pauseY));
 
@@ -64,7 +63,7 @@ bool GameSceneUILayer::init()
     drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
 
     // Thanh XP
-    xpBar      = Sprite::create("XPBar.png");
+    xpBar = Sprite::create("XPBar.png");
     xpBarUnder = Sprite::create("XPBarUnder.png");
     if (!xpBar || !xpBarUnder)
     {
@@ -74,7 +73,7 @@ bool GameSceneUILayer::init()
     xpBar->setAnchorPoint(Vec2(0, 0.5f));
     xpBarUnder->setAnchorPoint(Vec2(0, 0.5f));
     float xpY = safeOrigin.y + safeArea.size.height -
-                xpBar->getContentSize().height / 2;  // Đặt sát mép trên safeArea, đồng bộ với GameOverGamePauseLayer
+                xpBar->getContentSize().height / 2; // Đặt sát mép trên safeArea, đồng bộ với GameOverGamePauseLayer
     float xpX = safeOrigin.x;
     xpBar->setPosition(xpX, xpY);
     xpBarUnder->setPosition(xpX, xpY);
@@ -94,7 +93,7 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo coinSprite");
         return false;
     }
-    float coinY = xpY - 20;  // Dưới xpBar 30 pixel, đồng bộ với GameOverGamePauseLayer
+    float coinY = xpY - 20; // Dưới xpBar 30 pixel, đồng bộ với GameOverGamePauseLayer
     coinLabel->setAnchorPoint(Vec2(1, 0.5));
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     float coinLabelX = safeOrigin.x + safeArea.size.width - coinSprite->getContentSize().width - 17;
@@ -117,7 +116,7 @@ bool GameSceneUILayer::init()
         AXLOG("Không thể tạo skullSprite");
         return false;
     }
-    float killY = coinY - 20;  // Dưới coinLabel 30 pixel, đồng bộ với GameOverGamePauseLayer
+    float killY = coinY - 20; // Dưới coinLabel 30 pixel, đồng bộ với GameOverGamePauseLayer
     enemyKillCountLabel->setAnchorPoint(Vec2(1, 0.5));
     enemyKillCountLabel->setAlignment(ax::TextHAlignment::RIGHT);
     float killLabelX = coinLabelX;
@@ -136,7 +135,7 @@ bool GameSceneUILayer::init()
     }
 
     // Thanh HP cho player
-    hpBarRed  = Sprite::create("LifeBarMiniProgress.png");
+    hpBarRed = Sprite::create("LifeBarMiniProgress.png");
     hpBarGray = Sprite::create("LifeBarMiniUnder.png");
     if (!hpBarRed || !hpBarGray)
     {
@@ -151,7 +150,7 @@ bool GameSceneUILayer::init()
     // Level label
     levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Pixelpurl-0vBPP.ttf", 24);
     levelLabel->setPosition(
-        ax::Vec2(safeOrigin.x + safeArea.size.width / 2, xpY - 40));  // Căn giữa ngang, dưới xpBar 40 pixel
+        ax::Vec2(safeOrigin.x + safeArea.size.width / 2, xpY - 40)); // Căn giữa ngang, dưới xpBar 40 pixel
     this->addChild(levelLabel, 5);
 
     return true;
@@ -197,7 +196,7 @@ void GameSceneUILayer::updateEnemyKillCountLabel()
     enemyKillCountLabel->setString(ax::StringUtils::format("%d", enemyKillCount));
 }
 
-//Cập nhật vị trí và máu của thanh HP
+// Cập nhật vị trí và máu của thanh HP
 void GameSceneUILayer::updateHPBar()
 {
     // Lấy SpawnSystem từ SystemManager
@@ -234,9 +233,9 @@ void GameSceneUILayer::updateXPBar()
     xpBar->setScaleX(levelSystem->getCurrentXP() / levelSystem->getNeededXP());
 }
 
-void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
+void GameSceneUILayer::gamePauseCallback(ax::Object *sender)
 {
-    auto pauseLayer   = GameOverGamePauseLayer::create(false);
+    auto pauseLayer = GameOverGamePauseLayer::create(false);
     if (pauseLayer)
     {
         auto gameScene = this->getParent();
@@ -244,8 +243,8 @@ void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
         {
             Vec2 layerPos = this->getPosition();
             pauseLayer->setPosition(layerPos);
-            gameScene->addChild(pauseLayer, 1000);  // Thêm layer với z-order cao
-            //gameScene->unscheduleUpdate();         // Dừng update của GameScene
+            gameScene->addChild(pauseLayer, 1000); // Thêm layer với z-order cao
+            // gameScene->unscheduleUpdate();         // Dừng update của GameScene
             SystemManager::getInstance()->setUpdateState(false);
         }
     }
@@ -257,14 +256,15 @@ void GameSceneUILayer::bossAlert()
     // Tạo label "Boss Incoming"
     auto bossLabel = Label::createWithTTF("Boss Incoming", "fonts/Pixelpurl-0vBPP.ttf", 36);
     bossLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-    bossLabel->setColor(Color3B::RED);  // Đặt màu đỏ cho label
-    bossLabel->setOpacity(0);  // Bắt đầu ẩn để fade in
+    bossLabel->setColor(Color3B::RED); // Đặt màu đỏ cho label
+    bossLabel->setOpacity(0);          // Bắt đầu ẩn để fade in
     this->addChild(bossLabel, 10);
 
     // Tạo hiệu ứng: FadeIn + Blink, sau đó xóa label
-    auto fadeIn   = FadeIn::create(0.5f);    // Xuất hiện mượt mà trong 0.5 giây
-    auto blink    = Blink::create(2.5f, 5);  // Nhấp nháy 5 lần trong 2.5 giây
-    auto remove   = CallFunc::create([bossLabel]() { bossLabel->removeFromParentAndCleanup(true); });
+    auto fadeIn = FadeIn::create(0.5f);  // Xuất hiện mượt mà trong 0.5 giây
+    auto blink = Blink::create(2.5f, 5); // Nhấp nháy 5 lần trong 2.5 giây
+    auto remove = CallFunc::create([bossLabel]()
+                                   { bossLabel->removeFromParentAndCleanup(true); });
     auto sequence = Sequence::create(fadeIn, blink, remove, nullptr);
     bossLabel->runAction(sequence);
 }

@@ -54,15 +54,7 @@ private:
     // Callback khi player hết máu
     std::function<void()> onPlayerOutOfHealth;
 
-    // Khởi tạo std::random_device và mt19937 với seed
-    std::random_device rd;     // Lấy entropy từ hệ thống
-    std::mt19937 gen;       // Tạo bộ sinh số pseudo-random
-    // Hàm để sinh một số ngẫu nhiên thực (float) trong khoảng [min, max]
-    float getRandomFloat(float min, float max)
-    {
-        std::uniform_real_distribution<float> dist(min, max);
-        return dist(gen);
-    }
+    float attackBuffMultiplier = 0;
 };
 
 #endif  // __HEALTH_SYSTEM_H__

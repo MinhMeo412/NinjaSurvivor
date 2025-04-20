@@ -146,7 +146,7 @@ void RenderSystem::update(float dt)
         }
 
         if (identityMgr.getComponent(entity)->name == "sword")
-        {  // Không tự động update sword
+        {
             continue;
         }
 
@@ -168,6 +168,11 @@ void RenderSystem::update(float dt)
             continue;
         }
 
+        if (identityMgr.getComponent(entity)->name == "spinner")
+        {
+            continue;
+        }
+
 
 
         updateEntitySprite(entity, dt);
@@ -176,7 +181,7 @@ void RenderSystem::update(float dt)
 
 
 
-    //updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+    updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -320,7 +325,7 @@ void RenderSystem::updateSwordEntitySprite(Entity entity)
     sprite->gameSceneFrame->setScaleY(transform->scale);
     sprite->gameSceneFrame->setPosition(transform->x, transform->y);
     sprite->gameSceneFrame->setOpacity(255);
-    sprite->gameSceneFrame->runAction(ax::FadeOut::create(0.5f));
+    sprite->gameSceneFrame->runAction(ax::FadeOut::create(0.7f));
 }
 
 // Hình ảnh weapon shuriken (kiểu Conditional)
@@ -419,5 +424,49 @@ void RenderSystem::updateBigKunaiEntitySprite(Entity entity)
     else if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
     {
         sprite->gameSceneFrame->setOpacity(0);
+    }
+}
+
+void RenderSystem::updateSpinnerEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+
+
+    sprite->gameSceneFrame->setScale(transform->scale);
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+    // Định nghĩa tag cho hành động xoay
+    const int ROTATE_ACTION_TAG2 = 1002;
+
+    if (cooldown->cooldownTimer > cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(200);
+        // Kiểm tra xem hành động xoay đã chạy chưa
+        if (!sprite->gameSceneFrame->getActionByTag(ROTATE_ACTION_TAG2))
+        {
+            auto rotateAction = ax::RepeatForever::create(ax::RotateBy::create(0.6f, -360));
+            rotateAction->setTag(ROTATE_ACTION_TAG2);
+            sprite->gameSceneFrame->runAction(rotateAction);
+        }
+    }
+    else if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
+    {
+        // Fade out trong 0.5 giây
+        auto fade = ax::FadeOut::create(0.7f);
+
+        // Nếu đang xoay, dừng RepeatForever và thay bằng xoay giảm dần
+        if (sprite->gameSceneFrame->getActionByTag(ROTATE_ACTION_TAG2))
+        {
+            sprite->gameSceneFrame->stopActionByTag(ROTATE_ACTION_TAG2);
+
+            // Xoay chậm dần 1 vòng trong 0.7s với EaseOut
+            auto rotateSlowDown = ax::EaseOut::create(ax::RotateBy::create(0.7f, -360), 3.0f);
+            sprite->gameSceneFrame->runAction(rotateSlowDown);
+        }
+
+        // Chạy fade song song
+        sprite->gameSceneFrame->runAction(fade);
     }
 }

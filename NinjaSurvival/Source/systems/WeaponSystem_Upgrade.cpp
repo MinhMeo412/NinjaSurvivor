@@ -304,6 +304,117 @@ void WeaponSystem::upgradeBigKunai(std::string weaponName, int level)
     }
 }
 
+// Spinner
+void WeaponSystem::upgradeSpinner(std::string weaponName, int level)
+{
+    if (weaponName != "spinner")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        for (auto spinner : spinnerList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(spinner);
+            cooldown->cooldownDuration -= 1.0;
+        }
+        break;
+    }
+    case 3:
+    {
+        // Thêm 1 spinner
+        auto inventSpinner = spinnerList[0];
+        auto it             = createWeapon.find(weaponName);
+        auto newSpinner    = it->second(weaponName, true);
+        weaponPool.push_back(newSpinner);
+
+        auto cooldown  = cooldownMgr.getComponent(newSpinner);
+        auto duration  = durationMgr.getComponent(newSpinner);
+        auto attack    = attackMgr.getComponent(newSpinner);
+        auto hitbox    = hitboxMgr.getComponent(newSpinner);
+        auto transform = transformMgr.getComponent(newSpinner);
+
+        auto stCooldown  = cooldownMgr.getComponent(inventSpinner);
+        auto stDuration  = durationMgr.getComponent(inventSpinner);
+        auto stAttack    = attackMgr.getComponent(inventSpinner);
+        auto stHitbox    = hitboxMgr.getComponent(inventSpinner);
+        auto stTransform = transformMgr.getComponent(inventSpinner);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
+        duration->duration         = stDuration->duration;
+        attack->baseDamage         = stAttack->baseDamage;
+        hitbox->defaultSize        = stHitbox->defaultSize;
+        transform->scale           = stTransform->scale;
+
+        for (auto spinner : spinnerList)
+        {
+            // Tăng duration
+            auto duration = durationMgr.getComponent(spinner);
+            duration->duration += 1.0;
+        }
+        break;
+    }
+    case 4:
+    {
+        for (auto spinner : spinnerList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(spinner);
+            cooldown->cooldownDuration -= 0.75;
+            // Tăng duration
+            auto duration = durationMgr.getComponent(spinner);
+            duration->duration += 1.0;
+        }
+        break;
+    }
+    case 5:
+    {
+        // Thêm 1 spinner
+        auto inventSpinner = spinnerList[0];
+        auto it            = createWeapon.find(weaponName);
+        auto newSpinner    = it->second(weaponName, true);
+        weaponPool.push_back(newSpinner);
+
+        auto cooldown  = cooldownMgr.getComponent(newSpinner);
+        auto duration  = durationMgr.getComponent(newSpinner);
+        auto attack    = attackMgr.getComponent(newSpinner);
+        auto hitbox    = hitboxMgr.getComponent(newSpinner);
+        auto transform = transformMgr.getComponent(newSpinner);
+
+        auto stCooldown  = cooldownMgr.getComponent(inventSpinner);
+        auto stDuration  = durationMgr.getComponent(inventSpinner);
+        auto stAttack    = attackMgr.getComponent(inventSpinner);
+        auto stHitbox    = hitboxMgr.getComponent(inventSpinner);
+        auto stTransform = transformMgr.getComponent(inventSpinner);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
+        duration->duration         = stDuration->duration;
+        attack->baseDamage         = stAttack->baseDamage;
+        hitbox->defaultSize        = stHitbox->defaultSize;
+        transform->scale           = stTransform->scale;
+
+        for (auto spinner : spinnerList)
+        {
+            // Tăng size
+            auto transform = transformMgr.getComponent(spinner);
+            auto hitbox    = hitboxMgr.getComponent(spinner);
+            transform->scale += 0.5;
+            hitbox->defaultSize *= 1.5;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(spinner);
+            attack->baseDamage += 5.0;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 // Buffs
 //Attack
 void WeaponSystem::upgradeAttack(std::string buffName, int level)

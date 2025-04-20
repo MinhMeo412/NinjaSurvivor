@@ -36,7 +36,7 @@ private:
     EntityManager& entityMgr;
     ComponentManager<WeaponInventoryComponent>& wiMgr;
 
-    std::vector<std::string> weapons = {"sword", "shuriken", "kunai", "big_kunai"};
+    std::vector<std::string> weapons = {"sword", "shuriken", "kunai", "big_kunai", "spinner"};
     std::vector<std::string> buffs   = {"attack", "health", "speed", "xp_gain"};
     std::vector<std::string> others  = {"coin", "heart"};
 

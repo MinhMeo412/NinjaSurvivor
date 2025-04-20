@@ -24,6 +24,7 @@ private:
 
     float PICKUP_RANGE = 0.0f;
     float TOUCH_RANGE  = 0.0f;
+    float coinMultiplier = 0.0f;
 
     void applyHeart();
     void applyCoin();

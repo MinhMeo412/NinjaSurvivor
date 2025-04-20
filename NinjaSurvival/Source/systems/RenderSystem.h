@@ -28,6 +28,7 @@ public:
     void updateShurikenEntitySprite(Entity entity);
     void updateKunaiEntitySprite(Entity entity);
     void updateBigKunaiEntitySprite(Entity entity);
+    void updateSpinnerEntitySprite(Entity entity);
 
 
     // Hàm để DamageTextSystem gọi

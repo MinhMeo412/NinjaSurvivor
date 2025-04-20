@@ -11,7 +11,7 @@ using namespace ax;
 
 GameOverGamePauseLayer::GameOverGamePauseLayer(bool isPlayerDead) : isPlayerDead(isPlayerDead) {}
 
-GameOverGamePauseLayer* GameOverGamePauseLayer::create(bool isPlayerDead)
+GameOverGamePauseLayer *GameOverGamePauseLayer::create(bool isPlayerDead)
 {
     auto layer = new (std::nothrow) GameOverGamePauseLayer(isPlayerDead);
     if (layer && layer->init())
@@ -29,7 +29,7 @@ bool GameOverGamePauseLayer::init()
         return false;
 
     // Tạo nền mờ
-    auto background = LayerColor::create(Color4B(0, 0, 0, 128));  // Màu đen, độ mờ 50%
+    auto background = LayerColor::create(Color4B(0, 0, 0, 128)); // Màu đen, độ mờ 50%
     this->addChild(background, 0);
 
     createUI();
@@ -37,7 +37,8 @@ bool GameOverGamePauseLayer::init()
     // Chặn sự kiện chạm phía dưới layer
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
-    listener->onTouchBegan = [](Touch* touch, Event* event) { return true; };
+    listener->onTouchBegan = [](Touch *touch, Event *event)
+    { return true; };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
     return true;
@@ -45,14 +46,14 @@ bool GameOverGamePauseLayer::init()
 
 void GameOverGamePauseLayer::createUI()
 {
-    Vec2 origin      = _director->getVisibleOrigin();
-    Rect safeArea    = _director->getSafeAreaRect();
-    Vec2 safeOrigin  = safeArea.origin;
+    Vec2 origin = _director->getVisibleOrigin();
+    Rect safeArea = _director->getSafeAreaRect();
+    Vec2 safeOrigin = safeArea.origin;
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // Tạo panel sprite tương ứng với trạng thái (Game Over hoặc Paused)
     std::string panelSprite = isPlayerDead ? "UI/GameOver.png" : "UI/Pause.png";
-    auto panel              = Sprite::create(panelSprite);
+    auto panel = Sprite::create(panelSprite);
     if (!panel)
     {
         AXLOG("Failed to create panel sprite: %s", panelSprite.c_str());
@@ -75,7 +76,7 @@ void GameOverGamePauseLayer::createUI()
         return;
     }
     // Tính coinY dựa trên safeArea, đồng bộ với GameSceneUILayer
-    float coinY = 635.000f - 20;  // Dưới xpBar 30 pixel, khớp với GameSceneUILayer
+    float coinY = 635.000f - 20; // Dưới xpBar 30 pixel, khớp với GameSceneUILayer
     coinLabel->setAnchorPoint(Vec2(1, 0.5));
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     getCoin();
@@ -99,15 +100,15 @@ void GameOverGamePauseLayer::createUI()
         AXLOG("Lỗi: Không thể tạo skullSprite");
         return;
     }
-    float killY = coinY - 20;  // Dưới coinLabel 30 pixel, khớp với GameSceneUILayer
+    float killY = coinY - 20; // Dưới coinLabel 30 pixel, khớp với GameSceneUILayer
     enemyKillCountLabel->setAnchorPoint(Vec2(1, 0.5));
     enemyKillCountLabel->setAlignment(ax::TextHAlignment::RIGHT);
-    float killLabelX = coinLabelX;  // Cùng cột với coinLabel
+    float killLabelX = coinLabelX; // Cùng cột với coinLabel
     enemyKillCountLabel->setPosition(killLabelX, killY);
     skullSprite->setPosition(killLabelX + skullSprite->getContentSize().width / 2 + 7, killY);
     getKillCount();
     this->addChild(enemyKillCountLabel, 5);
-    skullSprite->setScale(0.8f);  // Đúng, giữ nguyên
+    skullSprite->setScale(0.8f); // Đúng, giữ nguyên
     this->addChild(skullSprite, 5);
 
     // Timer label
@@ -122,13 +123,13 @@ void GameOverGamePauseLayer::createUI()
     setTimeTemp();
 
     // Tạo vector chứa các menu item
-    Vector<MenuItem*> menuItems;
+    Vector<MenuItem *> menuItems;
 
     // Tạo nút Quit
     Vec2 quitPos = isPlayerDead ? Vec2(panel->getContentSize().width / 2, panel->getContentSize().height / 2)
                                 : Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 2 / 9);
-    quitButton   = Utils::createMenuItem("UI/buttonQuit.png", "UI/buttonQuit.png",
-                                         AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this), quitPos);
+    quitButton = Utils::createMenuItem("UI/buttonQuit.png", "UI/buttonQuit.png",
+                                       AX_CALLBACK_1(GameOverGamePauseLayer::onQuitGame, this), quitPos);
     if (quitButton)
     {
         menuItems.pushBack(quitButton);
@@ -164,7 +165,7 @@ void GameOverGamePauseLayer::createUI()
     panel->addChild(menu, 2);
 }
 
-ax::Layer* GameOverGamePauseLayer::getUILayer() const
+ax::Layer *GameOverGamePauseLayer::getUILayer() const
 {
     auto currentScene = SystemManager::getInstance()->getCurrentScene();
     if (!currentScene)
@@ -173,12 +174,12 @@ ax::Layer* GameOverGamePauseLayer::getUILayer() const
         return nullptr;
     }
 
-    auto uiLayer = currentScene->getChildByName<GameSceneUILayer*>("UILayer");
+    auto uiLayer = currentScene->getChildByName<GameSceneUILayer *>("UILayer");
     if (!uiLayer)
     {
-        for (auto* child : currentScene->getChildren())
+        for (auto *child : currentScene->getChildren())
         {
-            if ((uiLayer = dynamic_cast<GameSceneUILayer*>(child)))
+            if ((uiLayer = dynamic_cast<GameSceneUILayer *>(child)))
                 break;
         }
         if (!uiLayer)
@@ -200,7 +201,7 @@ void GameOverGamePauseLayer::getCoin()
     int collectedCoin = 0;
     if (auto uiLayer = getUILayer())
     {
-        collectedCoin = dynamic_cast<GameSceneUILayer*>(uiLayer)->getCollectedCoin();
+        collectedCoin = dynamic_cast<GameSceneUILayer *>(uiLayer)->getCollectedCoin();
     }
     coinLabel->setString(ax::StringUtils::format("%d", collectedCoin));
 }
@@ -216,7 +217,7 @@ void GameOverGamePauseLayer::getKillCount()
     int killCount = 0;
     if (auto uiLayer = getUILayer())
     {
-        killCount = dynamic_cast<GameSceneUILayer*>(uiLayer)->getKillCount();
+        killCount = dynamic_cast<GameSceneUILayer *>(uiLayer)->getKillCount();
     }
     enemyKillCountLabel->setString(ax::StringUtils::format("%d", killCount));
 }
@@ -230,19 +231,19 @@ void GameOverGamePauseLayer::setTimeTemp()
     }
 
     float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
-    int minutes   = static_cast<int>(timeSet) / 60;
-    int seconds   = static_cast<int>(timeSet) % 60;
+    int minutes = static_cast<int>(timeSet) / 60;
+    int seconds = static_cast<int>(timeSet) % 60;
     timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
 }
 
-void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
+void GameOverGamePauseLayer::onReturnGame(ax::Object *sender)
 {
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
     SystemManager::getInstance()->setUpdateState(true);
     this->removeFromParentAndCleanup(true);
 }
 
-void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
+void GameOverGamePauseLayer::onQuitGame(ax::Object *sender)
 {
     Director::getInstance()->getEventDispatcher()->setEnabled(false);
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
@@ -254,7 +255,7 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     int collectedCoin = 0;
     if (auto uiLayer = getUILayer())
     {
-        collectedCoin = dynamic_cast<GameSceneUILayer*>(uiLayer)->getCollectedCoin();
+        collectedCoin = dynamic_cast<GameSceneUILayer *>(uiLayer)->getCollectedCoin();
         if (collectedCoin < 0)
         {
             AXLOG("Cảnh báo: collectedCoin âm (%d), đặt về 0", collectedCoin);
@@ -263,9 +264,9 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     }
 
     // Cập nhật coin vào ShopSystem
-    auto shopSystem    = ShopSystem::getInstance();
+    auto shopSystem = ShopSystem::getInstance();
     float currentCoins = shopSystem->getCoins();
-    float newCoins     = currentCoins + collectedCoin;
+    float newCoins = currentCoins + collectedCoin;
     shopSystem->setCoins(static_cast<int>(newCoins));
 
     // Chuyển sang MainScene
@@ -273,9 +274,10 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
     Director::getInstance()->pushScene(scene);
 
     // Xử lý xóa scene cũ
-    Scene* gameScene = SystemManager::getInstance()->getCurrentScene();
+    Scene *gameScene = SystemManager::getInstance()->getCurrentScene();
     gameScene->retain();
-    scene->scheduleOnce([gameScene](float) {
+    scene->scheduleOnce([gameScene](float)
+                        {
         if (gameScene)
         {
             gameScene->onExit();
@@ -283,6 +285,16 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
             gameScene->release();
         }
         AXLOG("Xóa gameScene");
-        Director::getInstance()->getEventDispatcher()->setEnabled(true);
-    }, 0.5f, "pop_old_scene");
+        Director::getInstance()->getEventDispatcher()->setEnabled(true); }, 0.5f, "pop_old_scene");
+}
+void GameOverGamePauseLayer::setTimeTemp()
+{
+
+    float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
+
+    int minutes = static_cast<int>(timeSet) / 60;
+    int seconds = static_cast<int>(timeSet) % 60;
+
+    // %02d in ra số nguyên d với ít nhất 2 chữ số (bổ sung số 0 nếu thiếu)
+    timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
 }

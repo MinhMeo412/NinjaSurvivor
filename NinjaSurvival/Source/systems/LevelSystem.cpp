@@ -1,4 +1,5 @@
 #include "LevelSystem.h"
+#include "ShopSystem.h"
 #include "SystemManager.h"
 #include "SpawnSystem.h"
 #include "gameUI/LevelUpOrChestEventLayer.h"
@@ -11,7 +12,9 @@ void LevelSystem::init()
     currentXP = 0;
     neededXP  = 5;
     level     = 1;
-    rerollCount = 1; // Lấy thêm từ shop
+    rerollCount = static_cast<int>(ShopSystem::getInstance()->getShopBuff("RerollWeapon"));
+    shopXpGainBuff = ShopSystem::getInstance()->getShopBuff("XPGain");
+    ;  // Lấy thêm từ shop
 }
 
 void LevelSystem::update(float dt)
@@ -31,7 +34,7 @@ void LevelSystem::levelUp()
 
     float growthMultiplier = 1.0f + (0.1 * static_cast<int>(level / 4)); //Tăng 10% mỗi 4 level
 
-    neededXP = 5 * (level + 1) * growthMultiplier;
+    neededXP = 6 * (level + 1) * growthMultiplier;
     AXLOG("Level: %d", level);
 }
 
