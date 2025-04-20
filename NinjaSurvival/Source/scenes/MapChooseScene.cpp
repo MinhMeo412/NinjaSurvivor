@@ -22,6 +22,9 @@ bool MapChooseScene::init()
     SystemManager::getInstance()->resetSystems();
     menuUISetup();
 
+    ShopSystem ::getInstance()->getShopBuff("LootRange");
+
+
     auto entityTemplates = GameData::getInstance()->getEntityTemplates();
     for (const auto& [type, innerMap] : entityTemplates)
     {

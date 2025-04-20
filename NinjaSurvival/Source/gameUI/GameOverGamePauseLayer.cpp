@@ -223,12 +223,6 @@ void GameOverGamePauseLayer::getKillCount()
 
 void GameOverGamePauseLayer::setTimeTemp()
 {
-    if (!timerLabel)
-    {
-        AXLOG("Lỗi: timerLabel chưa được khởi tạo");
-        return;
-    }
-
     float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
     int minutes   = static_cast<int>(timeSet) / 60;
     int seconds   = static_cast<int>(timeSet) % 60;

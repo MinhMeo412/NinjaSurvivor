@@ -424,27 +424,8 @@ void GameData::syncStatsWithShopSystem()
                 AXLOG("Đồng bộ Speed cho %s: cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), baseSpeed, speedBuff,
                       templ.speed->speed);
             }
-
-            // Cập nhật Cooldown
-            if (templ.cooldown.has_value() && baseTempl.cooldown.has_value())
-            {
-                float baseCooldown = baseTempl.cooldown->cooldownDuration;
-                float cooldownBuff = shop->getStatLevelValue("Stat", "ReduceCooldown");
-
-                // Áp dụng giảm cooldown chỉ cho weapon_melee và weapon_projectile
-                if (type == "weapon_melee" || type == "weapon_projectile")
-                {
-                    templ.cooldown = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
-                    AXLOG("Đồng bộ Cooldown cho %s (%s): cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
-                          baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
-                }
-                // Cập nhật Cooldown cho player (như trước)
-                else 
-                {
-                    AXLOG("Lỗi: không cooldown được type weapon_melee, weapon_projectile");
-                }
-            }
         }
+
     }
 
     lastShopSyncVersion = shop->getShopDataVersion();
