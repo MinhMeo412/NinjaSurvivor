@@ -144,7 +144,7 @@ void LevelUpOrChestEventLayer::createUI()
         displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
 
         auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
-        itemLabel->setDimensions(280, 0);  // Hơi nhỏ hơn 300 để có lề
+        itemLabel->setDimensions(250, 0);  // Hơi nhỏ hơn 300 để có lề
         itemLabel->setAlignment(TextHAlignment::LEFT);
         itemLabel->setAnchorPoint(Vec2(0, 0.5));
         itemLabel->setPosition(Vec2(10, subPanelSprite->getContentSize().height / 2));  // Vị trí với lề trái
@@ -180,9 +180,11 @@ void LevelUpOrChestEventLayer::createUI()
     // Tạo nút Confirm
     confirmButton = MenuItemImage::create("UI/confirmButton.png", "UI/confirmButton.png",
                                           AX_CALLBACK_1(LevelUpOrChestEventLayer::onConfirm, this));
-    float bottonWidthLevelUp = panelLevelUp->getPositionX();
-    confirmButton->setPosition(bottonWidthLevelUp,
-                               panelLevelUp->getContentSize().height * 1.5 / 3);
+    confirmButton->setScale(0.7);
+    confirmButton->setPosition(
+         + panelLevelUp->getContentSize().width * 0.58f,  // Căn giữa ngang
+                               panelLevelUp->getContentSize().height * (1.5 / 3));  // 1.5/3 chiều cao
+
     confirmButton->setVisible(isLevelUp ? false : true);
 
     // Tạo nút Reroll và label (chỉ khi isLevelUp = true)
@@ -190,8 +192,9 @@ void LevelUpOrChestEventLayer::createUI()
     {
         rerollButton = MenuItemImage::create("UI/rerollbutton.png", "UI/rerollbutton.png",
                                              AX_CALLBACK_1(LevelUpOrChestEventLayer::onReroll, this));
-        rerollButton->setPosition(panelLevelUp->getContentSize().width * 4.4/5,
-                                  panelLevelUp->getContentSize().height * 1.73 / 3);
+        rerollButton->setScale(0.7);
+        rerollButton->setPosition(panelLevelUp->getContentSize().width * (4.4 / 5),  // 4.4/5 chiều rộng
+                                  panelLevelUp->getContentSize().height * (1.73 / 3));
 
         // Tạo label hiển thị số lần reroll
         rerollCountLabel = Label::createWithTTF(std::to_string(rerollCount), "fonts/Pixelpurl-0vBPP.ttf", 23);

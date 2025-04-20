@@ -1,6 +1,6 @@
 #include "TimeSystem.h"
 #include "SystemManager.h"
-
+#include "axmol.h"
 TimeSystem::TimeSystem() {}
 
 void TimeSystem::init()
@@ -11,10 +11,15 @@ void TimeSystem::init()
         AXLOG("Error: uiLayer is null in TimeSystem::init");
         return;
     }
+    ax::Vec2 origin      = ax::Director::getInstance()->getVisibleOrigin();
+    ax::Rect safeArea    = ax::Director::getInstance()->getSafeAreaRect();
+    ax::Vec2 safeOrigin  = safeArea.origin;
+    auto visibleSize     = ax::Director::getInstance()->getVisibleSize();
 
     // Tạo label để hiển thị thời gian
     timerLabel = ax::Label::createWithTTF("00:00", "fonts/Pixelpurl-0vBPP.ttf", 24);
-    timerLabel->setPosition(ax::Vec2(180, 620)); //Xem lại vị trí theo UI
+    timerLabel->setPosition(ax::Vec2(safeOrigin.x + safeArea.size.width / 2,
+                                     safeOrigin.y + safeArea.size.height - 20));  // Xem lại vị trí theo UI
     uiLayer->addChild(timerLabel,5); //Gán vào uiLayer
 
 }

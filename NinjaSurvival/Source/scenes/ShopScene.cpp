@@ -97,11 +97,12 @@ void ShopScene::menuUISetup()
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
     float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
     float posY            = safeOrigin.y + safeSize.height - marginY;
-    coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
-    coinLabel->setAlignment(TextHAlignment::LEFT);
+    coinLabel->setPosition(startPosX + coinLabelWidth / 2.5, posY);
+    coinLabel->setAnchorPoint(Vec2(0, 0.5));
+    coinLabel->setAlignment(ax::TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
-    coinSprite->setPosition(startPosX + coinLabelWidth + 10.0f + coinSpriteWidth / 2, posY);
-    coinSprite->setScale(3);
+    coinSprite->setPosition(startPosX + coinLabelWidth + coinSprite->getContentSize().width * 2, posY);
+    coinSprite->setScale(1.5f);
     this->addChild(coinSprite, 5, "coinSprite");
 
     // Vẽ viền debug cho safeArea
@@ -380,7 +381,7 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         else
         {
             bonusText =
-                StringUtils::format("Bonus: +%d -> +%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+                StringUtils::format("Bonus: +%d->%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
     else
@@ -389,11 +390,11 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
                    shopData->getValueIncrement("Stat", name);  // levelValue tiếp theo = (level + 1) * valueIncrement
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: x%.1f", currentBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: x%.2f", currentBuff + 1.0f);
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: x%.2f -> x%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: x%.2f->%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
         }
     }
 

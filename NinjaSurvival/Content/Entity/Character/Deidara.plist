@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+ <dict>
+  <key>frames</key>
+  <dict>
+   <key>./Deidara1</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{1,0}</string>
+    <key>spriteSize</key>
+    <string>{17,19}</string>
+    <key>spriteSourceSize</key>
+    <string>{16,16}</string>
+    <key>textureRect</key>
+    <string>{{60,0},{17,19}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 0 3 1</string>
+    <key>vertices</key>
+    <string>1 16 15 0 15 16 1 0</string>
+    <key>verticesUV</key>
+    <string>60 16 74 0 74 16 60 0</string>
+   </dict>
+   <key>./Deidara2</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{19,19}</string>
+    <key>spriteSourceSize</key>
+    <string>{16,16}</string>
+    <key>textureRect</key>
+    <string>{{0,0},{19,19}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 0 3 1</string>
+    <key>vertices</key>
+    <string>0 16 16 0 16 16 0 0</string>
+    <key>verticesUV</key>
+    <string>0 16 16 0 16 16 0 0</string>
+   </dict>
+   <key>./Deidara3</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{19,19}</string>
+    <key>spriteSourceSize</key>
+    <string>{16,16}</string>
+    <key>textureRect</key>
+    <string>{{20,0},{19,19}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 0 3 1</string>
+    <key>vertices</key>
+    <string>0 16 16 0 16 16 0 0</string>
+    <key>verticesUV</key>
+    <string>20 16 36 0 36 16 20 0</string>
+   </dict>
+   <key>./Deidara4</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{1,0}</string>
+    <key>spriteSize</key>
+    <string>{17,19}</string>
+    <key>spriteSourceSize</key>
+    <string>{16,16}</string>
+    <key>textureRect</key>
+    <string>{{80,0},{17,19}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 0 3 1</string>
+    <key>vertices</key>
+    <string>1 16 15 0 15 16 1 0</string>
+    <key>verticesUV</key>
+    <string>80 16 94 0 94 16 80 0</string>
+   </dict>
+   <key>./Deidara5</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{1,0}</string>
+    <key>spriteSize</key>
+    <string>{17,19}</string>
+    <key>spriteSourceSize</key>
+    <string>{16,16}</string>
+    <key>textureRect</key>
+    <string>{{40,0},{17,19}}</string>
+    <key>textureRotated</key>
+    <false/>
+    <key>triangles</key>
+    <string>0 1 2 0 3 1</string>
+    <key>vertices</key>
+    <string>1 16 15 0 15 16 1 0</string>
+    <key>verticesUV</key>
+    <string>40 16 54 0 54 16 40 0</string>
+   </dict>
+  </dict>
+  <key>metadata</key>
+  <dict>
+   <key>format</key>
+   <integer>3</integer>
+   <key>size</key>
+   <string>{96,18}</string>
+   <key>textureFileName</key>
+   <string>Deidara.png</string>
+  </dict>
+ </dict>
+</plist>

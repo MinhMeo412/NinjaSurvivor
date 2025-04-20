@@ -96,11 +96,12 @@ void CharacterChooseScene::menuUISetup()
     float totalWidth      = coinLabelWidth + coinSpriteWidth + 10.0f;
     float startPosX       = safeOrigin.x + safeSize.width - marginX - totalWidth;
     float posY            = safeOrigin.y + safeSize.height - marginY;
-    coinLabel->setPosition(startPosX + coinLabelWidth / 2, posY);
-    coinLabel->setAlignment(TextHAlignment::LEFT);
+    coinLabel->setPosition(startPosX + coinLabelWidth /2.5, posY);
+    coinLabel->setAnchorPoint(Vec2(0, 0.5));
+    coinLabel->setAlignment(ax::TextHAlignment::LEFT);
     this->addChild(coinLabel, 5, "coinLabel");
-    coinSprite->setPosition(startPosX + coinLabelWidth + 10.0f + coinSpriteWidth / 2, posY);
-    coinSprite->setScale(3);
+    coinSprite->setPosition(startPosX + coinLabelWidth + coinSprite->getContentSize().width*2, posY);
+    coinSprite->setScale(1.5f);
     this->addChild(coinSprite, 5, "coinSprite");
 
     Vector<MenuItem*> menuItems;
@@ -227,11 +228,10 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto weaponLabel    = dynamic_cast<Label*>(panelDescription->getChildByName("weaponLabel" + name));
     auto weaponDesScrollView =
         dynamic_cast<ax::ui::ScrollView*>(panelDescription->getChildByName("weaponDesScrollView" + name));
-    auto attackLabel = dynamic_cast<Label*>(panelDescription->getChildByName("attackLabel" + name));
     auto speedLabel  = dynamic_cast<Label*>(panelDescription->getChildByName("speedLabel" + name));
     auto unlockLabel = dynamic_cast<Label*>(panelDescription->getChildByName("unlockLabel" + name));
 
-    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !attackLabel || !speedLabel ||
+    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel ||
         !unlockLabel)
     {
         AXLOG("Lỗi: Thiếu label hoặc ScrollView cho nhân vật %s", name.c_str());
@@ -263,8 +263,6 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto templ = entities.at("player").at(name);
     healthLabel->setString(templ.health.has_value() ? StringUtils::format("Health: %.0f", templ.health->maxHealth)
                                                     : "Health: N/A");
-    attackLabel->setString(
-        templ.attack.has_value() ? StringUtils::format("Attack: %.0f", templ.attack->damageMultiplier) : "Attack: N/A");
     speedLabel->setString(templ.speed.has_value() ? StringUtils::format("Speed: %.0f", templ.speed->speed)
                                                   : "Speed: N/A");
     weaponLabel->setString(
@@ -295,7 +293,6 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     }
 
     healthLabel->setVisible(true);
-    attackLabel->setVisible(true);
     speedLabel->setVisible(true);
     weaponLabel->setVisible(true);
     weaponDesScrollView->setVisible(true);
@@ -452,11 +449,10 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
         auto weaponLabel       = createStatLabel(name, "weaponLabel", baseY, weaponLabelX, panelDescription);
         auto weaponDesScrollView =
             createWeaponDesScrollView(name, "weaponDesScrollView", baseY - 40.0f, weaponLabelX, panelDescription);
-        auto attackLabel = createStatLabel(name, "attackLabel", baseY - 20.0f, leftMargin, panelDescription);
-        auto speedLabel  = createStatLabel(name, "speedLabel", baseY - 40.0f, leftMargin, panelDescription);
+        auto speedLabel  = createStatLabel(name, "speedLabel", baseY - 20.0f, leftMargin, panelDescription);
         auto unlockLabel = createStatLabel(name, "unlockLabel", baseY - 50.0f, leftMargin, panelDescription);
 
-        if (!healthLabel || !weaponLabel || !weaponDesScrollView || !attackLabel || !speedLabel || !unlockLabel)
+        if (!healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel || !unlockLabel)
         {
             AXLOG("Lỗi: Không thể tạo đầy đủ label cho nhân vật %s", name.c_str());
             continue;

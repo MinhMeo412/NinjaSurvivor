@@ -54,6 +54,53 @@
         },
         {
             "type": "player",
+            "name": "Deidara",
+            "available": true,
+            "profileImage": "Entity/Character/Faceset2.png",
+            "components": {
+                "transform": {
+                    "x": 700.0,
+                    "y": 1000.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 150.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 50.0
+                },
+                "sprite": {
+                    "plist": "Entity/Character/Deidara.plist",
+                    "gameSceneFrame": "./Deidara1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Deidara2",
+                            "./Deidara3"
+                        ],
+                        "moveRight": [
+                            "./Deidara5"
+                        ],
+                        "moveLeft": [
+                            "./Deidara4"
+                        ],
+                        "idle": [
+                            "./Deidara1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                },
+                "weapon": "shuriken"
+            }
+        },
+        {
+            "type": "player",
             "name": "Master",
             "available": false,
             "profileImage": "Entity/Character/Faceset1.png",
