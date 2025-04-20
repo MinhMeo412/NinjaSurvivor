@@ -201,8 +201,7 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
     }
 
     // Part 4: Turn random values generated into unordered_map to return + logic for chest
-    std::unordered_map<std::string, int> levelUpResult;
-    std::unordered_map<std::string, int> chestResult;
+    std::unordered_map<std::string, int> Result;
     std::unordered_set<std::string> upgradeSet(filterUpgrade.begin(), filterUpgrade.end());
 
     if (isLevelUp)
@@ -212,15 +211,15 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             auto it = lookup.find(key);
             if (it != lookup.end())
             {
-                levelUpResult[key] = it->second;
+                Result[key] = it->second;
             }
             else
             {
-                levelUpResult[key] = 0;
+                Result[key] = 0;
             }
         }
 
-        for (auto& [key, value] : levelUpResult)
+        for (auto& [key, value] : Result)
         {
             if (upgradeSet.count(key))
             {
@@ -229,12 +228,10 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
         }
 
         int i = 1;
-        for (const auto& entry : levelUpResult)
+        for (const auto& entry : Result)
         {
             AXLOG("LevelUp upgrade %d: %s, %d", i++, entry.first.c_str(), entry.second);
         }
-
-        return levelUpResult;
     }
     else
     {
@@ -243,30 +240,36 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             auto it = lookup.find(key);
             if (it != lookup.end())
             {
-                chestResult[key] = it->second;
+                Result[key] = it->second + 1;
                 break;
             }
         }
-        if (chestResult.empty())
-        {
-            chestResult.insert({"coin", 0});
-        }
 
-        for (auto& [key, value] : chestResult)
+        if (Result.empty())
         {
-            if (upgradeSet.count(key))
+            for (const auto& key : randomValues)
             {
-                value += 1;
+                auto it = std::find(combinedArray.begin(), combinedArray.end(), key);
+                if (it != combinedArray.end())
+                {
+                    Result[key] = 1;
+                    break;
+                }
             }
         }
 
-        for (const auto& entry : chestResult)
+        if (Result.empty())
+        {
+            Result.insert({"coin", 0});
+        }
+
+        for (const auto& entry : Result)
         {
             AXLOG("Chest upgrade: %s, %d", entry.first.c_str(), entry.second);
         }
-
-        return chestResult;
     }
+
+    return Result;
 }
 
 void LevelSystem::chooseWeapon()
