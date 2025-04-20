@@ -50,7 +50,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     }
 
     // **Đảm bảo không clear toàn bộ buffer**
-    director->setClearColor(Color4F(0, 0, 0, 0));
+    //director->setClearColor(Color4F(0, 0, 0, 0));
 
     // turn on display FPS
     director->setStatsDisplay(true);

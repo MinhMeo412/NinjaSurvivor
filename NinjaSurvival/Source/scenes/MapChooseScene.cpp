@@ -7,7 +7,6 @@
 #include "systems/ShopSystem.h"
 #include "systems/SystemManager.h"
 #include "AudioManager.h"
-#include <algorithm>
 
 using namespace ax;
 
@@ -38,6 +37,16 @@ bool MapChooseScene::init()
                 }
             }
     }
+
+    ShopSystem::getInstance()->getShopBuff("LootRange");
+    ShopSystem::getInstance()->getShopBuff("SpawnRate");
+    ShopSystem::getInstance()->getShopBuff("Attack");
+    ShopSystem::getInstance()->getShopBuff("XPGain");
+    ShopSystem::getInstance()->getShopBuff("CoinGain");
+    ShopSystem::getInstance()->getShopBuff("RerollWeapon");
+    ShopSystem::getInstance()->getShopBuff("ReduceCooldown");
+
+
     return true;
 }
 

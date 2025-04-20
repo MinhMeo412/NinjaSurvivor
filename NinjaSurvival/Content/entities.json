@@ -2,60 +2,8 @@
     "entities": [
         {
             "type": "player",
-            "name": "Ninja",
-            "available": true,
-            "profileImage": "Entity/Character/Faceset.png",
-            "components": {
-                "transform": {
-                    "x": 700.0,
-                    "y": 1000.0
-                },
-                "velocity": {
-                    "vx": 0.0,
-                    "vy": 0.0
-                },
-                "speed": 40.0,
-                "hitbox": {
-                    "width": 16.0,
-                    "height": 16.0
-                },
-                "health": {
-                    "maxHealth": 50.0
-                },
-                "sprite": {
-                    "plist": "Entity/Character/ninja.plist",
-                    "gameSceneFrame": "./ninja_down0"
-                },
-                "animation": {
-                    "frames": {
-                        "moveDown": [
-                            "./ninja_down0",
-                            "./ninja_down1",
-                            "./ninja_down2"
-                        ],
-                        "moveRight": [
-                            "./ninja_right0",
-                            "./ninja_right1",
-                            "./ninja_right2"
-                        ],
-                        "moveLeft": [
-                            "./ninja_left0",
-                            "./ninja_left1",
-                            "./ninja_left2"
-                        ],
-                        "idle": [
-                            "./ninja_down0"
-                        ]
-                    },
-                    "frameDuration": 0.2
-                },
-                "weapon": "spinner"
-            }
-        },
-        {
-            "type": "player",
             "name": "Deidara",
-            "available": true,
+            "available": false,
             "profileImage": "Entity/Character/Faceset2.png",
             "components": {
                 "transform": {
@@ -146,6 +94,58 @@
                     "frameDuration": 0.2
                 },
                 "weapon": "sword"
+            }
+        },
+        {
+            "type": "player",
+            "name": "Ninja",
+            "available": true,
+            "profileImage": "Entity/Character/Faceset.png",
+            "components": {
+                "transform": {
+                    "x": 700.0,
+                    "y": 1000.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 40.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 50.0
+                },
+                "sprite": {
+                    "plist": "Entity/Character/ninja.plist",
+                    "gameSceneFrame": "./ninja_down0"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./ninja_down0",
+                            "./ninja_down1",
+                            "./ninja_down2"
+                        ],
+                        "moveRight": [
+                            "./ninja_right0",
+                            "./ninja_right1",
+                            "./ninja_right2"
+                        ],
+                        "moveLeft": [
+                            "./ninja_left0",
+                            "./ninja_left1",
+                            "./ninja_left2"
+                        ],
+                        "idle": [
+                            "./ninja_down0"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                },
+                "weapon": "kunai"
             }
         },
         {

@@ -376,12 +376,12 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         nextBuff = static_cast<float>(level + 1);  // levelValue tiếp theo = level + 1
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: %d", static_cast<int>(currentBuff));
+            bonusText = StringUtils::format("Bonus: +%d", static_cast<int>(currentBuff));
         }
         else
         {
             bonusText =
-                StringUtils::format("Bonus: +%d->%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+                StringUtils::format("Bonus: +%d -> +%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
     else
@@ -394,7 +394,7 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: x%.2f->%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
+            bonusText = StringUtils::format("Bonus: x%.2f -> x%.2f", currentBuff + 1.0f, nextBuff + 1.0f);
         }
     }
 

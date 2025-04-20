@@ -222,20 +222,6 @@ void GameOverGamePauseLayer::getKillCount()
     enemyKillCountLabel->setString(ax::StringUtils::format("%d", killCount));
 }
 
-void GameOverGamePauseLayer::setTimeTemp()
-{
-    if (!timerLabel)
-    {
-        AXLOG("Lỗi: timerLabel chưa được khởi tạo");
-        return;
-    }
-
-    float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
-    int minutes = static_cast<int>(timeSet) / 60;
-    int seconds = static_cast<int>(timeSet) % 60;
-    timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
-}
-
 void GameOverGamePauseLayer::onReturnGame(ax::Object *sender)
 {
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
