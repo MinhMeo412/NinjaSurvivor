@@ -7,7 +7,6 @@
 #include "systems/HealthSystem.h"
 #include "systems/LevelSystem.h"
 
-
 using namespace ax;
 
 GameSceneUILayer* GameSceneUILayer::create()
@@ -197,7 +196,7 @@ void GameSceneUILayer::updateEnemyKillCountLabel()
     enemyKillCountLabel->setString(ax::StringUtils::format("%d", enemyKillCount));
 }
 
-//Cập nhật vị trí và máu của thanh HP
+// Cập nhật vị trí và máu của thanh HP
 void GameSceneUILayer::updateHPBar()
 {
     // Lấy SpawnSystem từ SystemManager
@@ -236,7 +235,7 @@ void GameSceneUILayer::updateXPBar()
 
 void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
 {
-    auto pauseLayer   = GameOverGamePauseLayer::create(false);
+    auto pauseLayer = GameOverGamePauseLayer::create(false);
     if (pauseLayer)
     {
         auto gameScene = this->getParent();
@@ -245,7 +244,7 @@ void GameSceneUILayer::gamePauseCallback(ax::Object* sender)
             Vec2 layerPos = this->getPosition();
             pauseLayer->setPosition(layerPos);
             gameScene->addChild(pauseLayer, 1000);  // Thêm layer với z-order cao
-            //gameScene->unscheduleUpdate();         // Dừng update của GameScene
+            // gameScene->unscheduleUpdate();         // Dừng update của GameScene
             SystemManager::getInstance()->setUpdateState(false);
         }
     }
@@ -258,7 +257,7 @@ void GameSceneUILayer::bossAlert()
     auto bossLabel = Label::createWithTTF("Boss Incoming", "fonts/Pixelpurl-0vBPP.ttf", 36);
     bossLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
     bossLabel->setColor(Color3B::RED);  // Đặt màu đỏ cho label
-    bossLabel->setOpacity(0);  // Bắt đầu ẩn để fade in
+    bossLabel->setOpacity(0);           // Bắt đầu ẩn để fade in
     this->addChild(bossLabel, 10);
 
     // Tạo hiệu ứng: FadeIn + Blink, sau đó xóa label

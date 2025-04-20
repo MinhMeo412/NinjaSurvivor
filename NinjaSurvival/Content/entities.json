@@ -76,22 +76,43 @@
                 },
                 "sprite": {
                     "plist": "Entity/Character/Deidara.plist",
-                    "gameSceneFrame": "./Deidara1"
+                    "gameSceneFrame": "./DeidaraIndie"
                 },
                 "animation": {
                     "frames": {
                         "moveDown": [
-                            "./Deidara2",
-                            "./Deidara3"
+                            "./DeidaraDown1",
+                            "./DeidaraDown2",
+                            "./DeidaraDown3",
+                            "./DeidaraDown4",
+                            "./DeidaraDown5",
+                            "./DeidaraDown6",
+                            "./DeidaraDown7",
+                            "./DeidaraDown8"
                         ],
                         "moveRight": [
-                            "./Deidara5"
+                            "./DeidaraRight1",
+                            "./DeidaraRight2",
+                            "./DeidaraRight3",
+                            "./DeidaraRight4",
+                            "./DeidaraRight5",
+                            "./DeidaraRight6",
+                            "./DeidaraRight7",
+                            "./DeidaraRight8"
                         ],
                         "moveLeft": [
-                            "./Deidara4"
+                            "./DeidaraLeft1",
+                            "./DeidaraLeft2",
+                            "./DeidaraLeft3",
+                            "./DeidaraLeft4",
+                            "./DeidaraLeft5",
+                            "./DeidaraLeft6",
+                            "./DeidaraLeft7",
+                            "./DeidaraLeft8"
+
                         ],
                         "idle": [
-                            "./Deidara1"
+                            "./DeidaraIndie"
                         ]
                     },
                     "frameDuration": 0.2

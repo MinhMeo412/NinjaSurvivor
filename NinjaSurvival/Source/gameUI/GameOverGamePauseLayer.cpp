@@ -221,14 +221,6 @@ void GameOverGamePauseLayer::getKillCount()
     enemyKillCountLabel->setString(ax::StringUtils::format("%d", killCount));
 }
 
-void GameOverGamePauseLayer::setTimeTemp()
-{
-    float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
-    int minutes   = static_cast<int>(timeSet) / 60;
-    int seconds   = static_cast<int>(timeSet) % 60;
-    timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
-}
-
 void GameOverGamePauseLayer::onReturnGame(ax::Object* sender)
 {
     AudioManager::getInstance()->playSound("button_click", false, 1.0f, "click");
@@ -279,4 +271,15 @@ void GameOverGamePauseLayer::onQuitGame(ax::Object* sender)
         AXLOG("Xóa gameScene");
         Director::getInstance()->getEventDispatcher()->setEnabled(true);
     }, 0.5f, "pop_old_scene");
+}
+void GameOverGamePauseLayer::setTimeTemp()
+{
+
+    float timeSet = SystemManager::getInstance()->getSystem<TimeSystem>()->getElapsedTime();
+
+    int minutes = static_cast<int>(timeSet) / 60;
+    int seconds = static_cast<int>(timeSet) % 60;
+
+    // %02d in ra số nguyên d với ít nhất 2 chữ số (bổ sung số 0 nếu thiếu)
+    timerLabel->setString(ax::StringUtils::format("%02d:%02d", minutes, seconds));
 }

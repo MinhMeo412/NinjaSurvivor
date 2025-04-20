@@ -91,7 +91,6 @@ void LevelUpOrChestEventLayer::createUI()
     auto panelLevelUp = Sprite::create("UI/panelLevelUp.png");
     panelLevelUp->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(panelLevelUp, 1);
-    
 
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
@@ -134,7 +133,7 @@ void LevelUpOrChestEventLayer::createUI()
                 }
             }
         });
-        
+
         // Tạo văn bản hiển thị
         std::string displayText = upgrade.first;
         if (upgrade.second > 0)
@@ -181,8 +180,7 @@ void LevelUpOrChestEventLayer::createUI()
     confirmButton = MenuItemImage::create("UI/confirmButton.png", "UI/confirmButton.png",
                                           AX_CALLBACK_1(LevelUpOrChestEventLayer::onConfirm, this));
     confirmButton->setScale(0.7);
-    confirmButton->setPosition(
-         + panelLevelUp->getContentSize().width * 0.58f,  // Căn giữa ngang
+    confirmButton->setPosition(+panelLevelUp->getContentSize().width * 0.58f,       // Căn giữa ngang
                                panelLevelUp->getContentSize().height * (1.5 / 3));  // 1.5/3 chiều cao
 
     confirmButton->setVisible(isLevelUp ? false : true);
@@ -198,7 +196,8 @@ void LevelUpOrChestEventLayer::createUI()
 
         // Tạo label hiển thị số lần reroll
         rerollCountLabel = Label::createWithTTF(std::to_string(rerollCount), "fonts/Pixelpurl-0vBPP.ttf", 23);
-        rerollCountLabel->setPosition(rerollButton->getContentSize().width / 2, rerollButton->getContentSize().height / 2);
+        rerollCountLabel->setPosition(rerollButton->getContentSize().width / 2,
+                                      rerollButton->getContentSize().height / 2);
         rerollButton->addChild(rerollCountLabel, 20);
 
         // Nếu rerollCount = 0, làm mờ và vô hiệu hóa nút
@@ -344,7 +343,7 @@ void LevelUpOrChestEventLayer::onConfirm(ax::Object* sender)
             AXLOG("Khong co upgrade duoc chon");
         }
 
-        //gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
+        // gameScene->scheduleUpdate();  // Tiếp tục update của GameScene
         SystemManager::getInstance()->setUpdateState(true);
     }
     SystemManager::getInstance()->getSystem<LevelSystem>()->setRerollCount(rerollCount);
