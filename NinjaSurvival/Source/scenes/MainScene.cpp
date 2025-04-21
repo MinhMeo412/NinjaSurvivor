@@ -43,6 +43,8 @@ bool MainScene::init()
     shopItem = Utils::createMenuItem("UI/buttonShop.png", "UI/buttonShop.png",
                                      AX_CALLBACK_1(MainScene::menuShopCallback, this),
                                      Vec2(origin.x + visibleSize.width / 2, startY - 100));
+
+    
     /*
     Chưa có scene shop vs archive thì chưa cần đến
     auto shopButton =
@@ -80,6 +82,7 @@ void MainScene::menuCloseCallback(ax::Object* sender)
     _director->end();
 }
 
+
 void MainScene::menuPlayCallback(ax::Object* sender)
 {
     // âm thanh click
@@ -99,3 +102,8 @@ void MainScene::menuShopCallback(ax::Object* sender)
 
     _director->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }
+
+
+
+
+
