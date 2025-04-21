@@ -4,118 +4,286 @@
  <dict>
   <key>frames</key>
   <dict>
-   <key>./Deidara1</key>
+   <key>./DeidaraDown1</key>
    <dict>
-    <key>aliases</key>
-    <array/>
-    <key>spriteOffset</key>
-    <string>{1,0}</string>
-    <key>spriteSize</key>
-    <string>{17,19}</string>
-    <key>spriteSourceSize</key>
-    <string>{16,16}</string>
-    <key>textureRect</key>
-    <string>{{60,0},{17,19}}</string>
-    <key>textureRotated</key>
-    <false/>
-    <key>triangles</key>
-    <string>0 1 2 0 3 1</string>
-    <key>vertices</key>
-    <string>1 16 15 0 15 16 1 0</string>
-    <key>verticesUV</key>
-    <string>60 16 74 0 74 16 60 0</string>
-   </dict>
-   <key>./Deidara2</key>
-   <dict>
-    <key>aliases</key>
-    <array/>
-    <key>spriteOffset</key>
+    <key>frame</key>
+    <string>{{44,96},{20,22}}</string>
+    <key>offset</key>
     <string>{0,0}</string>
-    <key>spriteSize</key>
-    <string>{19,19}</string>
-    <key>spriteSourceSize</key>
-    <string>{16,16}</string>
-    <key>textureRect</key>
-    <string>{{0,0},{19,19}}</string>
-    <key>textureRotated</key>
+    <key>rotated</key>
     <false/>
-    <key>triangles</key>
-    <string>0 1 2 0 3 1</string>
-    <key>vertices</key>
-    <string>0 16 16 0 16 16 0 0</string>
-    <key>verticesUV</key>
-    <string>0 16 16 0 16 16 0 0</string>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
    </dict>
-   <key>./Deidara3</key>
+   <key>./DeidaraDown2</key>
    <dict>
-    <key>aliases</key>
-    <array/>
-    <key>spriteOffset</key>
+    <key>frame</key>
+    <string>{{88,72},{20,22}}</string>
+    <key>offset</key>
     <string>{0,0}</string>
-    <key>spriteSize</key>
-    <string>{19,19}</string>
-    <key>spriteSourceSize</key>
-    <string>{16,16}</string>
-    <key>textureRect</key>
-    <string>{{20,0},{19,19}}</string>
-    <key>textureRotated</key>
+    <key>rotated</key>
     <false/>
-    <key>triangles</key>
-    <string>0 1 2 0 3 1</string>
-    <key>vertices</key>
-    <string>0 16 16 0 16 16 0 0</string>
-    <key>verticesUV</key>
-    <string>20 16 36 0 36 16 20 0</string>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
    </dict>
-   <key>./Deidara4</key>
+   <key>./DeidaraDown3</key>
    <dict>
-    <key>aliases</key>
-    <array/>
-    <key>spriteOffset</key>
-    <string>{1,0}</string>
-    <key>spriteSize</key>
-    <string>{17,19}</string>
-    <key>spriteSourceSize</key>
-    <string>{16,16}</string>
-    <key>textureRect</key>
-    <string>{{80,0},{17,19}}</string>
-    <key>textureRotated</key>
+    <key>frame</key>
+    <string>{{66,96},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
     <false/>
-    <key>triangles</key>
-    <string>0 1 2 0 3 1</string>
-    <key>vertices</key>
-    <string>1 16 15 0 15 16 1 0</string>
-    <key>verticesUV</key>
-    <string>80 16 94 0 94 16 80 0</string>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
    </dict>
-   <key>./Deidara5</key>
+   <key>./DeidaraDown4</key>
    <dict>
-    <key>aliases</key>
-    <array/>
-    <key>spriteOffset</key>
-    <string>{1,0}</string>
-    <key>spriteSize</key>
-    <string>{17,19}</string>
-    <key>spriteSourceSize</key>
-    <string>{16,16}</string>
-    <key>textureRect</key>
-    <string>{{40,0},{17,19}}</string>
-    <key>textureRotated</key>
+    <key>frame</key>
+    <string>{{88,96},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
     <false/>
-    <key>triangles</key>
-    <string>0 1 2 0 3 1</string>
-    <key>vertices</key>
-    <string>1 16 15 0 15 16 1 0</string>
-    <key>verticesUV</key>
-    <string>40 16 54 0 54 16 40 0</string>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraDown5</key>
+   <dict>
+    <key>frame</key>
+    <string>{{0,0},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraDown6</key>
+   <dict>
+    <key>frame</key>
+    <string>{{22,0},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraDown7</key>
+   <dict>
+    <key>frame</key>
+    <string>{{0,24},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraDown8</key>
+   <dict>
+    <key>frame</key>
+    <string>{{22,24},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraIndie</key>
+   <dict>
+    <key>frame</key>
+    <string>{{44,0},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft1</key>
+   <dict>
+    <key>frame</key>
+    <string>{{0,48},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft2</key>
+   <dict>
+    <key>frame</key>
+    <string>{{44,24},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft3</key>
+   <dict>
+    <key>frame</key>
+    <string>{{22,48},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft4</key>
+   <dict>
+    <key>frame</key>
+    <string>{{44,48},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft5</key>
+   <dict>
+    <key>frame</key>
+    <string>{{66,0},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft6</key>
+   <dict>
+    <key>frame</key>
+    <string>{{66,24},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft7</key>
+   <dict>
+    <key>frame</key>
+    <string>{{0,72},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraLeft8</key>
+   <dict>
+    <key>frame</key>
+    <string>{{22,72},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight1</key>
+   <dict>
+    <key>frame</key>
+    <string>{{66,48},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight2</key>
+   <dict>
+    <key>frame</key>
+    <string>{{44,72},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight3</key>
+   <dict>
+    <key>frame</key>
+    <string>{{88,0},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight4</key>
+   <dict>
+    <key>frame</key>
+    <string>{{88,24},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight5</key>
+   <dict>
+    <key>frame</key>
+    <string>{{0,96},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight6</key>
+   <dict>
+    <key>frame</key>
+    <string>{{66,72},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight7</key>
+   <dict>
+    <key>frame</key>
+    <string>{{22,96},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
+   </dict>
+   <key>./DeidaraRight8</key>
+   <dict>
+    <key>frame</key>
+    <string>{{88,48},{20,22}}</string>
+    <key>offset</key>
+    <string>{0,0}</string>
+    <key>rotated</key>
+    <false/>
+    <key>sourceSize</key>
+    <string>{20,22}</string>
    </dict>
   </dict>
   <key>metadata</key>
   <dict>
    <key>format</key>
-   <integer>3</integer>
-   <key>size</key>
-   <string>{96,18}</string>
+   <integer>2</integer>
    <key>textureFileName</key>
    <string>Deidara.png</string>
   </dict>

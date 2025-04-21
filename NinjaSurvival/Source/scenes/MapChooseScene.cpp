@@ -46,7 +46,6 @@ bool MapChooseScene::init()
     ShopSystem::getInstance()->getShopBuff("RerollWeapon");
     ShopSystem::getInstance()->getShopBuff("ReduceCooldown");
 
-
     return true;
 }
 

@@ -240,8 +240,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto speedLabel  = dynamic_cast<Label*>(panelDescription->getChildByName("speedLabel" + name));
     auto unlockLabel = dynamic_cast<Label*>(panelDescription->getChildByName("unlockLabel" + name));
 
-    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel ||
-        !unlockLabel)
+    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel || !unlockLabel)
     {
         AXLOG("Lỗi: Thiếu label hoặc ScrollView cho nhân vật %s", name.c_str());
         return;

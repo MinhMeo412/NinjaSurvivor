@@ -3,6 +3,7 @@
 #include "rapidjson/document.h"
 #include "Utils.h"
 
+
 std::unique_ptr<GameData> GameData::instance = nullptr;
 
 GameData::GameData() {}
@@ -50,7 +51,7 @@ GameData* GameData::getInstance()
     }
     else
     {
-        //AXLOG("GameData instance đã tồn tại");
+        // AXLOG("GameData instance đã tồn tại");
     }
     return instance.get();
 }
@@ -294,12 +295,12 @@ bool GameData::loadMapData(const std::string& jsonString)
     {
         const auto& mapObj = mapsArray[i];
         MapData map;
-        map.name = mapObj["name"].GetString();
-        map.sprite = mapObj["sprite"].GetString();
-        map.available = mapObj["available"].GetBool();
+        map.name         = mapObj["name"].GetString();
+        map.sprite       = mapObj["sprite"].GetString();
+        map.available    = mapObj["available"].GetBool();
         const auto& mapS = mapObj["mapSize"];
         map.mapWidth     = mapS["width"].GetInt();
-        map.mapHeight     = mapS["height"].GetInt();
+        map.mapHeight    = mapS["height"].GetInt();
 
         // Phương thức load TMX file arrays chung
         auto loadTMXArray = [&](const char* key, std::vector<std::string>& target) {
@@ -389,6 +390,7 @@ void GameData::syncStatsWithShopSystem()
     for (auto& [type, templates] : entityTemplates)
     {
         if (Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
+
         {
             AXLOG("Bỏ qua type không được hỗ trợ: %s", type.c_str());
             continue;
@@ -400,11 +402,10 @@ void GameData::syncStatsWithShopSystem()
             {
                 AXLOG("Lỗi: Không tìm thấy %s trong entities.json cho type %s", name.c_str(), type.c_str());
                 continue;
-            }
 
             auto& baseTempl = baseTemplates[type][name];
 
-            // Cập nhật Health 
+            // Cập nhật Health
             if (type == "player" && templ.health.has_value() && baseTempl.health.has_value())
             {
                 float baseHealth = baseTempl.health->maxHealth;
@@ -414,8 +415,6 @@ void GameData::syncStatsWithShopSystem()
                       baseHealth, healthBuff, templ.health->maxHealth);
             }
 
-
-            // Cập nhật Speed 
             if (type == "player" && templ.speed.has_value() && baseTempl.speed.has_value())
             {
                 float baseSpeed = baseTempl.speed->speed;
@@ -424,6 +423,7 @@ void GameData::syncStatsWithShopSystem()
                 AXLOG("Đồng bộ Speed cho %s (%s): cơ bản=%.2f, tăng=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
                       baseSpeed, speedBuff, templ.speed->speed);
             }
+
 
             // kéo sâu xuống entities.json check
             // Cập nhật Cooldown 
@@ -450,24 +450,27 @@ void GameData::syncStatsWithShopSystem()
 
 std::string GameData::readFileContent(const std::string& filename)
 {
-    //Sử dụng FileUtils của Axmol
-    // Lấy đường dẫn đầy đủ từ FileUtils
+
     std::string fullPath = ax::FileUtils::getInstance()->fullPathForFilename(filename);
-    if (fullPath.empty()) {
+    if (fullPath.empty())
+    {
         AXLOG("Error: File %s not found in assets", filename.c_str());
         return "";
     }
     // Đọc nội dung tệp
     std::string content = ax::FileUtils::getInstance()->getStringFromFile(fullPath);
-    if (content.empty()) {
+    if (content.empty())
+    {
         AXLOG("Error: Failed to read content from %s (file might be empty or inaccessible)", filename.c_str());
-    } else {
+    }
+    else
+    {
         AXLOG("Successfully read %s: %d bytes", filename.c_str(), content.size());
     }
     return content;
 }
 
-//Nhận tên file .json
+// Nhận tên file .json
 bool GameData::loadMapDataFromFile(const std::string& filename)
 {
     std::string jsonString = readFileContent(filename);
@@ -486,17 +489,17 @@ bool GameData::loadEntityDataFromFile(const std::string& filename)
     return loadEntityData(jsonString);
 }
 
-//lấy danh sách map
+// lấy danh sách map
 const std::unordered_map<std::string, MapData>& GameData::getMaps() const
 {
     return maps;
 }
 
-const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& GameData::getEntityTemplates() const
+const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& GameData::getEntityTemplates()
+    const
 {
     return entityTemplates;
 }
-
 
 void GameData::setMapAvailable(const std::string& name, bool available)
 {
@@ -538,8 +541,6 @@ std::string GameData::getSelectedMap() const
 {
     return selectedMapName;
 }
-
-
 
 std::string GameData::findTypeByName(
     const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& entityTemplates,
