@@ -86,17 +86,17 @@ bool ShopSystem::createSaveGame()
         {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Health: max 10 level, +10% mỗi level
         {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Attack: max 10 level, +10% mỗi level
         {"Stat", "Speed", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},            // Speed: max 5 level, +10% mỗi level
-        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},          // XP Gain: max 5 level, +10% mỗi level
-        {"Stat", "CoinGain", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},        // Coin Gain: max 10 level, +10% mỗi level
+        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: max 5 level, +10% mỗi level
+        {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},        // Coin Gain: max 10 level, +10% mỗi level
         {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
         {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},  // Reduce Cooldown: max 5 level, +5% mỗi level
-        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},       // Spawn Rate: max 10 level, +10% mỗi level
-        {"Stat", "LootRange", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},       // Loot Range: max 10 level, +20% mỗi level
-        {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
+        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},       // Spawn Rate: max 10 level, +10% mỗi level
+        {"Stat", "LootRange", false, 0, 0.0f, 50, 10, 0.1f, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
+        {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Deidara", false, std::nullopt, std::nullopt, 400, std::nullopt, std::nullopt, std::nullopt},
         {"maps", "Plains", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
-        {"maps", "Snow Field", false, std::nullopt, std::nullopt, 500, std::nullopt, std::nullopt, std::nullopt}
+        {"maps", "Snow Field", false, std::nullopt, std::nullopt, 1000, std::nullopt, std::nullopt, std::nullopt}
     };
 
     shopDataVersion++;

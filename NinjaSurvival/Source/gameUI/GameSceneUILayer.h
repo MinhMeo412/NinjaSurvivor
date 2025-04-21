@@ -20,6 +20,7 @@ public:
 
 
 private:
+    ax::SpriteBatchNode* batchNode = nullptr;
     ax::MenuItemImage* pauseButton;
 
     ax::Sprite* hpBarRed;
@@ -41,6 +42,7 @@ private:
     void updateCoinLabel();
     void updateLevelLabel();
     void updateEnemyKillCountLabel();
+    void updateInventoryUI();
     void gamePauseCallback(ax::Object* sender);
 };
 

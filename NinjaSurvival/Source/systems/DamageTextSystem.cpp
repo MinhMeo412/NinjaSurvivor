@@ -51,6 +51,22 @@ void DamageTextSystem::update(float dt)
     {
         hitEffects.erase(hitEffects.begin() + *it);
     }
+
+    // Update explosion effects
+    std::vector<size_t> explosionToRemove;
+    for (size_t i = 0; i < explosionEffects.size(); ++i)
+    {
+        updateExplosionEffect(explosionEffects[i], dt);
+        if (explosionEffects[i].lifetime <= 0.0f)
+        {
+            explosionEffects[i].sprite->removeFromParent();
+            explosionToRemove.push_back(i);
+        }
+    }
+    for (auto it = explosionToRemove.rbegin(); it != explosionToRemove.rend(); ++it)
+    {
+        explosionEffects.erase(explosionEffects.begin() + *it);
+    }
 }
 
 void DamageTextSystem::showDamage(float damage, Entity entity)
@@ -61,6 +77,11 @@ void DamageTextSystem::showDamage(float damage, Entity entity)
 void DamageTextSystem::showHitEffect(Entity entity)
 {
     createHitEffect(entity);
+}
+
+void DamageTextSystem::showExplosionEffect(Entity entity)
+{
+    createExplosionEffect(entity);
 }
 
 void DamageTextSystem::createDamageText(float damage, Entity entity)
@@ -142,6 +163,59 @@ void DamageTextSystem::createHitEffect(Entity entity)
     hitEffects.push_back(effect);
 }
 
+void DamageTextSystem::createExplosionEffect(Entity entity)
+{
+    auto renderSystem = SystemManager::getInstance()->getSystem<RenderSystem>();
+    auto transform    = transformMgr.getComponent(entity);
+
+    // Tạo animation từ các frame explosion
+    auto animation     = ax::Animation::create();
+    for (int i = 1; i <= 7; ++i)
+    {
+        std::string frameName = "./explosion" + std::to_string(i);
+        auto spriteFrame      = ax::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+        if (!spriteFrame)
+        {
+            AXLOG("Error: Sprite frame %s not found", frameName.c_str());
+            continue;
+        }
+        animation->addSpriteFrame(spriteFrame);;
+    }
+
+
+    animation->setDelayPerUnit(0.125f);  // Mỗi frame cách nhau 0.125s
+    animation->setLoops(1);            // Chỉ chạy 1 lần
+
+    // Tạo sprite với frame đầu tiên
+    std::string initialFrameName = "./explosion1";
+    auto initialSpriteFrame      = ax::SpriteFrameCache::getInstance()->getSpriteFrameByName(initialFrameName);
+    if (!initialSpriteFrame)
+    {
+        AXLOG("Error: Initial sprite frame %s not found", initialFrameName.c_str());
+        return;
+    }
+
+    auto sprite = ax::Sprite::createWithSpriteFrame(initialSpriteFrame);
+    if (!sprite)
+    {
+        AXLOG("Error: Failed to create sprite for explosion effect");
+        return;
+    }
+
+    ExplosionEffect effect;
+    effect.sprite   = sprite;
+    effect.lifetime = 1.0f;  // 7 frames * 0.1s = 0.7s
+
+    sprite->setPosition(ax::Vec2(transform->x, transform->y));
+    renderSystem->setSpriteBatchNodeForSprite(sprite, "explosion_effect");
+
+    // Chạy animation và fade out ở cuối
+    auto animate = ax::Animate::create(animation);
+    sprite->runAction(ax::Sequence::create(animate, ax::FadeOut::create(0.1f), nullptr));
+
+    explosionEffects.push_back(effect);
+}
+
 void DamageTextSystem::updateDamageText(DamageText& text, float dt)
 {
     text.lifetime -= dt;
@@ -150,6 +224,13 @@ void DamageTextSystem::updateDamageText(DamageText& text, float dt)
 }
 
 void DamageTextSystem::updateHitEffect(HitEffect& effect, float dt)
+{
+    effect.lifetime -= dt;
+    if (effect.lifetime < 0.0f)
+        effect.lifetime = 0.0f;
+}
+
+void DamageTextSystem::updateExplosionEffect(ExplosionEffect& effect, float dt)
 {
     effect.lifetime -= dt;
     if (effect.lifetime < 0.0f)

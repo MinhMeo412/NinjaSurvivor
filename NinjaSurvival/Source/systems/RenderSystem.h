@@ -29,7 +29,8 @@ public:
     void updateKunaiEntitySprite(Entity entity);
     void updateBigKunaiEntitySprite(Entity entity);
     void updateSpinnerEntitySprite(Entity entity);
-
+    void updateExplosionKunaiEntitySprite(Entity entity);
+    void updateNinjutsuSpellEntitySprite(Entity entity);
 
     // Hàm để DamageTextSystem gọi
     void setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type);
@@ -44,24 +45,20 @@ private:
     ComponentManager<CooldownComponent>& cooldownMgr;
     ComponentManager<VelocityComponent>& velocityMgr;
     ComponentManager<DurationComponent>& durationMgr;
-    
 
-    ax::Scene* scene                        = nullptr;
-    ax::SpriteBatchNode* enemyBatchNode     = nullptr;
-    //ax::SpriteBatchNode* bossBatchNode      = nullptr;
-    ax::SpriteBatchNode* itemBatchNode      = nullptr;
-    ax::SpriteBatchNode* weaponBatchNode    = nullptr;
-    ax::SpriteBatchNode* numberBatchNode    = nullptr;
+    ax::Scene* scene                    = nullptr;
+    ax::SpriteBatchNode* enemyBatchNode = nullptr;
+    // ax::SpriteBatchNode* bossBatchNode      = nullptr;
+    ax::SpriteBatchNode* itemBatchNode   = nullptr;
+    ax::SpriteBatchNode* weaponBatchNode = nullptr;
+    ax::SpriteBatchNode* numberBatchNode = nullptr;
 
-    ax::DrawNode* debugDrawNode              = nullptr;
+    ax::DrawNode* debugDrawNode = nullptr;
 
     void addSpriteToScene(Entity entity);
     void updateEntitySprite(Entity entity, float dt);
-    
+
     void updateDebugDraw();
 };
-
-
-
 
 #endif  // __RENDER_SYSTEM_H__

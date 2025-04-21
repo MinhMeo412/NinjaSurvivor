@@ -5,14 +5,15 @@
 #include "gameUI/LevelUpOrChestEventLayer.h"
 #include "scenes/GameScene.h"
 
-LevelSystem::LevelSystem(EntityManager& em, ComponentManager<WeaponInventoryComponent>& wim) : entityMgr(em), wiMgr(wim) {}
+LevelSystem::LevelSystem(EntityManager& em, ComponentManager<WeaponInventoryComponent>& wim) : entityMgr(em), wiMgr(wim)
+{}
 
 void LevelSystem::init()
 {
-    currentXP = 0;
-    neededXP  = 5;
-    level     = 1;
-    rerollCount = static_cast<int>(ShopSystem::getInstance()->getShopBuff("RerollWeapon"));
+    currentXP      = 0;
+    neededXP       = 5;
+    level          = 1;
+    rerollCount    = static_cast<int>(ShopSystem::getInstance()->getShopBuff("RerollWeapon"));
     shopXpGainBuff = ShopSystem::getInstance()->getShopBuff("XPGain");
     ;  // Lấy thêm từ shop
 }
@@ -32,7 +33,7 @@ void LevelSystem::levelUp()
     level     = level + 1;
     currentXP = currentXP - neededXP;
 
-    float growthMultiplier = 1.0f + (0.1 * static_cast<int>(level / 4)); //Tăng 10% mỗi 4 level
+    float growthMultiplier = 1.0f + (0.1 * static_cast<int>(level / 4));  // Tăng 10% mỗi 4 level
 
     neededXP = 6 * (level + 1) * growthMultiplier;
     AXLOG("Level: %d", level);
@@ -41,7 +42,7 @@ void LevelSystem::levelUp()
 void LevelSystem::increaseXP(float xp)
 {
     float xpMultiplier = 1.0f + shopXpGainBuff + inventXpGainBuff;
-    currentXP = currentXP + (xp * xpMultiplier); //thêm buff
+    currentXP          = currentXP + (xp * xpMultiplier);  // thêm buff
 }
 
 std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelUp)
@@ -286,9 +287,8 @@ void LevelSystem::chooseWeapon()
             ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
             levelUpLayer->setPosition(uiLayerPos);
             gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            //gameScene->unscheduleUpdate();  // Dừng update
+            // gameScene->unscheduleUpdate();  // Dừng update
             SystemManager::getInstance()->setUpdateState(false);
         }
     }
 }
-

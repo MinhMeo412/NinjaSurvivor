@@ -69,6 +69,9 @@ Entity WeaponSystem::createSword(std::string weaponName, bool alreadyHave)
         sprite->initializeSprite();
     }
 
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
+
     swordList.push_back(weapon);
 
     return weapon;
@@ -98,6 +101,9 @@ Entity WeaponSystem::createShuriken(std::string weaponName, bool alreadyHave)
     {
         sprite->initializeSprite();
     }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
 
     shurikenList.push_back(weapon);
 
@@ -135,6 +141,9 @@ Entity WeaponSystem::createKunai(std::string weaponName, bool alreadyHave)
     {
         hitbox->size = ax::Size(0, 0);
     }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
 
     // Gán làm kunai mẫu
     kunaiEntity = weapon;
@@ -236,5 +245,68 @@ Entity WeaponSystem::createSpinner(std::string weaponName, bool alreadyHave)
     return weapon;
 }
 
+// Explosion Kunai
+Entity WeaponSystem::createExplosionKunai(std::string weaponName, bool alreadyHave)
+{
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "explosion_kunai";
+            it->second = 1;
+        }
+    }
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
 
+    Entity weapon = factory->createEntity(type, weaponName);
 
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
+
+    explosionKunaiList.push_back(weapon);
+
+    return weapon;
+}
+
+// Ninjutsu Spell
+Entity WeaponSystem::createNinjutsuSpell(std::string weaponName, bool alreadyHave)
+{
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "ninjutsu_spell";
+            it->second = 1;
+        }
+    }
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
+
+    Entity weapon = factory->createEntity(type, weaponName);
+
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
+
+    ninjutsuSpellList.push_back(weapon);
+
+    return weapon;
+}

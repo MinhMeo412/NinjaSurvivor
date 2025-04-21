@@ -3,14 +3,16 @@
 #include "EntityFactory.h"
 #include "SpawnSystem.h"
 #include "MovementSystem.h"
+#include "HealthSystem.h"
 #include "TimeSystem.h"
 #include "LevelSystem.h"
+#include "PickupSystem.h"
 #include "RenderSystem.h"
 #include "SystemManager.h"
 #include "GameData.h"
 
 // Weapons
-//Sword
+// Sword
 void WeaponSystem::upgradeSword(std::string weaponName, int level)
 {
     if (weaponName != "sword")
@@ -26,7 +28,7 @@ void WeaponSystem::upgradeSword(std::string weaponName, int level)
         // Đồng bộ CD
         for (auto sword : swordList)
         {
-            auto cooldown = cooldownMgr.getComponent(sword);
+            auto cooldown           = cooldownMgr.getComponent(sword);
             cooldown->cooldownTimer = 0.0;
         }
         break;
@@ -36,7 +38,7 @@ void WeaponSystem::upgradeSword(std::string weaponName, int level)
         for (auto sword : swordList)
         {
             // Giảm cooldown
-            auto cooldown           = cooldownMgr.getComponent(sword);
+            auto cooldown = cooldownMgr.getComponent(sword);
             cooldown->cooldownDuration -= 0.25;
             // Tăng dame
             auto attack = attackMgr.getComponent(sword);
@@ -74,7 +76,7 @@ void WeaponSystem::upgradeSword(std::string weaponName, int level)
     }
 }
 
-//Shuriken
+// Shuriken
 void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
 {
     if (weaponName != "shuriken")
@@ -82,12 +84,13 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
 
     switch (level)
     {
-    case 2:  
+    case 2:
     {
         // Thêm 1 shuriken
         auto it = createWeapon.find(weaponName);
         weaponPool.push_back(it->second(weaponName, true));
-        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(
+            shurikenList);
         for (auto shuriken : shurikenList)
         {
             // Đồng bộ CD
@@ -101,7 +104,8 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
         // Thêm 1 shuriken
         auto it = createWeapon.find(weaponName);
         weaponPool.push_back(it->second(weaponName, true));
-        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(
+            shurikenList);
 
         auto cooldownSync = cooldownMgr.getComponent(shurikenList[0]);
         // Giảm CD
@@ -109,8 +113,8 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
         for (auto shuriken : shurikenList)
         {
             // Đồng bộ CD
-            auto cooldown           = cooldownMgr.getComponent(shuriken);
-            cooldown->cooldownTimer = 0.0;
+            auto cooldown              = cooldownMgr.getComponent(shuriken);
+            cooldown->cooldownTimer    = 0.0;
             cooldown->cooldownDuration = cooldownSync->cooldownDuration;
         }
         break;
@@ -120,7 +124,8 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
         // Thêm 1 shuriken
         auto it = createWeapon.find(weaponName);
         weaponPool.push_back(it->second(weaponName, true));
-        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(
+            shurikenList);
         auto cooldownSync = cooldownMgr.getComponent(shurikenList[0]);
         // Giảm CD
         cooldownSync->cooldownDuration -= 1.0;
@@ -133,12 +138,13 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
         }
         break;
     }
-    case 5: 
+    case 5:
     {
         // Thêm 1 shuriken
         auto it = createWeapon.find(weaponName);
         weaponPool.push_back(it->second(weaponName, true));
-        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(shurikenList);
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->recalculateShurikenAngles(
+            shurikenList);
         for (auto shuriken : shurikenList)
         {
             // Tăng size
@@ -157,7 +163,7 @@ void WeaponSystem::upgradeShuriken(std::string weaponName, int level)
     }
 }
 
-//Kunai
+// Kunai
 void WeaponSystem::upgradeKunai(std::string weaponName, int level)
 {
     if (weaponName != "kunai")
@@ -204,7 +210,7 @@ void WeaponSystem::upgradeKunai(std::string weaponName, int level)
     }
 }
 
-//Big kunai
+// Big kunai
 void WeaponSystem::upgradeBigKunai(std::string weaponName, int level)
 {
     if (weaponName != "big_kunai")
@@ -219,7 +225,7 @@ void WeaponSystem::upgradeBigKunai(std::string weaponName, int level)
             // Giảm cooldown
             auto cooldown = cooldownMgr.getComponent(bigKunai);
             cooldown->cooldownDuration -= 1.0;
-            //Tăng size
+            // Tăng size
             auto transform = transformMgr.getComponent(bigKunai);
             auto hitbox    = hitboxMgr.getComponent(bigKunai);
             transform->scale += 0.25;
@@ -272,15 +278,15 @@ void WeaponSystem::upgradeBigKunai(std::string weaponName, int level)
 
         // Thêm 1 big kunai
         auto inventBigKunai = bigKunaiList[0];
-        auto it = createWeapon.find(weaponName);
-        auto newBigKunai = it->second(weaponName, true);
+        auto it             = createWeapon.find(weaponName);
+        auto newBigKunai    = it->second(weaponName, true);
         weaponPool.push_back(newBigKunai);
-        auto cooldown   = cooldownMgr.getComponent(newBigKunai);
-        auto duration   = durationMgr.getComponent(newBigKunai);
-        auto attack     = attackMgr.getComponent(newBigKunai);
-        auto hitbox     = hitboxMgr.getComponent(newBigKunai);
-        auto transform  = transformMgr.getComponent(newBigKunai);
-        auto speed      = speedMgr.getComponent(newBigKunai);
+        auto cooldown  = cooldownMgr.getComponent(newBigKunai);
+        auto duration  = durationMgr.getComponent(newBigKunai);
+        auto attack    = attackMgr.getComponent(newBigKunai);
+        auto hitbox    = hitboxMgr.getComponent(newBigKunai);
+        auto transform = transformMgr.getComponent(newBigKunai);
+        auto speed     = speedMgr.getComponent(newBigKunai);
 
         auto stCooldown  = cooldownMgr.getComponent(inventBigKunai);
         auto stDuration  = durationMgr.getComponent(inventBigKunai);
@@ -326,7 +332,7 @@ void WeaponSystem::upgradeSpinner(std::string weaponName, int level)
     {
         // Thêm 1 spinner
         auto inventSpinner = spinnerList[0];
-        auto it             = createWeapon.find(weaponName);
+        auto it            = createWeapon.find(weaponName);
         auto newSpinner    = it->second(weaponName, true);
         weaponPool.push_back(newSpinner);
 
@@ -415,8 +421,181 @@ void WeaponSystem::upgradeSpinner(std::string weaponName, int level)
     }
 }
 
+// Explosion Kunai
+void WeaponSystem::upgradeExplosionKunai(std::string weaponName, int level)
+{
+    if (weaponName != "explosion_kunai")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        for (auto explosionKunai : explosionKunaiList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(explosionKunai);
+            cooldown->cooldownDuration -= 0.75;
+        }
+        break;
+    }
+    case 3:
+    {
+        // Thêm 1 explosion kunai
+        auto inventExplosionKunai = explosionKunaiList[0];
+        auto it                   = createWeapon.find(weaponName);
+        auto newExplosionKunai    = it->second(weaponName, true);
+        weaponPool.push_back(newExplosionKunai);
+
+        auto cooldown = cooldownMgr.getComponent(newExplosionKunai);
+
+        auto stCooldown = cooldownMgr.getComponent(inventExplosionKunai);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
+
+        break;
+    }
+    case 4:
+    {
+        for (auto explosionKunai : explosionKunaiList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(explosionKunai);
+            cooldown->cooldownDuration -= 0.75;
+            // Tăng dame
+            auto attack = attackMgr.getComponent(explosionKunai);
+            attack->baseDamage += 4.0;
+        }
+        break;
+    }
+    case 5:
+    {
+        // Thêm 1 explosion kunai
+        auto inventExplosionKunai = explosionKunaiList[0];
+        auto it                   = createWeapon.find(weaponName);
+        auto newExplosionKunai    = it->second(weaponName, true);
+        weaponPool.push_back(newExplosionKunai);
+
+        auto cooldown = cooldownMgr.getComponent(newExplosionKunai);
+        auto attack   = attackMgr.getComponent(newExplosionKunai);
+
+        auto stCooldown = cooldownMgr.getComponent(inventExplosionKunai);
+        auto stAttack   = attackMgr.getComponent(inventExplosionKunai);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
+        attack->baseDamage         = stAttack->baseDamage;
+
+        for (auto explosionKunai : explosionKunaiList)
+        {
+            // Tăng dame
+            auto attack = attackMgr.getComponent(explosionKunai);
+            attack->baseDamage += 4.0;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+// Ninjutsu Spell
+void WeaponSystem::upgradeNinjutsuSpell(std::string weaponName, int level)
+{
+    if (weaponName != "ninjutsu_spell")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        // Thêm 1 spell
+        auto inventNinjutsuSpell = ninjutsuSpellList[0];
+        auto it                   = createWeapon.find(weaponName);
+        auto newNinjutsuSpell    = it->second(weaponName, true);
+        weaponPool.push_back(newNinjutsuSpell);
+
+        auto cooldown = cooldownMgr.getComponent(newNinjutsuSpell);
+        //auto attack   = attackMgr.getComponent(newNinjutsuSpell);
+
+        auto stCooldown = cooldownMgr.getComponent(inventNinjutsuSpell);
+        //auto stAttack   = attackMgr.getComponent(inventNinjutsuSpell);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.15;
+        //attack->baseDamage         = stAttack->baseDamage;
+
+        break;
+    }
+    case 3:
+    {
+        // Thêm 1 spell
+        auto inventNinjutsuSpell = ninjutsuSpellList[0];
+        auto it                  = createWeapon.find(weaponName);
+        auto newNinjutsuSpell    = it->second(weaponName, true);
+        weaponPool.push_back(newNinjutsuSpell);
+
+        auto cooldown = cooldownMgr.getComponent(newNinjutsuSpell);
+
+        auto stCooldown = cooldownMgr.getComponent(inventNinjutsuSpell);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.3;
+
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.1;
+        }
+
+        break;
+    }
+    case 4:
+    {
+        // Thêm 1 spell
+        auto inventNinjutsuSpell = ninjutsuSpellList[0];
+        auto it                  = createWeapon.find(weaponName);
+        auto newNinjutsuSpell    = it->second(weaponName, true);
+        weaponPool.push_back(newNinjutsuSpell);
+
+        auto cooldown = cooldownMgr.getComponent(newNinjutsuSpell);
+
+        auto stCooldown = cooldownMgr.getComponent(inventNinjutsuSpell);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.45;
+
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.1;
+        }
+
+        break;
+    }
+    case 5:
+    {
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Tăng dame
+            auto attack = attackMgr.getComponent(ninjutsuSpell);
+            attack->baseDamage += 4.0;
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.1;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 // Buffs
-//Attack
+// Attack
 void WeaponSystem::upgradeAttack(std::string buffName, int level)
 {
     if (buffName != "attack")
@@ -427,31 +606,31 @@ void WeaponSystem::upgradeAttack(std::string buffName, int level)
     case 1:
     {
         // Tăng 10%
-        attackBuff += 0.1;
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
         break;
     }
     case 2:
     {
         // Tăng 10%
-        attackBuff += 0.1;
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
         break;
     }
     case 3:
     {
         // Tăng 10%
-        attackBuff += 0.1;
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
         break;
     }
     case 4:
     {
         // Tăng 10%
-        attackBuff += 0.1;
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
         break;
     }
     case 5:
     {
         // Tăng 10%
-        attackBuff += 0.1;
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
         break;
     }
     default:
@@ -459,7 +638,7 @@ void WeaponSystem::upgradeAttack(std::string buffName, int level)
     }
 }
 
-//Health
+// Health
 void WeaponSystem::upgradeHealth(std::string buffName, int level)
 {
     if (buffName != "health")
@@ -475,15 +654,9 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
     {
         // Tăng 10%
         float healthMultiplier = 0.1;
-        float hpIncrease        = (baseHealth * (1 + healthMultiplier)) - baseHealth;
+        float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
 
-        auto health     = healthMgr.getComponent(playerEntity);
-        health->maxHealth += hpIncrease;
-        health->currentHealth += hpIncrease;
-        if (health->currentHealth > health->maxHealth)
-        {
-            health->currentHealth = health->maxHealth;
-        }
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(hpIncrease);
         break;
     }
     case 2:
@@ -492,13 +665,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
         float healthMultiplier = 0.1;
         float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
 
-        auto health = healthMgr.getComponent(playerEntity);
-        health->maxHealth += hpIncrease;
-        health->currentHealth += hpIncrease;
-        if (health->currentHealth > health->maxHealth)
-        {
-            health->currentHealth = health->maxHealth;
-        }
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(hpIncrease);
         break;
     }
     case 3:
@@ -507,13 +674,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
         float healthMultiplier = 0.1;
         float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
 
-        auto health = healthMgr.getComponent(playerEntity);
-        health->maxHealth += hpIncrease;
-        health->currentHealth += hpIncrease;
-        if (health->currentHealth > health->maxHealth)
-        {
-            health->currentHealth = health->maxHealth;
-        }
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(hpIncrease);
         break;
     }
     case 4:
@@ -522,13 +683,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
         float healthMultiplier = 0.1;
         float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
 
-        auto health = healthMgr.getComponent(playerEntity);
-        health->maxHealth += hpIncrease;
-        health->currentHealth += hpIncrease;
-        if (health->currentHealth > health->maxHealth)
-        {
-            health->currentHealth = health->maxHealth;
-        }
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(hpIncrease);
         break;
     }
     case 5:
@@ -537,13 +692,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
         float healthMultiplier = 0.1;
         float hpIncrease       = (baseHealth * (1 + healthMultiplier)) - baseHealth;
 
-        auto health = healthMgr.getComponent(playerEntity);
-        health->maxHealth += hpIncrease;
-        health->currentHealth += hpIncrease;
-        if (health->currentHealth > health->maxHealth)
-        {
-            health->currentHealth = health->maxHealth;
-        }
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setPlayerCurrentHealth(hpIncrease);
         break;
     }
     default:
@@ -551,7 +700,7 @@ void WeaponSystem::upgradeHealth(std::string buffName, int level)
     }
 }
 
-//Speed
+// Speed
 void WeaponSystem::upgradeSpeed(std::string buffName, int level)
 {
     if (buffName != "speed")
@@ -559,7 +708,7 @@ void WeaponSystem::upgradeSpeed(std::string buffName, int level)
 
     auto identity      = identityMgr.getComponent(playerEntity);
     auto characterData = GameData::getInstance()->getEntityTemplates().at(identity->type).at(identity->name);
-    float baseSpeed   = characterData.speed->speed;
+    float baseSpeed    = characterData.speed->speed;
 
     switch (level)
     {
@@ -623,7 +772,7 @@ void WeaponSystem::upgradeSpeed(std::string buffName, int level)
     }
 }
 
-//XPGain
+// XPGain
 void WeaponSystem::upgradeXPGain(std::string buffName, int level)
 {
     if (buffName != "xp_gain")
@@ -666,18 +815,186 @@ void WeaponSystem::upgradeXPGain(std::string buffName, int level)
     }
 }
 
-//Pickup Range
+// Pickup Range
+void WeaponSystem::upgradePickupRange(std::string buffName, int level)
+{
+    if (buffName != "pickup_range")
+        return;
 
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->increasePickupMultiplier(0.1);
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->increasePickupMultiplier(0.1);
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->increasePickupMultiplier(0.1);
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->increasePickupMultiplier(0.1);
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->increasePickupMultiplier(0.1);
+        break;
+    }
+    default:
+        break;
+    }
+}
 
-//Reduce receive damage
+// Reduce receive damage
+void WeaponSystem::upgradeReduceReceiveDamage(std::string buffName, int level)
+{
+    if (buffName != "reduce_receive_damage")
+        return;
 
+    switch (level)
+    {
+    case 1:
+    {
+        // Giảm 5% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(-0.05);
+        break;
+    }
+    case 2:
+    {
+        // Giảm 5% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(-0.05);
+        break;
+    }
+    case 3:
+    {
+        // Giảm 5% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(-0.05);
+        break;
+    }
+    case 4:
+    {
+        // Giảm 5% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(-0.05);
+        break;
+    }
+    case 5:
+    {
+        // Giảm 5% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(-0.05);
+        break;
+    }
+    default:
+        break;
+    }
+}
 
-//Coin gain
+// Coin gain
+void WeaponSystem::upgradeCoinGain(std::string buffName, int level)
+{
+    if (buffName != "coin_gain")
+        return;
 
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->setCoinMulltiplier(0.1);
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->setCoinMulltiplier(0.1);
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->setCoinMulltiplier(0.1);
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->setCoinMulltiplier(0.1);
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10%
+        SystemManager::getInstance()->getSystem<PickupSystem>()->setCoinMulltiplier(0.1);
+        break;
+    }
+    default:
+        break;
+    }
+}
 
-//Recovery
+// Recovery
 
+// Curse (increase attack - increase receive damage)
+void WeaponSystem::upgradeCurse(std::string buffName, int level)
+{
+    if (buffName != "curse")
+        return;
 
-//Curse (increase attack - increase receive damage)
-
-
+    switch (level)
+    {
+    case 1:
+    {
+        // Tăng 10% attack
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
+        // Tăng 10% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(0.1);
+        break;
+    }
+    case 2:
+    {
+        // Tăng 10% attack
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
+        // Tăng 10% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(0.1);
+        break;
+    }
+    case 3:
+    {
+        // Tăng 10% attack
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
+        // Tăng 10% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(0.1);
+        break;
+    }
+    case 4:
+    {
+        // Tăng 10% attack
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
+        // Tăng 10% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(0.1);
+        break;
+    }
+    case 5:
+    {
+        // Tăng 10% attack
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setAttackMutiplier(0.1);
+        // Tăng 10% dame nhận vào
+        SystemManager::getInstance()->getSystem<HealthSystem>()->setDamageReceiveMutiplier(0.1);
+        break;
+    }
+    default:
+        break;
+    }
+}

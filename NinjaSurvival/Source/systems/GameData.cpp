@@ -1,7 +1,7 @@
 #include "GameData.h"
 #include "ShopSystem.h"
 #include "rapidjson/document.h"
-
+#include "Utils.h"
 
 std::unique_ptr<GameData> GameData::instance = nullptr;
 
@@ -54,6 +54,7 @@ GameData* GameData::getInstance()
     }
     return instance.get();
 }
+
 bool GameData::loadEntityData(const std::string& jsonString)
 {
     rapidjson::Document doc;
@@ -330,8 +331,7 @@ void GameData::syncStatsWithShopSystem()
     auto shop = ShopSystem::getInstance();
 
     // Đọc chỉ số cơ bản từ entities.json
-    std::string filename   = ax::FileUtils::getInstance()->fullPathForFilename("entities.json");
-    std::string jsonString = ax::FileUtils::getInstance()->getStringFromFile(filename);
+    std::string jsonString = readFileContent("entities.json");
     if (jsonString.empty())
     {
         AXLOG("Lỗi: Không thể đọc entities.json");
@@ -356,33 +356,39 @@ void GameData::syncStatsWithShopSystem()
             !entity["name"].IsString())
             continue;
 
+        //Kiểm tra nếu type không nằm trong 3 loại này thì bỏ qua
         std::string type = entity["type"].GetString();
+        if (Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
+        {
+            continue;
+        }
+
         std::string name = entity["name"].GetString();
         EntityTemplate templ;
 
         if (entity.HasMember("components"))
         {
             const auto& components = entity["components"];
+            //Lấy HP data
             if (components.HasMember("health") && components["health"].IsObject() &&
                 components["health"].HasMember("maxHealth"))
                 templ.health = HealthComponent{static_cast<float>(components["health"]["maxHealth"].GetDouble())};
-            if (components.HasMember("attack") && components["attack"].IsObject() &&
-                components["attack"].HasMember("damageMultiplier"))
-                templ.attack =
-                    AttackComponent{static_cast<float>(components["attack"]["damageMultiplier"].GetDouble()), 1.0f};
+            //Lấy speed data
             if (components.HasMember("speed") && components["speed"].IsFloat())
                 templ.speed = SpeedComponent{static_cast<float>(components["speed"].GetFloat())};
+            //Lấy CD data
             if (components.HasMember("cooldown") && components["cooldown"].IsFloat())
                 templ.cooldown = CooldownComponent{static_cast<float>(components["cooldown"].GetFloat())};
         }
 
+        //Lưu vào baseTemplates
         baseTemplates[type][name] = templ;
     }
 
     // Cập nhật entityTemplates
     for (auto& [type, templates] : entityTemplates)
     {
-        if (type != "player" && type != "weapon_melee" && type != "weapon_projectile")
+        if (Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
         {
             AXLOG("Bỏ qua type không được hỗ trợ: %s", type.c_str());
             continue;
@@ -395,6 +401,7 @@ void GameData::syncStatsWithShopSystem()
                 AXLOG("Lỗi: Không tìm thấy %s trong entities.json cho type %s", name.c_str(), type.c_str());
                 continue;
             }
+
             auto& baseTempl = baseTemplates[type][name];
 
             // Cập nhật Health 
@@ -420,51 +427,29 @@ void GameData::syncStatsWithShopSystem()
 
             // kéo sâu xuống entities.json check
             // Cập nhật Cooldown 
-            if (templ.cooldown.has_value() && baseTempl.cooldown.has_value())
+            if (Utils::in(type, "weapon_melee", "weapon_projectile") && templ.cooldown.has_value() && baseTempl.cooldown.has_value())
             {
                 float baseCooldown = baseTempl.cooldown->cooldownDuration;
                 float cooldownBuff = shop->getStatLevelValue("Stat", "ReduceCooldown");
 
-                if (type == "weapon_melee" || type == "weapon_projectile")
-                {
-                    templ.cooldown = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
-                    AXLOG("Đồng bộ Cooldown cho %s (%s): cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
-                          baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
-                }
-                else
-                {
-                    AXLOG("Lỗi: Type %s không được hỗ trợ cho Cooldown", type.c_str());
-                }
-                // Cập nhật Attack
-                if (type == "weapon_melee" || type == "weapon_projectile")
-                {
-                    float baseMultiplier           = baseTempl.attack->damageMultiplier;
-                    float attackBuff               = shop->getStatLevelValue("Stat", "Attack");
-                    templ.attack->damageMultiplier = baseMultiplier + baseMultiplier * attackBuff;
-                    AXLOG("Đồng bộ Attack cho %s (%s): baseMultiplier=%.2f, attackBuff=%.2f, damageMultiplier=%.2f",
-                          name.c_str(), type.c_str(), baseMultiplier, attackBuff, templ.attack->damageMultiplier);
-                }
+                templ.cooldown = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
+                AXLOG("Đồng bộ Cooldown cho %s (%s): cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
+                        baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
+            }
+            else
+            {
+                AXLOG("Lỗi: Type %s không được hỗ trợ cho Cooldown", type.c_str());
             }
         }   
     }
 
     lastShopSyncVersion = shop->getShopDataVersion();
+
     AXLOG("Hoàn tất đồng bộ shop, phiên bản=%d", lastShopSyncVersion);
 }
 
 std::string GameData::readFileContent(const std::string& filename)
 {
-    // Dễ gây lỗi khi chạy trên android (chỉ phù hợp PC)
-    //std::ifstream file(filename);
-    //if (!file)
-    //{
-    //    std::cerr << "Error opening file: " << filename << std::endl;
-    //    return "";
-    //}
-    //std::stringstream buffer;
-    //buffer << file.rdbuf();
-    //return buffer.str();
-
     //Sử dụng FileUtils của Axmol
     // Lấy đường dẫn đầy đủ từ FileUtils
     std::string fullPath = ax::FileUtils::getInstance()->fullPathForFilename(filename);
@@ -512,7 +497,7 @@ const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemp
     return entityTemplates;
 }
 
-//Sửa map thành available (cần thay đổi)
+
 void GameData::setMapAvailable(const std::string& name, bool available)
 {
     auto it = maps.find(name);

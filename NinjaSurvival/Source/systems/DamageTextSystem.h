@@ -15,6 +15,7 @@ public:
     void update(float dt) override;
     void showDamage(float damage, Entity entity);
     void showHitEffect(Entity entity);
+    void showExplosionEffect(Entity entity);
     
 private:
     EntityManager& entityManager;
@@ -35,10 +36,19 @@ private:
     };
     std::vector<HitEffect> hitEffects;  // Danh sách các hit effect đang hiển thị
 
+    struct ExplosionEffect
+    {
+        ax::Sprite* sprite;  // Sprite của explosion effect
+        float lifetime;      // Thời gian sống còn lại
+    };
+    std::vector<ExplosionEffect> explosionEffects;  // Danh sách các explosion effect đang hiển thị
+
     void createDamageText(float damage, Entity entity);
     void createHitEffect(Entity entity);
+    void createExplosionEffect(Entity entity);
     void updateDamageText(DamageText& text, float dt);
     void updateHitEffect(HitEffect& effect, float dt);
+    void updateExplosionEffect(ExplosionEffect& effect, float dt);
 };
 
 #endif  // __DAMAGE_TEXT_SYSTEM_H__

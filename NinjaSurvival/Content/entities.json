@@ -145,7 +145,7 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "kunai"
+                "weapon": "ninjutsu_spell"
             }
         },
         {
@@ -731,7 +731,7 @@
                     "height": 16.0
                 },
                 "attack": {
-                    "baseDamage": 10.0,
+                    "baseDamage": 7.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
@@ -791,7 +791,7 @@
                     "height": 15.0
                 },
                 "attack": {
-                    "baseDamage": 15.0,
+                    "baseDamage": 10.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
@@ -825,6 +825,66 @@
                 },
                 "cooldown": 5.0,
                 "duration": 3.0
+            }
+        },
+        {
+            "type": "weapon_projectile",
+            "name": "explosion_kunai",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 1.0,
+                    "vy": 0.0
+                },
+                "speed": 200.0,
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./explosion_kunai"
+                },
+                "hitbox": {
+                    "width": 12.0,
+                    "height": 12.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 4.0,
+                "duration": 2.0
+            }
+        },
+        {
+            "type": "weapon_projectile",
+            "name": "ninjutsu_spell",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 1.0,
+                    "vy": 0.0
+                },
+                "speed": 250.0,
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./bird"
+                },
+                "hitbox": {
+                    "width": 10.0,
+                    "height": 10.0
+                },
+                "attack": {
+                    "baseDamage": 4.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "duration": 1.0
             }
         }
     ]

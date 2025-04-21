@@ -31,6 +31,9 @@ public:
 
     void applyBombDamageToAll(float damage);
 
+    void setAttackMutiplier(float value) { attackBuffMultiplier += value; };
+    void setDamageReceiveMutiplier(float value) { damageReceiveMultiplier += value; };
+
 private:
     EntityManager& entityManager;
     ComponentManager<IdentityComponent>& identityMgr;
@@ -54,7 +57,8 @@ private:
     // Callback khi player hết máu
     std::function<void()> onPlayerOutOfHealth;
 
-    float attackBuffMultiplier = 0;
+    float attackBuffMultiplier    = 0.0;
+    float damageReceiveMultiplier = 0.0;
 };
 
 #endif  // __HEALTH_SYSTEM_H__

@@ -15,7 +15,22 @@
     <key>spriteSourceSize</key>
     <string>{13,30}</string>
     <key>textureRect</key>
-    <string>{{32,0},{13,30}}</string>
+    <string>{{74,0},{13,30}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./bird</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,0}</string>
+    <key>spriteSize</key>
+    <string>{21,18}</string>
+    <key>spriteSourceSize</key>
+    <string>{21,18}</string>
+    <key>textureRect</key>
+    <string>{{0,74},{21,18}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -30,7 +45,7 @@
     <key>spriteSourceSize</key>
     <string>{14,14}</string>
     <key>textureRect</key>
-    <string>{{42,50},{12,12}}</string>
+    <string>{{32,80},{12,12}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -45,7 +60,7 @@
     <key>spriteSourceSize</key>
     <string>{12,27}</string>
     <key>textureRect</key>
-    <string>{{47,0},{12,27}}</string>
+    <string>{{74,32},{12,27}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -60,7 +75,97 @@
     <key>spriteSourceSize</key>
     <string>{6,13}</string>
     <key>textureRect</key>
-    <string>{{60,32},{6,13}}</string>
+    <string>{{23,74},{6,13}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n0</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,8}</string>
+    <key>spriteSize</key>
+    <string>{26,14}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{60,63},{26,14}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n1</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,3}</string>
+    <key>spriteSize</key>
+    <string>{22,22}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{32,22},{22,22}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n2</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{-2,-3}</string>
+    <key>spriteSize</key>
+    <string>{24,23}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{0,32},{24,23}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n3</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{-2,-7}</string>
+    <key>spriteSize</key>
+    <string>{26,15}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{32,63},{26,15}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n4</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{-1,-8}</string>
+    <key>spriteSize</key>
+    <string>{30,15}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{32,46},{30,15}}</string>
+    <key>textureRotated</key>
+    <false/>
+   </dict>
+   <key>./lighting_n5</key>
+   <dict>
+    <key>aliases</key>
+    <array/>
+    <key>spriteOffset</key>
+    <string>{0,-8}</string>
+    <key>spriteSize</key>
+    <string>{28,15}</string>
+    <key>spriteSourceSize</key>
+    <string>{32,32}</string>
+    <key>textureRect</key>
+    <string>{{0,57},{28,15}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -75,7 +180,7 @@
     <key>spriteSourceSize</key>
     <string>{16,16}</string>
     <key>textureRect</key>
-    <string>{{42,32},{16,16}}</string>
+    <string>{{56,22},{16,16}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -105,7 +210,7 @@
     <key>spriteSourceSize</key>
     <string>{40,20}</string>
     <key>textureRect</key>
-    <string>{{0,32},{40,20}}</string>
+    <string>{{32,0},{40,20}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -115,7 +220,7 @@
    <key>format</key>
    <integer>3</integer>
    <key>size</key>
-   <string>{68,64}</string>
+   <string>{89,94}</string>
    <key>textureFileName</key>
    <string>weapon.png</string>
   </dict>

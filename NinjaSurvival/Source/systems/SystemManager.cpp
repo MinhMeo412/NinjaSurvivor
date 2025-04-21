@@ -31,7 +31,7 @@ SystemManager* SystemManager::getInstance()
 
 void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* uiLayer)
 {
-    //Seed random (nếu chưa có)
+    // Seed random (nếu chưa có)
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     currentScene = scene;
@@ -68,10 +68,8 @@ void SystemManager::initSystems(ax::Scene* scene, GameWorld* world, ax::Layer* u
 
     registerSystem("DamageTextSystem");
 
-
     registerSystem("RenderSystem");
     registerSystem("CleanupSystem");
-
 
     for (auto& system : systems)
         system->init();
@@ -92,7 +90,7 @@ void SystemManager::update(float dt)
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    //AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
+    // AXLOG("Thời gian thực thi SystemManager: %ld ms", duration);
 }
 
 void SystemManager::resetSystems()
@@ -111,7 +109,7 @@ void SystemManager::registerSystem(const std::string& systemType)
     if (!gameWorld)
         return;
 
-    //Thêm JoystickSystem
+    // Thêm JoystickSystem
     if (systemType == "JoystickSystem")
         addSystem(std::make_unique<JoystickSystem>());
 
@@ -134,11 +132,10 @@ void SystemManager::registerSystem(const std::string& systemType)
 
     // Thêm RenderSystem
     else if (systemType == "RenderSystem")
-        addSystem(std::make_unique<RenderSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
-                                                 gameWorld->getSpriteManager(), gameWorld->getTransformManager(),
-                                                 gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),
-                                                 gameWorld->getCooldownManager(), gameWorld->getVelocityManager(),
-                                                 gameWorld->getDurationManager()));
+        addSystem(std::make_unique<RenderSystem>(
+            gameWorld->getEntityManager(), gameWorld->getIdentityManager(), gameWorld->getSpriteManager(),
+            gameWorld->getTransformManager(), gameWorld->getAnimationManager(), gameWorld->getHitboxManager(),
+            gameWorld->getCooldownManager(), gameWorld->getVelocityManager(), gameWorld->getDurationManager()));
 
     // Thêm MovementSystem
     else if (systemType == "MovementSystem")
@@ -160,7 +157,7 @@ void SystemManager::registerSystem(const std::string& systemType)
     else if (systemType == "HealthSystem")
         addSystem(std::make_unique<HealthSystem>(gameWorld->getEntityManager(), gameWorld->getIdentityManager(),
                                                  gameWorld->getHealthManager(), gameWorld->getAttackManager(),
-                                                 gameWorld->getCooldownManager(),gameWorld->getDurationManager()));
+                                                 gameWorld->getCooldownManager(), gameWorld->getDurationManager()));
 
     // Thêm ItemSystem
     else if (systemType == "ItemSystem")
@@ -178,7 +175,8 @@ void SystemManager::registerSystem(const std::string& systemType)
 
     // Thêm CleanupSystem
     else if (systemType == "CleanupSystem")
-        addSystem(std::make_unique<CleanupSystem>(gameWorld->getEntityManager(), gameWorld->getSpriteManager(),gameWorld->getHitboxManager()));
+        addSystem(std::make_unique<CleanupSystem>(gameWorld->getEntityManager(), gameWorld->getSpriteManager(),
+                                                  gameWorld->getHitboxManager()));
 
     // Thêm LevelSystem
     else if (systemType == "LevelSystem")
@@ -186,8 +184,7 @@ void SystemManager::registerSystem(const std::string& systemType)
 
     // Thêm DamageTextSystem
     else if (systemType == "DamageTextSystem")
-        addSystem(std::make_unique<DamageTextSystem>(gameWorld->getEntityManager(),
-                                                     gameWorld->getTransformManager()));
+        addSystem(std::make_unique<DamageTextSystem>(gameWorld->getEntityManager(), gameWorld->getTransformManager()));
 
     // Thêm WeaponSystem
     else if (systemType == "WeaponSystem")
@@ -197,4 +194,4 @@ void SystemManager::registerSystem(const std::string& systemType)
             gameWorld->getHitboxManager(), gameWorld->getHealthManager(), gameWorld->getAttackManager(),
             gameWorld->getCooldownManager(), gameWorld->getSpeedManager(), gameWorld->getWeaponInventoryManager(),
             gameWorld->getDurationManager()));
-}   
+}
