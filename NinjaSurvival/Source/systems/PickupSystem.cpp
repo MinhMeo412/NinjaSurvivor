@@ -11,14 +11,16 @@
 #include "SystemManager.h"
 #include "AudioManager.h"
 
-PickupSystem::PickupSystem(EntityManager& em, ComponentManager<IdentityComponent>& im, ComponentManager<TransformComponent>& tm)
+PickupSystem::PickupSystem(EntityManager& em,
+                           ComponentManager<IdentityComponent>& im,
+                           ComponentManager<TransformComponent>& tm)
     : entityManager(em), identityMgr(im), transformMgr(tm)
 {}
 
 void PickupSystem::init()
 {
-    PICKUP_RANGE = 50.0f; //+buff
-    TOUCH_RANGE  = 16.0f;
+    PICKUP_RANGE   = 50.0f * (1 + ShopSystem::getInstance()->getShopBuff("LootRange")) * (1 + pickupMultiplier);
+    TOUCH_RANGE    = 16.0f;
     coinMultiplier = 1 + ShopSystem::getInstance()->getShopBuff("CoinGain");
 
     pickupItems = {"greenGem", "blueGem", "redGem", "coin", "heart"};
@@ -27,14 +29,14 @@ void PickupSystem::init()
 
 void PickupSystem::update(float dt)
 {
-    auto start          = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
     auto spawnSystem    = SystemManager::getInstance()->getSystem<SpawnSystem>();
     auto movementSystem = SystemManager::getInstance()->getSystem<MovementSystem>();
     if (!spawnSystem || !movementSystem)
         return;
 
-    ax::Vec2 playerPos       = spawnSystem->getPlayerPosition();
+    ax::Vec2 playerPos = spawnSystem->getPlayerPosition();
 
     for (auto entity : entityManager.getActiveEntities())
     {
@@ -65,11 +67,9 @@ void PickupSystem::update(float dt)
         }
     }
 
-    
-
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    //AXLOG("Thời gian thực thi PickupSystem: %ld ms", duration);
+    // AXLOG("Thời gian thực thi PickupSystem: %ld ms", duration);
 }
 
 void PickupSystem::applyPickupEffect(std::string& itemName)
@@ -146,7 +146,7 @@ void PickupSystem::applyXPGem(std::string& itemName)
 
 void PickupSystem::applyBomb()
 {
-    SystemManager::getInstance()->getSystem<HealthSystem>()->applyBombDamageToAll(200);
+    SystemManager::getInstance()->getSystem<HealthSystem>()->applyBombDamageToAll(100);
 }
 
 void PickupSystem::applyMagnet()
@@ -170,7 +170,8 @@ void PickupSystem::applyMagnet()
 
 void PickupSystem::applyChest()
 {
-    std::unordered_map<std::string, int> upgradeList = SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator(false);
+    std::unordered_map<std::string, int> upgradeList =
+        SystemManager::getInstance()->getSystem<LevelSystem>()->upgradeGenerator(false);
 
     auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
     if (gameScene)
@@ -182,7 +183,7 @@ void PickupSystem::applyChest()
             ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
             levelUpLayer->setPosition(uiLayerPos);
             gameScene->addChild(levelUpLayer, 1000);  // Thêm layer
-            //gameScene->unscheduleUpdate();            // Dừng update
+            // gameScene->unscheduleUpdate();            // Dừng update
             SystemManager::getInstance()->setUpdateState(false);
         }
     }

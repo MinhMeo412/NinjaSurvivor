@@ -84,7 +84,6 @@ public:
     //Lấy danh sách toàn bộ entities (có thể dùng .at(type).at(name) để truy cập cụ thể)
     const std::unordered_map<std::string, std::unordered_map<std::string, EntityTemplate>>& getEntityTemplates() const;
 
-    // Sửa dữ liệu (chưa dùng)
     void setMapAvailable(const std::string& name, bool available);
 
     void setCharacterAvailable(const std::string& name, bool available);

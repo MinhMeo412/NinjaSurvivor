@@ -10,9 +10,9 @@ class CollisionSystem : public System
 {
 public:
     CollisionSystem(EntityManager& em,
-                 ComponentManager<IdentityComponent>& im,
-                 ComponentManager<TransformComponent>& tm,
-                 ComponentManager<HitboxComponent>& hm); 
+                    ComponentManager<IdentityComponent>& im,
+                    ComponentManager<TransformComponent>& tm,
+                    ComponentManager<HitboxComponent>& hm);
 
     void init() override;
     void update(float dt) override;
@@ -23,6 +23,7 @@ public:
     bool isCollidingWithTileMap(Entity entity, const ax::Vec2& position);
 
     std::vector<Entity> getEnemyEntitiesInView(const ax::Vec2& pos);
+    std::vector<Entity> getNearbyEnemyEntities(const Entity target);
 
 private:
     EntityManager& entityManager;
@@ -33,20 +34,20 @@ private:
     // Cấu trúc SpatialGrid (Spatial Partitioning) để tối ưu hóa kiểm tra va chạm
     struct SpatialGrid
     {
-        std::vector<std::vector<std::vector<Entity>>> cells;// Lưới chứa các entity theo ô
-        ax::Vec2 cellSize = ax::Vec2(16, 16);               // Kích thước mỗi ô trong lưới
-        ax::Vec2 gridSize;                                  // Kích thước lưới
+        std::vector<std::vector<std::vector<Entity>>> cells;  // Lưới chứa các entity theo ô
+        ax::Vec2 cellSize = ax::Vec2(16, 16);                 // Kích thước mỗi ô trong lưới
+        ax::Vec2 gridSize;                                    // Kích thước lưới
 
-        void init(const ax::Vec2& worldSize);               // Khởi tạo lưới với kích thước tổng của map
-        void clear();                                       // Xóa toàn bộ entity trong lưới
-        void insert(Entity entity, const ax::Vec2& pos);    // Thêm entity vào ô tương ứng
+        void init(const ax::Vec2& worldSize);             // Khởi tạo lưới với kích thước tổng của map
+        void clear();                                     // Xóa toàn bộ entity trong lưới
+        void insert(Entity entity, const ax::Vec2& pos);  // Thêm entity vào ô tương ứng
         std::vector<Entity> getNearbyEntities(const ax::Vec2& pos, int radius);  // Lấy các entity gần vị trí
-        std::vector<Entity> getViewEntities(const ax::Vec2& pos);  // Lấy các entity trong view
+        std::vector<Entity> getViewEntities(const ax::Vec2& pos);                // Lấy các entity trong view
     };
 
-    SpatialGrid spatialGrid; // Khởi tạo lưới
+    SpatialGrid spatialGrid;  // Khởi tạo lưới
 
-    std::function<void(Entity, Entity)> onCollision; // Callback khi va chạm xảy ra
+    std::function<void(Entity, Entity)> onCollision;  // Callback khi va chạm xảy ra
     std::function<void(Entity, Entity)> onWeaponCollision;
 
     void weaponCollisionCheck();
@@ -58,8 +59,5 @@ private:
     // Lấy tile map của chunk tại vị trí cụ thể
     ax::TMXTiledMap* getChunkTileMap(const ax::Vec2& position);
 };
-
-
-
 
 #endif  // __COLLISION_SYSTEM_H__

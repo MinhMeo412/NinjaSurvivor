@@ -2,7 +2,6 @@
 #include "SpawnSystem.h"
 #include "CleanupSystem.h"
 
-
 #include "SystemManager.h"
 
 RenderSystem::RenderSystem(EntityManager& em,
@@ -41,15 +40,15 @@ void RenderSystem::init()
         return;
     }
 
-    enemyBatchNode      = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
-    //bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
-    itemBatchNode = ax::SpriteBatchNode::create("Entity/Items/items.png");
+    enemyBatchNode = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
+    // bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
+    itemBatchNode   = ax::SpriteBatchNode::create("Entity/Items/items.png");
     weaponBatchNode = ax::SpriteBatchNode::create("Entity/Weapons/weapon.png");
     numberBatchNode = ax::SpriteBatchNode::create("number.png");
 
     scene->addChild(enemyBatchNode, 3);
-    //scene->addChild(bossBatchNode, 4);
-    scene->addChild(itemBatchNode, 2); 
+    // scene->addChild(bossBatchNode, 4);
+    scene->addChild(itemBatchNode, 2);
     scene->addChild(weaponBatchNode, 5);
     scene->addChild(numberBatchNode, 6);
 
@@ -90,7 +89,7 @@ void RenderSystem::addSpriteToScene(Entity entity)
     }
     else if (identity->type == "boss")
     {
-        //sprite->setBatchNode(bossBatchNode);
+        // sprite->setBatchNode(bossBatchNode);
         if (sprite->gameSceneFrame->getParent() != scene)
         {
             scene->addChild(sprite->gameSceneFrame, 4);
@@ -112,7 +111,6 @@ void RenderSystem::addSpriteToScene(Entity entity)
     {
         sprite->setBatchNode(weaponBatchNode);
     }
-
 
     auto transform = transformMgr.getComponent(entity);
     if (transform)
@@ -173,26 +171,33 @@ void RenderSystem::update(float dt)
             continue;
         }
 
+        if (identityMgr.getComponent(entity)->name == "explosion_kunai")
+        {
+            updateExplosionKunaiEntitySprite(entity);
+            continue;
+        }
 
+        if (identityMgr.getComponent(entity)->name == "ninjutsu_spell")
+        {
+            updateNinjutsuSpellEntitySprite(entity);
+            continue;
+        }
 
         updateEntitySprite(entity, dt);
     }
 
-
-
-
-    updateDebugDraw(); //Bỏ nếu k vẽ viền nữa
+    updateDebugDraw();  // Bỏ nếu k vẽ viền nữa
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    //AXLOG("Thời gian thực thi RenderSystem: %ld ms", duration);
+    // AXLOG("Thời gian thực thi RenderSystem: %ld ms", duration);
 }
 
 void RenderSystem::updateEntitySprite(Entity entity, float dt)
 {
-    auto sprite         = spriteMgr.getComponent(entity);
-    auto transform      = transformMgr.getComponent(entity);
-    auto animation      = animationMgr.getComponent(entity);
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto animation = animationMgr.getComponent(entity);
     if (!sprite || !sprite->gameSceneFrame || !transform)
         return;
 
@@ -233,7 +238,7 @@ void RenderSystem::updateEntitySprite(Entity entity, float dt)
                     animation->currentAction = ax::RepeatForever::create(animate);
                     animation->currentAction->setTag(tag);
                     sprite->gameSceneFrame->runAction(animation->currentAction);
-                    //AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
+                    // AXLOG("Started animation %s with tag %d for entity %u", anim.c_str(), tag, entity);
                 }
                 else
                 {
@@ -264,8 +269,6 @@ void RenderSystem::updateDebugDraw()
     }
 }
 
-
-
 void RenderSystem::onEntityDestroyed(Entity entity)
 {
     auto sprite = spriteMgr.getComponent(entity);
@@ -276,8 +279,7 @@ void RenderSystem::onEntityDestroyed(Entity entity)
     }
 }
 
-
-// Hàm set batch node cho sprite (chỉ dùng cho number)
+// Hàm set batch node cho sprite (chỉ dùng cho number và effect)
 void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type)
 {
     if (!sprite)
@@ -285,7 +287,7 @@ void RenderSystem::setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::st
         AXLOG("Error: Sprite is null in setSpriteBatchNodeForSprite");
         return;
     }
-    if (type == "number" || type == "hit_effect")
+    if (type == "number" || type == "hit_effect" || type == "explosion_effect")
     {
         numberBatchNode->addChild(sprite);
     }
@@ -392,6 +394,7 @@ void RenderSystem::updateKunaiEntitySprite(Entity entity)
     }
 }
 
+// Hình ảnh weapon big kunai (kiểu Conditional)
 void RenderSystem::updateBigKunaiEntitySprite(Entity entity)
 {
     auto sprite    = spriteMgr.getComponent(entity);
@@ -427,12 +430,12 @@ void RenderSystem::updateBigKunaiEntitySprite(Entity entity)
     }
 }
 
+// Hình ảnh weapon spinner (kiểu Conditional)
 void RenderSystem::updateSpinnerEntitySprite(Entity entity)
 {
     auto sprite    = spriteMgr.getComponent(entity);
     auto transform = transformMgr.getComponent(entity);
     auto cooldown  = cooldownMgr.getComponent(entity);
-
 
     sprite->gameSceneFrame->setScale(transform->scale);
     sprite->gameSceneFrame->setPosition(transform->x, transform->y);
@@ -468,5 +471,89 @@ void RenderSystem::updateSpinnerEntitySprite(Entity entity)
 
         // Chạy fade song song
         sprite->gameSceneFrame->runAction(fade);
+    }
+}
+
+// Hình ảnh weapon explosion kunai (kiểu Conditional)
+void RenderSystem::updateExplosionKunaiEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto hitbox    = hitboxMgr.getComponent(entity);
+
+    if (hitbox->size == ax::Size(0, 0))
+    {
+        sprite->gameSceneFrame->setOpacity(0);
+        return;
+    }
+
+    if (cooldown->cooldownTimer > cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(255);
+        sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+        auto angleRadians = std::atan2(vel->vy, -vel->vx);
+        // Chuyển sang độ và điều chỉnh
+        float angleDegrees = angleRadians * 180.0f / M_PI - 90.0f;
+
+        // Đảm bảo góc nằm trong khoảng [0, 360)
+        if (angleDegrees >= 360.0f)
+        {
+            angleDegrees -= 360.0f;
+        }
+        else if (angleDegrees < 0.0f)
+        {
+            angleDegrees += 360.0f;
+        }
+        sprite->gameSceneFrame->setRotation(angleDegrees);
+    }
+
+    if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(0);
+    }
+}
+
+// Hình ảnh weapon explosion kunai (kiểu Conditional)
+void RenderSystem::updateNinjutsuSpellEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+    auto cooldown  = cooldownMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto hitbox    = hitboxMgr.getComponent(entity);
+
+    if (hitbox->size == ax::Size(0, 0))
+    {
+        sprite->gameSceneFrame->setOpacity(0);
+        return;
+    }
+
+    if (cooldown->cooldownTimer > cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(255);
+        sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+
+        auto angleRadians = std::atan2(vel->vy, -vel->vx);
+        // Chuyển sang độ và điều chỉnh
+        float angleDegrees = angleRadians * 180.0f / M_PI - 90.0f;
+
+        // Đảm bảo góc nằm trong khoảng [0, 360)
+        if (angleDegrees >= 360.0f)
+        {
+            angleDegrees -= 360.0f;
+        }
+        else if (angleDegrees < 0.0f)
+        {
+            angleDegrees += 360.0f;
+        }
+        sprite->gameSceneFrame->setRotation(angleDegrees);
+    }
+
+    if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
+    {
+        sprite->gameSceneFrame->setOpacity(0);
     }
 }

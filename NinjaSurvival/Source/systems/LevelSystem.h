@@ -13,7 +13,6 @@ public:
     void init() override;
     void update(float dt) override;
 
-
     void increaseXP(float xp);
     float getCurrentXP() const { return currentXP; }
     float getNeededXP() const { return neededXP; }
@@ -24,8 +23,8 @@ public:
 
     std::unordered_map<std::string, int> upgradeGenerator(bool isLevelUp);
 
-    float shopXpGainBuff   = 0;
-    float inventXpGainBuff = 0;
+    float shopXpGainBuff   = 0.0;
+    float inventXpGainBuff = 0.0;
 
 private:
     float currentXP;
@@ -36,14 +35,12 @@ private:
     EntityManager& entityMgr;
     ComponentManager<WeaponInventoryComponent>& wiMgr;
 
-    std::vector<std::string> weapons = {"sword", "shuriken", "kunai", "big_kunai", "spinner"};
-    std::vector<std::string> buffs   = {"attack", "health", "speed", "xp_gain"};
-    std::vector<std::string> others  = {"coin", "heart"};
-
+    std::vector<std::string> weapons = {"sword", "shuriken", "kunai", "big_kunai", "spinner", "explosion_kunai", "ninjutsu_spell"};
+    std::vector<std::string> buffs   = {"attack", "health", "speed", "xp_gain", "pickup_range", "reduce_receive_damage", "coin_gain", "curse"};
+    std::vector<std::string> others = {"coin", "heart"};
 
     void levelUp();
     void chooseWeapon();
 };
-
 
 #endif  // !__LEVEL_SYSTEM_H__

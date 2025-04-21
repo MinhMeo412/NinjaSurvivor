@@ -8,22 +8,29 @@
 #include "Utils.h"
 
 WeaponMovementSystem::WeaponMovementSystem(EntityManager& em,
-                               ComponentManager<IdentityComponent>& im,
-                               ComponentManager<TransformComponent>& tm,
-                               ComponentManager<VelocityComponent>& vm,
-                               ComponentManager<AnimationComponent>& am,
-                               ComponentManager<HitboxComponent>& hm,
-                               ComponentManager<SpeedComponent>& spm)
-    : entityManager(em), identityMgr(im), transformMgr(tm), velocityMgr(vm), animationMgr(am), hitboxMgr(hm), speedMgr(spm)
+                                           ComponentManager<IdentityComponent>& im,
+                                           ComponentManager<TransformComponent>& tm,
+                                           ComponentManager<VelocityComponent>& vm,
+                                           ComponentManager<AnimationComponent>& am,
+                                           ComponentManager<HitboxComponent>& hm,
+                                           ComponentManager<SpeedComponent>& spm)
+    : entityManager(em)
+    , identityMgr(im)
+    , transformMgr(tm)
+    , velocityMgr(vm)
+    , animationMgr(am)
+    , hitboxMgr(hm)
+    , speedMgr(spm)
 {
     // Khai báo các kiểu di chuyển
-    movementStrategies["enemy_projectile_energy_ball"]  = [this](Entity e, float dt) { moveEnemyProjectile(e, dt); };
-    movementStrategies["weapon_melee_sword"]            = [this](Entity e, float dt) { moveSwordWeapon(e, dt); };
-    movementStrategies["weapon_melee_shuriken"]         = [this](Entity e, float dt) { moveShurikenWeapon(e, dt); };
-    movementStrategies["weapon_projectile_kunai"]       = [this](Entity e, float dt) { moveKunaiWeapon(e, dt); };
-    movementStrategies["weapon_projectile_big_kunai"]   = [this](Entity e, float dt) { moveBigKunaiWeapon(e, dt); };
+    movementStrategies["enemy_projectile_energy_ball"]      = [this](Entity e, float dt) { moveEnemyProjectile(e, dt); };
 
-
+    movementStrategies["weapon_melee_sword"]                = [this](Entity e, float dt) { moveSwordWeapon(e, dt); };
+    movementStrategies["weapon_melee_shuriken"]             = [this](Entity e, float dt) { moveShurikenWeapon(e, dt); };
+    movementStrategies["weapon_projectile_kunai"]           = [this](Entity e, float dt) { moveKunaiWeapon(e, dt); };
+    movementStrategies["weapon_projectile_big_kunai"]       = [this](Entity e, float dt) { moveBigKunaiWeapon(e, dt); };
+    movementStrategies["weapon_projectile_explosion_kunai"] = [this](Entity e, float dt) { moveExplosionKunaiWeapon(e, dt); };
+    movementStrategies["weapon_projectile_ninjutsu_spell"] = [this](Entity e, float dt) { moveExplosionKunaiWeapon(e, dt); };
 }
 
 void WeaponMovementSystem::init() {}
@@ -76,21 +83,25 @@ void WeaponMovementSystem::updateEntityMovement(Entity entity, float dt)
 ax::Vec2 WeaponMovementSystem::subSteppingHandle(Entity entity, float dt)
 {
     // Sub-stepping
-    ax::Vec2 currentPos = ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);  // Lấy vị trí hiện tại
-    ax::Vec2 moveStep   = ax::Vec2(velocityMgr.getComponent(entity)->vx, velocityMgr.getComponent(entity)->vy) * dt;  // Một bước di chuyển (Vec2) trong 1 frame
+    ax::Vec2 currentPos =
+        ax::Vec2(transformMgr.getComponent(entity)->x, transformMgr.getComponent(entity)->y);  // Lấy vị trí hiện tại
+    ax::Vec2 moveStep = ax::Vec2(velocityMgr.getComponent(entity)->vx, velocityMgr.getComponent(entity)->vy) *
+                        dt;  // Một bước di chuyển (Vec2) trong 1 frame
 
     // Thêm giới hạn tốc độ để bỏ tính toán sub stepping (giới hạn trong khoảng 500speed)
     /*
     float stepLength    = moveStep.length();                          // Tính số pixel di chuyển trong 1 frame
     ax::Size tileSize =
         SystemManager::getInstance()->getSystem<MapSystem>()->getTileSize();  // Lấy kích thước 1 ô trong tileMap(pixel)
-    
+
     if (stepLength > tileSize.width * 0.5f)
     {
         // Số bước nhỏ cần thực hiện trong 1 frame
-        // ceil làm phép chia luôn trả về kết quả >= 1 trừ khi tử số = 0 (làm tròn để số bước di chuyển luôn ít nhất là 1)
+        // ceil làm phép chia luôn trả về kết quả >= 1 trừ khi tử số = 0 (làm tròn để số bước di chuyển luôn ít nhất là
+    1)
         // Chia cho nửa tileSize để tránh một bước dài hơn 1 tileSize (tunneling)
-        int steps = std::min(3, static_cast<int>(std::ceil(stepLength / (tileSize.width * 0.5f))));  // Giới hạn tối đa 3 bước (giảm tính toán)
+        int steps = std::min(3, static_cast<int>(std::ceil(stepLength / (tileSize.width * 0.5f))));  // Giới hạn tối đa
+    3 bước (giảm tính toán)
 
         // Một bước nhỏ trong Tổng số bước cần thực hiện/frame
         // Đảm bảo luôn chia được kể cả khi không di chuyển (steps = 0)
@@ -114,15 +125,14 @@ ax::Vec2 WeaponMovementSystem::subSteppingHandle(Entity entity, float dt)
     }
     else
     {*/
-        // Di chuyển trực tiếp nếu vận tốc nhỏ
-        ax::Vec2 newPos = currentPos + moveStep;
-        newPos          = SystemManager::getInstance()->getSystem<CollisionSystem>()->resolvePosition(entity, newPos);
-        transformMgr.getComponent(entity)->x = newPos.x;
-        transformMgr.getComponent(entity)->y = newPos.y;
-        return newPos;
+    // Di chuyển trực tiếp nếu vận tốc nhỏ
+    ax::Vec2 newPos = currentPos + moveStep;
+    newPos          = SystemManager::getInstance()->getSystem<CollisionSystem>()->resolvePosition(entity, newPos);
+    transformMgr.getComponent(entity)->x = newPos.x;
+    transformMgr.getComponent(entity)->y = newPos.y;
+    return newPos;
     //}
 }
-
 
 // Enemy projectile
 void WeaponMovementSystem::moveEnemyProjectile(Entity entity, float dt)
@@ -134,12 +144,12 @@ void WeaponMovementSystem::moveEnemyProjectile(Entity entity, float dt)
     {
         return;
     }
-    
+
     transform->x += vel->vx * speed->speed * dt;
     transform->y += vel->vy * speed->speed * dt;
 }
 
-//Sword
+// Sword
 void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
 {
     auto transform = transformMgr.getComponent(entity);
@@ -155,14 +165,14 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
     // Lấy vị trí player
     Entity player        = spawnSystem->getPlayerEntity();
     auto playerTransform = transformMgr.getComponent(player);
-    auto playerVel = velocityMgr.getComponent(player);
+    auto playerVel       = velocityMgr.getComponent(player);
     if (!playerTransform)
         return;
 
     swordCountInFrame++;
-    float offsetX = 8.0 + hitbox->defaultSize.width/2;  // Khoảng cách từ nhân vật đến kiếm
+    float offsetX = 8.0 + hitbox->defaultSize.width / 2;  // Khoảng cách từ nhân vật đến kiếm
 
-    if (swordCountInFrame == 1) //Nhát chém thứ 1
+    if (swordCountInFrame == 1)  // Nhát chém thứ 1
     {
         if (playerVel->vx > 0)  // Sang phải
         {
@@ -186,8 +196,8 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
             }
         }
     }
-    
-    if (swordCountInFrame == 2) //Nhát chém thứ 2
+
+    if (swordCountInFrame == 2)  // Nhát chém thứ 2
     {
         if (playerVel->vx > 0)  // Sang phải (chém sau)
         {
@@ -215,7 +225,7 @@ void WeaponMovementSystem::moveSwordWeapon(Entity entity, float dt)
     transform->y = playerTransform->y;
 }
 
-//Shuriken
+// Shuriken
 void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
 {
     auto transform = transformMgr.getComponent(entity);
@@ -233,9 +243,9 @@ void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
     if (!playerTransform)
         return;
 
-    // Các thông số cho chuyển động tròn 
-    float radius             = hitbox->defaultSize.x * 2;      // Bán kính quỹ đạo
-    const float angularSpeed = 0.67f * 3.14159f; // Tốc độ góc (1 vòng/giây)
+    // Các thông số cho chuyển động tròn
+    float radius             = hitbox->defaultSize.x * 2;  // Bán kính quỹ đạo
+    const float angularSpeed = 0.67f * 3.14159f;           // Tốc độ góc (1 vòng/giây)
 
     // Cập nhật góc
     vel->vx += angularSpeed * dt;
@@ -253,7 +263,7 @@ void WeaponMovementSystem::moveShurikenWeapon(Entity entity, float dt)
     transform->y = newY;
 }
 
-//Kunai
+// Kunai
 void WeaponMovementSystem::moveKunaiWeapon(Entity entity, float dt)
 {
     auto transform = transformMgr.getComponent(entity);
@@ -285,7 +295,7 @@ void WeaponMovementSystem::recalculateShurikenAngles(const std::vector<Entity>& 
     }
 }
 
-//Big Kunai
+// Big Kunai
 void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
 {
     auto transform = transformMgr.getComponent(entity);
@@ -319,7 +329,7 @@ void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
     // Rìa trái || Rìa phải
     if (transform->x < (leftEdge + kunaiSize) && vel->vx < 0)
     {
-        vel->vx      = -vel->vx;  // Đảo ngược vận tốc x
+        vel->vx = -vel->vx;  // Đảo ngược vận tốc x
     }
     else if (transform->x > (rightEdge - kunaiSize) && vel->vx > 0)
     {
@@ -328,18 +338,18 @@ void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
     // Rìa trên || Rìa dưới
     if (transform->y > (topEdge - kunaiSize) && vel->vy > 0)
     {
-        vel->vy      = -vel->vy;  // Đảo ngược vận tốc y
+        vel->vy = -vel->vy;  // Đảo ngược vận tốc y
     }
     else if (transform->y < (bottomEdge + kunaiSize) && vel->vy < 0)
     {
-        vel->vy      = -vel->vy;  // Đảo ngược vận tốc y
+        vel->vy = -vel->vy;  // Đảo ngược vận tốc y
     }
 }
 
-//Spinner
+// Spinner
 void WeaponMovementSystem::moveSpinnerWeapon(Entity entity, float dt)
 {
-    auto spawnSystem = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    auto spawnSystem     = SystemManager::getInstance()->getSystem<SpawnSystem>();
     auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
     if (!spawnSystem || !collisionSystem)
         return;
@@ -349,10 +359,10 @@ void WeaponMovementSystem::moveSpinnerWeapon(Entity entity, float dt)
     auto transform = transformMgr.getComponent(entity);
     if (!enemiesInView.empty())
     {
-        int index = Utils::getRandomInt(0, enemiesInView.size() - 1);
+        int index     = Utils::getRandomInt(0, enemiesInView.size() - 1);
         auto enemyPos = transformMgr.getComponent(enemiesInView[index]);
-        transform->x   = enemyPos->x;
-        transform->y   = enemyPos->y;
+        transform->x  = enemyPos->x + Utils::getRandomFloat(-10, 10);
+        transform->y  = enemyPos->y + Utils::getRandomFloat(-10, 10);
     }
     else
     {
@@ -361,3 +371,24 @@ void WeaponMovementSystem::moveSpinnerWeapon(Entity entity, float dt)
     }
 }
 
+// Explosion kunai
+void WeaponMovementSystem::moveExplosionKunaiWeapon(Entity entity, float dt)
+{
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto speed     = speedMgr.getComponent(entity);
+
+    transform->x += vel->vx * speed->speed * dt;
+    transform->y += vel->vy * speed->speed * dt;
+}
+
+// Ninjutsu Spell
+void WeaponMovementSystem::moveNinjutsuSpellWeapon(Entity entity, float dt)
+{
+    auto transform = transformMgr.getComponent(entity);
+    auto vel       = velocityMgr.getComponent(entity);
+    auto speed     = speedMgr.getComponent(entity);
+
+    transform->x += vel->vx * speed->speed * dt;
+    transform->y += vel->vy * speed->speed * dt;
+}

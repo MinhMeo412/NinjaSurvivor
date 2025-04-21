@@ -7,6 +7,7 @@
 #include "MovementSystem.h"
 #include "ItemSystem.h"
 #include "DamageTextSystem.h"
+#include "CollisionSystem.h"
 #include "WeaponSystem.h"
 #include "CleanupSystem.h"
 #include "gameUI/GameOverGamePauseLayer.h"
@@ -39,7 +40,7 @@ void HealthSystem::init()
                 ax::Vec2 uiLayerPos = gameScene->getUILayer()->getPosition();
                 pauseLayer->setPosition(uiLayerPos);
                 gameScene->addChild(pauseLayer, 1000);  // Thêm layer
-                //gameScene->unscheduleUpdate();          // Dừng update
+                // gameScene->unscheduleUpdate();          // Dừng update
                 SystemManager::getInstance()->setUpdateState(false);
             }
         }
@@ -67,12 +68,12 @@ void HealthSystem::update(float dt)
 
 void HealthSystem::handleCollision(Entity e1, Entity e2)
 {
-    //Kiểm tra identity component và lấy type (nếu có)
+    // Kiểm tra identity component và lấy type (nếu có)
     auto id1 = identityMgr.getComponent(e1);
     auto id2 = identityMgr.getComponent(e2);
     if (!id1 || !id2)
         return;
-    std::string type1 = id1->type; //Type1 luôn là player
+    std::string type1 = id1->type;  // Type1 luôn là player
     std::string type2 = id2->type;
 
     // Xử lý va chạm giữa enemy/enemy_projectile/boss với player
@@ -116,14 +117,25 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
                         {
                             float damage = calculatePlayerDamage(attack);
                             applyDamage(e, damage);
-                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
-                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(e);
+
                             AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
-                                    pair.first, health->currentHealth);
+                                  pair.first, health->currentHealth);
+
+                            // Gây dame xung quanh nếu là explosion_kunai
+                            if (identityMgr.getComponent(pair.first)->name == "explosion_kunai")
+                            {
+                                SystemManager::getInstance()->getSystem<DamageTextSystem>()->showExplosionEffect(e);
+                                auto nearbyEnemies = SystemManager::getInstance()->getSystem<CollisionSystem>()->getNearbyEnemyEntities(e);
+                                for (auto& enemy : nearbyEnemies)
+                                {
+                                    applyDamage(enemy, damage);
+                                }
+                            }
 
                             if (durationMgr.getComponent(pair.first))
                             {
-                                durationMgr.getComponent(pair.first)->timer[e] = 1.0f;  // Thêm vào map tgian chờ gây dame lần tiếp theo là 1s
+                                durationMgr.getComponent(pair.first)->timer[e] =
+                                    1.0f;  // Thêm vào map tgian chờ gây dame lần tiếp theo là 1s
                             }
                         }
                     }
@@ -135,14 +147,13 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
     this->damagedEnemy.clear();
 }
 
-//Công thức tính dame
+// Công thức tính dame
 float HealthSystem::calculateEnemyDamage(const AttackComponent* attack)
 {
-    return (attack->baseDamage) * (1.0f + attack->damageMultiplier);
+    return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1 * damageReceiveMultiplier);
 }
 float HealthSystem::calculatePlayerDamage(const AttackComponent* attack)
 {
-    attackBuffMultiplier = SystemManager::getInstance()->getSystem<WeaponSystem>()->attackBuff;
     return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1.0f + attackBuffMultiplier) * Utils::getRandomFloat(1.0, 1.3);
 }
 
@@ -151,6 +162,10 @@ void HealthSystem::applyDamage(Entity target, float damage)
     if (auto health = healthMgr.getComponent(target))
     {
         health->currentHealth -= damage;
+
+        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, target);
+        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(target);
+
         AXLOG("%d : %f", target, health->currentHealth);
         if (health->currentHealth <= 0.0f)
         {
@@ -184,7 +199,7 @@ void HealthSystem::applyDamage(Entity target, float damage)
                 }
             }
             SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(target);  // Hủy entity nếu hết máu
-            //AXLOG("Entity %u destroyed due to zero health", target);
+            // AXLOG("Entity %u destroyed due to zero health", target);
         }
     }
 }
@@ -222,14 +237,15 @@ void HealthSystem::applyBombDamageToAll(float damage)
                         auto layer = dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer());
                         layer->increaseEnemyKillCount();
                     }
-                    SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(entity);  // Hủy entity nếu hết máu
+                    SystemManager::getInstance()->getSystem<CleanupSystem>()->destroyEntity(
+                        entity);  // Hủy entity nếu hết máu
                 }
             }
         }
     }
 }
 
-//Kiểm tra cooldown xem có được phép gây sát thương không
+// Kiểm tra cooldown xem có được phép gây sát thương không
 bool HealthSystem::canDealDamage(Entity attacker)
 {
     if (auto cooldown = cooldownMgr.getComponent(attacker))
@@ -248,7 +264,7 @@ bool HealthSystem::canWeaponDealDame(Entity weapon, Entity target)
     return true;  // Nếu không có DurationComponent, mặc định cho phép gây sát thương
 }
 
-//Vào trạng thái cooldown
+// Vào trạng thái cooldown
 void HealthSystem::resetCooldown(Entity attacker)
 {
     if (auto cooldown = cooldownMgr.getComponent(attacker))
@@ -271,7 +287,7 @@ float HealthSystem::getPlayerCurrentHealth() const
     return healthMgr.getComponent(playerEntity)->currentHealth;
 }
 
-void HealthSystem::setPlayerCurrentHealth(float hpRecover) 
+void HealthSystem::setPlayerCurrentHealth(float hpRecover)
 {
     Entity playerEntity = SystemManager::getInstance()->getSystem<SpawnSystem>()->getPlayerEntity();
 

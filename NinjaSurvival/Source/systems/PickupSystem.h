@@ -13,6 +13,8 @@ public:
     void init() override;
     void update(float dt) override;
     void applyPickupEffect(std::string& itemName);
+    void increasePickupMultiplier(float value) { pickupMultiplier += value; };
+    void setCoinMulltiplier(float value) { coinMultiplier += value; };
 
 private:
     EntityManager& entityManager;
@@ -22,9 +24,10 @@ private:
     std::unordered_set<std::string> pickupItems;
     std::unordered_set<std::string> touchItems;
 
-    float PICKUP_RANGE = 0.0f;
-    float TOUCH_RANGE  = 0.0f;
-    float coinMultiplier = 0.0f;
+    float PICKUP_RANGE     = 0.0f;
+    float TOUCH_RANGE      = 0.0f;
+    float pickupMultiplier = 0.0f;
+    float coinMultiplier   = 0.0f;
 
     void applyHeart();
     void applyCoin();

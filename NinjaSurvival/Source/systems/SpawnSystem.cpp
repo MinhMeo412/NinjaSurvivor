@@ -10,13 +10,13 @@
 #include "MovementSystem.h"
 #include "gameUI/GameSceneUILayer.h"
 
-
 void SpawnSystem::init()
 {
     spawnRate = 1 + ShopSystem::getInstance()->getShopBuff("SpawnRate");
     // Khởi tạo entity factory
     factory = std::make_unique<EntityFactory>(entityManager, identityMgr, transformMgr, spriteMgr, animationMgr,
-                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr, weaponInventoryMgr, durationMgr);
+                                              velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr,
+                                              weaponInventoryMgr, durationMgr);
 
     std::string characterName = GameData::getInstance()->getSelectedCharacter();
     if (characterName.empty())
@@ -47,14 +47,13 @@ void SpawnSystem::init()
             livingEnemyCount = 0;
     };
 
-
-    //Test
+    // Test
     int gridSize = 2;
     int spacing  = 16;
     for (int i = 0; i < 4; i++)
     {
         Entity entity = factory->createEntity("enemy", "Octopus");
-        ax::Vec2 spawnPos(800,1000);
+        ax::Vec2 spawnPos(800, 1000);
         if (auto transform = transformMgr.getComponent(entity))
         {
             int row      = i / gridSize;  // chỉ số hàng
@@ -73,9 +72,8 @@ void SpawnSystem::init()
         }
     }
 
-    //spawnBoss(10);
+    // spawnBoss(10);
 }
-
 
 void SpawnSystem::update(float dt)
 {
@@ -91,7 +89,7 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    //if (spawnTimer >= spawnInterval)
+    // if (spawnTimer >= spawnInterval)
     //{
     //    spawnEnemies(elapsedTime);
     //    spawnBoss(elapsedTime);
@@ -206,14 +204,14 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
 
 void SpawnSystem::spawnBoss(float elapsedTime)
 {
-    //if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
-    { 
+    // if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
+    {
         auto playerTransform = transformMgr.getComponent(playerEntity);
         if (!playerTransform)
             return;
         ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
 
-        std::string bossName = nameList[Utils::getRandomInt(0, nameList.size()-1)];
+        std::string bossName = nameList[Utils::getRandomInt(0, nameList.size() - 1)];
         Entity boss          = spawnEntity("boss", bossName, playerPos);
 
         bossSpawnCount++;
@@ -222,19 +220,19 @@ void SpawnSystem::spawnBoss(float elapsedTime)
             auto health = healthMgr.getComponent(boss);
             auto speed  = speedMgr.getComponent(boss);
             auto attack = attackMgr.getComponent(boss);
-            if (health) // +50% hp mỗi lần spawn
+            if (health)  // +50% hp mỗi lần spawn
             {
                 health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
                 health->currentHealth = health->maxHealth;
             }
-            if (speed) // +20% speed mỗi lần spawn
+            if (speed)  // +20% speed mỗi lần spawn
             {
                 float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
                 speed->speed         = std::min(speedCalculate, 135.0f);
             }
-            if (attack)// +20% attack mỗi lần spawn
+            if (attack)  // +20% attack mỗi lần spawn
             {
-                attack->baseDamage   = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                attack->baseDamage = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
             }
             isBossActive = true;
 
@@ -274,23 +272,23 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
         }
         if (type != "boss")
         {
-            auto health = healthMgr.getComponent(entity);
-            auto speed  = speedMgr.getComponent(entity);
-            auto attack = attackMgr.getComponent(entity);
+            auto health   = healthMgr.getComponent(entity);
+            auto speed    = speedMgr.getComponent(entity);
+            auto attack   = attackMgr.getComponent(entity);
             auto identity = identityMgr.getComponent(entity);
 
-            int statsMultiplier = elapsedTime / 30; //30s tăng stats enemy 1 lần
+            int statsMultiplier = elapsedTime / 30;  // 30s tăng stats enemy 1 lần
 
-            health->maxHealth     = health->maxHealth * (1 + (0.5 * statsMultiplier)); //50% mỗi lần tăng
+            health->maxHealth     = health->maxHealth * (1 + (0.5 * statsMultiplier));  // 50% mỗi lần tăng
             health->currentHealth = health->maxHealth;
 
-            attack->baseDamage = attack->baseDamage * (1 + (0.1 * statsMultiplier)); //10% mỗi lần tăng
+            attack->baseDamage = attack->baseDamage * (1 + (0.1 * statsMultiplier));  // 10% mỗi lần tăng
 
             if (identity->name != "Octopus")
             {
-                float speedMultiplier   = std::min(1 + (0.05 * statsMultiplier),2.5); //5% mỗi lần tăng
-                float speedCalculate    = speed->speed * speedMultiplier;
-                speed->speed            = std::min(speedCalculate, 500.0f);
+                float speedMultiplier = std::min(1 + (0.05 * statsMultiplier), 2.5);  // 5% mỗi lần tăng
+                float speedCalculate  = speed->speed * speedMultiplier;
+                speed->speed          = std::min(speedCalculate, 500.0f);
             }
             // Thêm entity vào batch để cập nhật di chuyển (cần xóa khi chết)
             SystemManager::getInstance()->getSystem<MovementSystem>()->assignEntityToBatch(entity);
@@ -305,13 +303,13 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
 
 ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition)
 {
-    const float VIEW_WIDTH   = 360.0f;   // Chiều rộng view
+    const float VIEW_WIDTH   = 360.0f;  // Chiều rộng view
     const float VIEW_HEIGHT  = 640.0f;  // Chiều cao view
-    const float SPAWN_MARGIN = 200.0f;   // Khoảng cách spawn bên ngoài viền
+    const float SPAWN_MARGIN = 200.0f;  // Khoảng cách spawn bên ngoài viền
 
     // Kích thước vùng spawn (view + margin hai bên)
-    const float spawnWidth  = VIEW_WIDTH + 2 * SPAWN_MARGIN;  
-    const float spawnHeight = VIEW_HEIGHT + 2 * SPAWN_MARGIN; 
+    const float spawnWidth  = VIEW_WIDTH + 2 * SPAWN_MARGIN;
+    const float spawnHeight = VIEW_HEIGHT + 2 * SPAWN_MARGIN;
 
     // Tọa độ vùng view (không spawn trong này)
     float viewMinX = playerPosition.x - VIEW_WIDTH / 2;   // player.x - 180
@@ -368,12 +366,11 @@ ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& play
     }
 
     // Nếu không tìm thấy vị trí hợp lệ, chọn vị trí gần viền map
-    //AXLOG("Warning: Could not find valid spawn position, using fallback.");
+    // AXLOG("Warning: Could not find valid spawn position, using fallback.");
     spawnPosition.x = std::max(0.0f, std::min(viewMinX - SPAWN_MARGIN, mapWidth));
     spawnPosition.y = std::max(0.0f, std::min(viewMinY - SPAWN_MARGIN, mapHeight));
     return spawnPosition;
 }
-
 
 bool SpawnSystem::isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition)
 {

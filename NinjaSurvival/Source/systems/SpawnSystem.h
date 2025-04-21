@@ -11,18 +11,18 @@ class SpawnSystem : public System
 {
 public:
     SpawnSystem(EntityManager& em,
-                             ComponentManager<IdentityComponent>& im,
-                             ComponentManager<TransformComponent>& tm,
-                             ComponentManager<SpriteComponent>& sm,
-                             ComponentManager<AnimationComponent>& am,
-                             ComponentManager<VelocityComponent>& vm,
-                             ComponentManager<HitboxComponent>& hm,
-                             ComponentManager<HealthComponent>& hem,
-                             ComponentManager<AttackComponent>& atm,
-                             ComponentManager<CooldownComponent>& cdm,
-                             ComponentManager<SpeedComponent>& spm,
-                             ComponentManager<WeaponInventoryComponent>& wim,
-                             ComponentManager<DurationComponent>& drm)
+                ComponentManager<IdentityComponent>& im,
+                ComponentManager<TransformComponent>& tm,
+                ComponentManager<SpriteComponent>& sm,
+                ComponentManager<AnimationComponent>& am,
+                ComponentManager<VelocityComponent>& vm,
+                ComponentManager<HitboxComponent>& hm,
+                ComponentManager<HealthComponent>& hem,
+                ComponentManager<AttackComponent>& atm,
+                ComponentManager<CooldownComponent>& cdm,
+                ComponentManager<SpeedComponent>& spm,
+                ComponentManager<WeaponInventoryComponent>& wim,
+                ComponentManager<DurationComponent>& drm)
         : entityManager(em)
         , identityMgr(im)
         , transformMgr(tm)
@@ -37,7 +37,7 @@ public:
         , weaponInventoryMgr(wim)
         , durationMgr(drm)
     {}
-    
+
     void init() override;
     void update(float dt) override;
 
@@ -49,7 +49,7 @@ public:
     // Lấy vị trí world của player
     ax::Vec2 getPlayerPosition() const;
 
-    //Re-position cho moveSystem
+    // Re-position cho moveSystem
     ax::Vec2 getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition);
 
     void isBossAlive(bool isBossActive);
@@ -70,7 +70,6 @@ private:
     ComponentManager<WeaponInventoryComponent>& weaponInventoryMgr;
     ComponentManager<DurationComponent>& durationMgr;
 
-
     std::unique_ptr<EntityFactory> factory;
 
     Entity playerEntity  = 0;
@@ -88,12 +87,8 @@ private:
     void spawnBoss(float elapsedTime);
 
     Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& playerPosition);
-    
 
     bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
 };
-
-
-
 
 #endif  // __SPAWN_SYSTEM_H__

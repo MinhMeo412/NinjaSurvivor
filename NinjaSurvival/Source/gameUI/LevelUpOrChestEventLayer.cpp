@@ -136,12 +136,12 @@ void LevelUpOrChestEventLayer::createUI()
         });
         
         // Tạo văn bản hiển thị
-        std::string displayText = upgrade.first;
+        std::string displayText;
         if (upgrade.second > 0)
         {
-            displayText += " - level " + std::to_string(upgrade.second);
+            displayText += WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
         }
-        displayText += "\n" + WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
+        
 
         auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
         itemLabel->setDimensions(250, 0);  // Hơi nhỏ hơn 300 để có lề
