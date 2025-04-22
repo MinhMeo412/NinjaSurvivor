@@ -81,10 +81,15 @@ private:
     bool isBossActive    = false;
     int bossSpawnCount   = 0;
     std::vector<Entity> bossList;
-    std::vector<std::string> nameList = {"Giant Slime", "Giant Bamboo"};
+    std::vector<std::string> bossNameList1 = {"Giant Slime", "Giant Bamboo", "Racoon"};
+    std::vector<std::string> bossNameList2 = {"Cyclop", "Flame", "Tengu"};
 
-    void spawnEnemies(float elapsedTime);
-    void spawnBoss(float elapsedTime);
+    bool mapSnowField = false;
+
+    void spawnEnemies_m1(float elapsedTime);
+    void spawnBoss_m1(float elapsedTime);
+    void spawnEnemies_m2(float elapsedTime);
+    void spawnBoss_m2(float elapsedTime);
 
     Entity spawnEntity(const std::string& type, const std::string& name, const ax::Vec2& playerPosition);
 

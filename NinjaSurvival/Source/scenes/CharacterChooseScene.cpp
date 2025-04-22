@@ -86,7 +86,7 @@ void CharacterChooseScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("UI/coin.png");
+    auto coinSprite = Sprite::create("UI/coinUI.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");
@@ -274,24 +274,58 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
                                                     : "Health: N/A");
     speedLabel->setString(templ.speed.has_value() ? StringUtils::format("Speed: %.0f", templ.speed->speed)
                                                   : "Speed: N/A");
-    weaponLabel->setString(
-        templ.weaponInventory.has_value() && !templ.weaponInventory->weapons.empty() &&
-                !templ.weaponInventory->weapons[0].first.empty()
-            ? StringUtils::format("Default Weapon: %s", templ.weaponInventory->weapons[0].first.c_str())
-            : "Default Weapon: None");
 
+    std::string mainWpName;
     std::string desWeapon;
     if (templ.weaponInventory.has_value() && !templ.weaponInventory->weapons.empty() &&
         !templ.weaponInventory->weapons[0].first.empty())
     {
+        if (templ.weaponInventory->weapons[0].first == "sword")
+        {
+            mainWpName = "Katana";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "shuriken")
+        {
+            mainWpName = "Shuriken Storm";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "kunai")
+        {
+            mainWpName = "Kunai";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "big_kunai")
+        {
+            mainWpName = "Bounce Kunai";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "spinner")
+        {
+            mainWpName = "Death Spinner";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "explosion_kunai")
+        {
+            mainWpName = "Explosive Shot";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "ninjutsu_spell")
+        {
+            mainWpName = "Ninjutsu Spell";
+        }
+        else if (templ.weaponInventory->weapons[0].first == "lightning_scroll")
+        {
+            mainWpName = "Lightning Strike";
+        }
+
+        weaponLabel->setString(StringUtils::format("Main Weapon: %s", mainWpName.c_str()));
         desWeapon = templ.weaponInventory->weapons[0].first;
+    }
+    else
+    {
+        weaponLabel->setString("Main Weapon: None");
     }
 
     auto weaponDesLabel = dynamic_cast<Label*>(weaponDesScrollView->getChildByName("weaponDesLabel"));
     if (weaponDesLabel)
     {
         std::string description =
-            !desWeapon.empty() ? "Information:\n" + WeaponUpgradeUtils::getDescription(desWeapon, 1) : "None";
+            !desWeapon.empty() ? "Description:\n" + WeaponUpgradeUtils::getDescription(desWeapon, 0) : "None";
         weaponDesLabel->setString(description);
 
         auto labelSize  = weaponDesLabel->getContentSize();

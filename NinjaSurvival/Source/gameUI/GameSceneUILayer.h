@@ -18,8 +18,15 @@ public:
     int getCollectedCoin() { return static_cast<int>(collectedCoin); }
     int getKillCount() { return static_cast<int>(enemyKillCount); }
 
+    void updateInventoryUI();
 
 private:
+    ax::Vec2 visibleSize;
+    ax::Vec2 origin;
+    ax::Rect safeArea;
+    ax::Vec2 safeOrigin;
+
+
     ax::SpriteBatchNode* batchNode = nullptr;
     ax::MenuItemImage* pauseButton;
 
@@ -30,11 +37,13 @@ private:
     ax::Sprite* xpBarUnder;
 
     float collectedCoin = 0;
+    ax::Sprite* coinSprite;
     ax::Label* coinLabel = nullptr;
 
     ax::Label* levelLabel = nullptr;
 
     int enemyKillCount             = 0;
+    ax::Sprite* skullSprite;
     ax::Label* enemyKillCountLabel = nullptr;
 
     void updateHPBar();
@@ -42,7 +51,6 @@ private:
     void updateCoinLabel();
     void updateLevelLabel();
     void updateEnemyKillCountLabel();
-    void updateInventoryUI();
     void gamePauseCallback(ax::Object* sender);
 };
 

@@ -26,11 +26,11 @@
     <key>spriteOffset</key>
     <string>{0,0}</string>
     <key>spriteSize</key>
-    <string>{21,18}</string>
+    <string>{10,12}</string>
     <key>spriteSourceSize</key>
-    <string>{21,18}</string>
+    <string>{10,12}</string>
     <key>textureRect</key>
-    <string>{{0,74},{21,18}}</string>
+    <string>{{14,74},{10,12}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -45,7 +45,7 @@
     <key>spriteSourceSize</key>
     <string>{14,14}</string>
     <key>textureRect</key>
-    <string>{{32,80},{12,12}}</string>
+    <string>{{0,74},{12,12}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -75,7 +75,7 @@
     <key>spriteSourceSize</key>
     <string>{6,13}</string>
     <key>textureRect</key>
-    <string>{{23,74},{6,13}}</string>
+    <string>{{64,46},{6,13}}</string>
     <key>textureRotated</key>
     <false/>
    </dict>
@@ -220,7 +220,7 @@
    <key>format</key>
    <integer>3</integer>
    <key>size</key>
-   <string>{89,94}</string>
+   <string>{89,88}</string>
    <key>textureFileName</key>
    <string>weapon.png</string>
   </dict>

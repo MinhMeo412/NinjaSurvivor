@@ -22,6 +22,7 @@ public:
     // Hàm tính lại góc cho tất cả shuriken
     void recalculateShurikenAngles(const std::vector<Entity>& shurikenList);
     void moveSpinnerWeapon(Entity entity, float dt);
+    void moveLightningScrollWeapon(Entity entity, float dt);
 
 private:
     EntityManager& entityManager;

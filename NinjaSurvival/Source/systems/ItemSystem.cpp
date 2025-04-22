@@ -14,40 +14,51 @@ void ItemSystem::init()
                                               velocityMgr, hitboxMgr, healthMgr, attackMgr, cooldownMgr, speedMgr,
                                               weaponInventoryMgr, durationMgr);
 
-    int num = 1000;
-    for (int i = 0; i < num; i++) 
+    std::string mapName = GameData::getInstance()->getSelectedMap();
+    if (mapName == "Snow Field")
     {
-        Entity item = factory->createEntity("item", "chest");
-        if (auto spriteComp = spriteMgr.getComponent(item))
-        {
-            spriteComp->initializeSprite();
-        }
-        auto transform = transformMgr.getComponent(item);
-        if (!transform)
-            continue;
-        // Tính toán vị trí dựa trên số thứ tự i
-        float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-        float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-        transform->x  = 1000 + offsetX;
-        transform->y  = 1000 + offsetY;
+        mapSnowField = true;
+        AXLOG("Map Snow Field");
+    }
+    else
+    {
+        AXLOG("Map Plains");
     }
 
-    for (int i = 0; i < num; i++)
-    {
-          Entity item = factory->createEntity("item", "greenGem");
-          if (auto spriteComp = spriteMgr.getComponent(item))
-          {
-              spriteComp->initializeSprite();
-          }
-          auto transform = transformMgr.getComponent(item);
-          if (!transform)
-              continue;
-          // Tính toán vị trí dựa trên số thứ tự i
-          float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
-          float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
-          transform->x = 1000 + offsetX;
-          transform->y = 1500 + offsetY;
-    }
+    //int num = 1000;
+    //for (int i = 0; i < num; i++) 
+    //{
+    //    Entity item = factory->createEntity("item", "chest");
+    //    if (auto spriteComp = spriteMgr.getComponent(item))
+    //    {
+    //        spriteComp->initializeSprite();
+    //    }
+    //    auto transform = transformMgr.getComponent(item);
+    //    if (!transform)
+    //        continue;
+    //    // Tính toán vị trí dựa trên số thứ tự i
+    //    float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //    float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //    transform->x  = 1000 + offsetX;
+    //    transform->y  = 1000 + offsetY;
+    //}
+
+    //for (int i = 0; i < num; i++)
+    //{
+    //      Entity item = factory->createEntity("item", "greenGem");
+    //      if (auto spriteComp = spriteMgr.getComponent(item))
+    //      {
+    //          spriteComp->initializeSprite();
+    //      }
+    //      auto transform = transformMgr.getComponent(item);
+    //      if (!transform)
+    //          continue;
+    //      // Tính toán vị trí dựa trên số thứ tự i
+    //      float offsetX = (i % 50) * 20.0f;  // Mỗi hàng có 50 coin
+    //      float offsetY = (i / 50) * 20.0f;  // Xuống hàng sau mỗi 50 coin
+    //      transform->x = 1000 + offsetX;
+    //      transform->y = 1500 + offsetY;
+    //}
 
     // Entity item = factory->createEntity("item", "magnet");
     // if (auto spriteComp = spriteMgr.getComponent(item))
@@ -128,7 +139,15 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
                 spawnMultipleItems(position, "redGem", 10, 20, 1.0f);
         }
 
-        spawnMultipleItems(position, "coin", 10, 20, 1.0f);
+        if (mapSnowField)
+        {
+            spawnMultipleItems(position, "coin", 20, 40, 1.0f);
+        }
+        else
+        {
+            spawnMultipleItems(position, "coin", 10, 20, 1.0f);
+        }
+        
         spawnMultipleItems(position, "heart", 1, 3, 1.0f);
         spawnSingleItem(position, "chest", 1.0f);  // 100% Chest
     }
@@ -145,7 +164,15 @@ void ItemSystem::spawnItemAtDeath(Entity deadEntity, bool isBoss)
                 spawnSingleItem(position, "redGem", 1.0f);
         }
 
-        spawnSingleItem(position, "coin", 0.15f);   // 15% coin
+        if (mapSnowField)
+        {
+            spawnSingleItem(position, "coin", 0.45f);  // 45% coin
+        }
+        else
+        {
+            spawnSingleItem(position, "coin", 0.15f);   // 15% coin
+        }
+        
         spawnSingleItem(position, "heart", 0.01f);  // 1% heart
         spawnSingleItem(position, "bomb", 0.005f);  // 0.5% bomb
     }

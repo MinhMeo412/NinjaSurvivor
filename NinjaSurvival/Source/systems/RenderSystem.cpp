@@ -41,13 +41,11 @@ void RenderSystem::init()
     }
 
     enemyBatchNode = ax::SpriteBatchNode::create("Entity/Enemy/enemy.png");
-    // bossBatchNode       = ax::SpriteBatchNode::create("Entity/Boss/boss.png");
     itemBatchNode   = ax::SpriteBatchNode::create("Entity/Items/items.png");
     weaponBatchNode = ax::SpriteBatchNode::create("Entity/Weapons/weapon.png");
-    numberBatchNode = ax::SpriteBatchNode::create("number.png");
+    numberBatchNode = ax::SpriteBatchNode::create("Effects/number.png");
 
     scene->addChild(enemyBatchNode, 3);
-    // scene->addChild(bossBatchNode, 4);
     scene->addChild(itemBatchNode, 2);
     scene->addChild(weaponBatchNode, 5);
     scene->addChild(numberBatchNode, 6);
@@ -183,10 +181,15 @@ void RenderSystem::update(float dt)
             continue;
         }
 
+        if (identityMgr.getComponent(entity)->name == "lightning_scroll")
+        {
+            continue;
+        }
+
         updateEntitySprite(entity, dt);
     }
 
-    updateDebugDraw();  // Bỏ nếu k vẽ viền nữa
+    //updateDebugDraw();  // Bỏ nếu k vẽ viền nữa
 
     auto end      = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -516,7 +519,7 @@ void RenderSystem::updateExplosionKunaiEntitySprite(Entity entity)
     }
 }
 
-// Hình ảnh weapon explosion kunai (kiểu Conditional)
+// Hình ảnh weapon ninjutsu spell (kiểu Conditional)
 void RenderSystem::updateNinjutsuSpellEntitySprite(Entity entity)
 {
     auto sprite    = spriteMgr.getComponent(entity);
@@ -555,5 +558,65 @@ void RenderSystem::updateNinjutsuSpellEntitySprite(Entity entity)
     if (cooldown->cooldownTimer <= cooldown->cooldownDuration)
     {
         sprite->gameSceneFrame->setOpacity(0);
+    }
+}
+
+// Hình ảnh weapon lightning scroll (kiểu OneShot)
+void RenderSystem::updateLightningScrollEntitySprite(Entity entity)
+{
+    auto sprite    = spriteMgr.getComponent(entity);
+    auto animation = animationMgr.getComponent(entity);
+    auto transform = transformMgr.getComponent(entity);
+
+    sprite->gameSceneFrame->setPosition(transform->x, transform->y);
+    sprite->gameSceneFrame->setAnchorPoint(ax::Vec2(0.5,0.25));
+    sprite->gameSceneFrame->setScale(transform->scale);
+    sprite->gameSceneFrame->setOpacity(255);
+
+    if (animation && !animation->currentState.empty())
+    {
+        std::string entityName;
+        if (auto identity = identityMgr.getComponent(entity))
+        {
+            entityName = identity->name;
+        }
+        std::string anim = entityName + animation->currentState;
+        int tag          = 0;
+
+        if (animation->currentState == "idle")
+            tag = AnimationComponent::ACTION_TAG_IDLE;
+
+        if (tag != 0)
+        {
+            auto cachedAnim = ax::AnimationCache::getInstance()->getAnimation(anim);
+            if (cachedAnim)
+            {
+                auto animate = ax::Animate::create(cachedAnim);
+                if (animate)
+                {
+                    if (animation->currentAction)
+                    {
+                        sprite->gameSceneFrame->stopAction(animation->currentAction);
+                    }
+                    // Chạy animation chỉ một lần
+                    animation->currentAction = animate;
+                    animation->currentAction->setTag(tag);
+
+                    // Tạo sequence để chạy animation và fade out
+                    auto fadeOut  = ax::FadeOut::create(0.3f);  // Fade out
+                    auto sequence = ax::Sequence::create(animate, fadeOut, nullptr);
+
+                    sprite->gameSceneFrame->runAction(sequence);
+                }
+                else
+                {
+                    AXLOG("Warning: Failed to create Animate for %s, entity %u", anim.c_str(), entity);
+                }
+            }
+            else
+            {
+                AXLOG("Warning: Animation %s not found in cache for entity %u", anim.c_str(), entity);
+            }
+        }
     }
 }

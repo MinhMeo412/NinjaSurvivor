@@ -34,6 +34,10 @@ MovementSystem::MovementSystem(EntityManager& em,
     movementStrategies["enemy_Slime"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     movementStrategies["enemy_Bear"]    = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     movementStrategies["enemy_Snake"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Blue Bat"]= [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Eye"]     = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Kappa"]   = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
+    movementStrategies["enemy_Reptile"] = [this](Entity e, float dt) { moveMeleeEnemy(e, dt); };
     // Enemy_Octopus
     movementStrategies["enemy_Octopus"] = [this](Entity e, float dt) { moveRangedEnemy(e, dt); };
     // Boss

@@ -86,7 +86,7 @@ void ShopScene::menuUISetup()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("UI/coin.png");
+    auto coinSprite = Sprite::create("UI/coinUI.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");

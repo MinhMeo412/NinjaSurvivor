@@ -70,6 +70,8 @@ private:
     bool isSpawnOnCollisionTile(Entity entity, const ax::Vec2& spawnPosition);
     void setRandomMapPosition(Entity entity);
 
+    bool mapSnowField = false;
+
     std::mt19937 rng{std::random_device{}()};              
     std::uniform_real_distribution<float> dist{0.0f, 1.0f};
 

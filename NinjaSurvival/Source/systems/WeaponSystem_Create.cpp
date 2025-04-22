@@ -310,3 +310,43 @@ Entity WeaponSystem::createNinjutsuSpell(std::string weaponName, bool alreadyHav
 
     return weapon;
 }
+
+// Lightning scroll
+Entity WeaponSystem::createLightningScroll(std::string weaponName, bool alreadyHave)
+{
+    if (!alreadyHave)
+    {
+        auto weaponInventory = weaponInventoryMgr.getComponent(playerEntity);
+        auto it              = std::find_if(weaponInventory->weapons.begin(), weaponInventory->weapons.end(),
+                                            [](auto& p) { return p.first == ""; });
+        if (it != weaponInventory->weapons.end())
+        {
+            it->first  = "lightning_scroll";
+            it->second = 1;
+        }
+    }
+    const auto& templ = GameData::getInstance()->getEntityTemplates();
+    std::string type  = GameData::getInstance()->findTypeByName(templ, weaponName);
+
+    Entity weapon = factory->createEntity(type, weaponName);
+
+    auto sprite = spriteMgr.getComponent(weapon);
+    if (sprite)
+    {
+        sprite->initializeSprite();
+    }
+
+    auto animation = animationMgr.getComponent(weapon);
+    if (animation)
+    {
+        animation->initializeAnimations();
+        animation->currentState = "idle";
+    }
+
+    auto cooldown           = cooldownMgr.getComponent(weapon);
+    cooldown->cooldownTimer = 1.0f;
+
+    lightningScrollList.push_back(weapon);
+
+    return weapon;
+}

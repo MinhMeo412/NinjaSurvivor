@@ -14,37 +14,57 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 150.0,
+                "speed": 70.0,
                 "hitbox": {
-                    "width": 16.0,
-                    "height": 16.0
+                    "width": 20.0,
+                    "height": 20.0
                 },
                 "health": {
                     "maxHealth": 50.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/Deidara.plist",
-                    "gameSceneFrame": "./Deidara1"
+                    "gameSceneFrame": "./DeidaraIdle"
                 },
                 "animation": {
                     "frames": {
                         "moveDown": [
-                            "./Deidara2",
-                            "./Deidara3"
+                            "./DeidaraDown1",
+                            "./DeidaraDown2",
+                            "./DeidaraDown3",
+                            "./DeidaraDown4",
+                            "./DeidaraDown5",
+                            "./DeidaraDown6",
+                            "./DeidaraDown7",
+                            "./DeidaraDown8"
                         ],
                         "moveRight": [
-                            "./Deidara5"
+                            "./DeidaraRight1",
+                            "./DeidaraRight2",
+                            "./DeidaraRight3",
+                            "./DeidaraRight4",
+                            "./DeidaraRight5",
+                            "./DeidaraRight6",
+                            "./DeidaraRight7",
+                            "./DeidaraRight8"
                         ],
                         "moveLeft": [
-                            "./Deidara4"
+                            "./DeidaraLeft1",
+                            "./DeidaraLeft2",
+                            "./DeidaraLeft3",
+                            "./DeidaraLeft4",
+                            "./DeidaraLeft5",
+                            "./DeidaraLeft6",
+                            "./DeidaraLeft7",
+                            "./DeidaraLeft8"
                         ],
                         "idle": [
-                            "./Deidara1"
+                            "./DeidaraIdle"
                         ]
                     },
-                    "frameDuration": 0.2
+                    "frameDuration": 0.1
                 },
-                "weapon": "shuriken"
+                "weapon": "ninjutsu_spell"
             }
         },
         {
@@ -145,7 +165,7 @@
                     },
                     "frameDuration": 0.2
                 },
-                "weapon": "ninjutsu_spell"
+                "weapon": "shuriken"
             }
         },
         {
@@ -375,6 +395,232 @@
             }
         },
         {
+            "type": "enemy",
+            "name": "Blue Bat",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 200.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 8.0
+                },
+                "attack": {
+                    "baseDamage": 3.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./BlueBatDown1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./BlueBatDown1",
+                            "./BlueBatDown2",
+                            "./BlueBatDown3"
+                        ],
+                        "moveRight": [
+                            "./BlueBatDown1",
+                            "./BlueBatDown2",
+                            "./BlueBatDown3"
+                        ],
+                        "moveLeft": [
+                            "./BlueBatDown1",
+                            "./BlueBatDown2",
+                            "./BlueBatDown3"
+                        ],
+                        "idle": [
+                            "./BlueBatDown1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Eye",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 125.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 11.0
+                },
+                "attack": {
+                    "baseDamage": 7.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./Eyedown1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Eyedown1",
+                            "./Eyedown2",
+                            "./Eyedown3",
+                            "./Eyedown4"
+                        ],
+                        "moveRight": [
+                            "./Eyedown1",
+                            "./Eyedown2",
+                            "./Eyedown3",
+                            "./Eyedown4"
+                        ],
+                        "moveLeft": [
+                            "./Eyedown1",
+                            "./Eyedown2",
+                            "./Eyedown3",
+                            "./Eyedown4"
+                        ],
+                        "idle": [
+                            "./Eyedown1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Kappa",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 125.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 11.0
+                },
+                "attack": {
+                    "baseDamage": 7.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./KappaDown1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./KappaDown1",
+                            "./KappaDown2",
+                            "./KappaDown3",
+                            "./KappaDown4"
+                        ],
+                        "moveRight": [
+                            "./KappaDown1",
+                            "./KappaDown2",
+                            "./KappaDown3",
+                            "./KappaDown4"
+                        ],
+                        "moveLeft": [
+                            "./KappaDown1",
+                            "./KappaDown2",
+                            "./KappaDown3",
+                            "./KappaDown4"
+                        ],
+                        "idle": [
+                            "./KappaDown1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "enemy",
+            "name": "Reptile",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 100.0,
+                "hitbox": {
+                    "width": 16.0,
+                    "height": 16.0
+                },
+                "health": {
+                    "maxHealth": 22.0
+                },
+                "attack": {
+                    "baseDamage": 10.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Enemy/enemy.plist",
+                    "gameSceneFrame": "./ReptileDown1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./ReptileDown1",
+                            "./ReptileDown2",
+                            "./ReptileDown3"
+                        ],
+                        "moveRight": [
+                            "./ReptileDown1",
+                            "./ReptileDown2",
+                            "./ReptileDown3"
+                        ],
+                        "moveLeft": [
+                            "./ReptileDown1",
+                            "./ReptileDown2",
+                            "./ReptileDown3"
+                        ],
+                        "idle": [
+                            "./ReptileDown1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
             "type": "boss",
             "name": "Giant Slime",
             "available": true,
@@ -387,7 +633,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 25.0,
+                "speed": 30.0,
                 "hitbox": {
                     "width": 52.0,
                     "height": 32.0
@@ -396,7 +642,7 @@
                     "maxHealth": 600.0
                 },
                 "attack": {
-                    "baseDamage": 20.0,
+                    "baseDamage": 10.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,
@@ -428,11 +674,7 @@
                             "./giant_slime_idle4"
                         ],
                         "idle": [
-                            "./giant_slime_idle0",
-                            "./giant_slime_idle1",
-                            "./giant_slime_idle2",
-                            "./giant_slime_idle3",
-                            "./giant_slime_idle4"
+                            "./giant_slime_idle0"
                         ]
                     },
                     "frameDuration": 0.1
@@ -452,13 +694,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 25.0,
+                "speed": 20.0,
                 "hitbox": {
                     "width": 52.0,
                     "height": 62.0
                 },
                 "health": {
-                    "maxHealth": 600.0
+                    "maxHealth": 800.0
                 },
                 "attack": {
                     "baseDamage": 20.0,
@@ -514,21 +756,257 @@
                             "./giant_bamboo11"
                         ],
                         "idle": [
-                            "./giant_bamboo0",
-                            "./giant_bamboo1",
-                            "./giant_bamboo2",
-                            "./giant_bamboo3",
-                            "./giant_bamboo4",
-                            "./giant_bamboo5",
-                            "./giant_bamboo6",
-                            "./giant_bamboo7",
-                            "./giant_bamboo8",
-                            "./giant_bamboo9",
-                            "./giant_bamboo10",
-                            "./giant_bamboo11"
+                            "./giant_bamboo0"
                         ]
                     },
                     "frameDuration": 0.08
+                }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Cyclop",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 30.0,
+                "hitbox": {
+                    "width": 37.0,
+                    "height": 37.0
+                },
+                "health": {
+                    "maxHealth": 900.0
+                },
+                "attack": {
+                    "baseDamage": 20.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/cyclop.plist",
+                    "gameSceneFrame": "./Cyclop1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Cyclop2",
+                            "./Cyclop3",
+                            "./Cyclop4",
+                            "./Cyclop5"
+                        ],
+                        "moveRight": [
+                            "./Cyclop2",
+                            "./Cyclop3",
+                            "./Cyclop4",
+                            "./Cyclop5"
+                        ],
+                        "moveLeft": [
+                            "./Cyclop2",
+                            "./Cyclop3",
+                            "./Cyclop4",
+                            "./Cyclop5"
+                        ],
+                        "idle": [
+                            "./Cyclop1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Racoon",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 25.0,
+                "hitbox": {
+                    "width": 55.0,
+                    "height": 50.0
+                },
+                "health": {
+                    "maxHealth": 700.0
+                },
+                "attack": {
+                    "baseDamage": 15.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/racoon.plist",
+                    "gameSceneFrame": "./Racoon1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Racoon1",
+                            "./Racoon2",
+                            "./Racoon3",
+                            "./Racoon4",
+                            "./Racoon5",
+                            "./Racoon6"
+                        ],
+                        "moveRight": [
+                            "./Racoon1",
+                            "./Racoon2",
+                            "./Racoon3",
+                            "./Racoon4",
+                            "./Racoon5",
+                            "./Racoon6"
+                        ],
+                        "moveLeft": [
+                            "./Racoon1",
+                            "./Racoon2",
+                            "./Racoon3",
+                            "./Racoon4",
+                            "./Racoon5",
+                            "./Racoon6"
+                        ],
+                        "idle": [
+                            "./Racoon1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Flame",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 35.0,
+                "hitbox": {
+                    "width": 40.0,
+                    "height": 45.0
+                },
+                "health": {
+                    "maxHealth": 800.0
+                },
+                "attack": {
+                    "baseDamage": 15.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/flame.plist",
+                    "gameSceneFrame": "./Flame1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Flame1",
+                            "./Flame2",
+                            "./Flame3",
+                            "./Flame4",
+                            "./Flame5"
+                        ],
+                        "moveRight": [
+                            "./Flame1",
+                            "./Flame2",
+                            "./Flame3",
+                            "./Flame4",
+                            "./Flame5"
+                        ],
+                        "moveLeft": [
+                            "./Flame1",
+                            "./Flame2",
+                            "./Flame3",
+                            "./Flame4",
+                            "./Flame5"
+                        ],
+                        "idle": [
+                            "./Flame1"
+                        ]
+                    },
+                    "frameDuration": 0.2
+                }
+            }
+        },
+        {
+            "type": "boss",
+            "name": "Tengu",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "velocity": {
+                    "vx": 0.0,
+                    "vy": 0.0
+                },
+                "speed": 25.0,
+                "hitbox": {
+                    "width": 50.0,
+                    "height": 35.0
+                },
+                "health": {
+                    "maxHealth": 1000.0
+                },
+                "attack": {
+                    "baseDamage": 25.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 1.0,
+                "sprite": {
+                    "plist": "Entity/Boss/tengu.plist",
+                    "gameSceneFrame": "./Tengu1"
+                },
+                "animation": {
+                    "frames": {
+                        "moveDown": [
+                            "./Tengu1",
+                            "./Tengu2",
+                            "./Tengu3",
+                            "./Tengu4",
+                            "./Tengu5",
+                            "./Tengu6"
+                        ],
+                        "moveRight": [
+                            "./Tengu1",
+                            "./Tengu2",
+                            "./Tengu3",
+                            "./Tengu4",
+                            "./Tengu5",
+                            "./Tengu6"
+                        ],
+                        "moveLeft": [
+                            "./Tengu1",
+                            "./Tengu2",
+                            "./Tengu3",
+                            "./Tengu4",
+                            "./Tengu5",
+                            "./Tengu6"
+                        ],
+                        "idle": [
+                            "./Tengu1"
+                        ]
+                    },
+                    "frameDuration": 0.2
                 }
             }
         },
@@ -885,6 +1363,43 @@
                 },
                 "cooldown": 1.0,
                 "duration": 1.0
+            }
+        },
+        {
+            "type": "weapon_melee",
+            "name": "lightning_scroll",
+            "available": true,
+            "components": {
+                "transform": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sprite": {
+                    "plist": "Entity/Weapons/weapon.plist",
+                    "gameSceneFrame": "./lighting_n0"
+                },
+                "animation": {
+                    "frames": {
+                        "idle": [
+                            "./lighting_n0",
+                            "./lighting_n1",
+                            "./lighting_n2",
+                            "./lighting_n3",
+                            "./lighting_n4",
+                            "./lighting_n5"
+                        ]
+                    },
+                    "frameDuration": 0.1
+                },
+                "hitbox": {
+                    "width": 32.0,
+                    "height": 16.0
+                },
+                "attack": {
+                    "baseDamage": 20.0,
+                    "damageMultiplier": 0.0
+                },
+                "cooldown": 5.0
             }
         }
     ]

@@ -12,6 +12,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Katana";
         switch (level)
         {
+        case 0:
+            description = "Slash to faced direction";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Slash to faced direction";
             return description;
@@ -36,6 +39,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Shuriken Storm";
         switch (level)
         {
+        case 0:
+            description = "Create a shuriken moves around character";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Create a shuriken moves around character";
             return description;
@@ -60,6 +66,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Kunai";
         switch (level)
         {
+        case 0:
+            description = "Throw kunai at move direction";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Throw kunai at move direction";
             return description;
@@ -81,9 +90,12 @@ std::string getDescription(const std::string& name, int level)
     }
     else if (name == "big_kunai")
     {
-        description = "Another Kunai";
+        description = "Bounce Kunai";
         switch (level)
         {
+        case 0:
+            description = "Throw a big kunai at random direction and bounce off the wall";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Throw a big kunai at random direction and bounce off the wall";
             return description;
@@ -108,6 +120,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Death Spinner";
         switch (level)
         {
+        case 0:
+            description = "Summon deadly shuriken at random enemy and deals damage";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Summon deadly shuriken at random enemy and deals damage";
             return description;
@@ -132,6 +147,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Explosive Shot";
         switch (level)
         {
+        case 0:
+            description = "Throw kunai to random enemy and explode on impact";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Throw kunai to random enemy and explode on impact";
             return description;
@@ -156,6 +174,9 @@ std::string getDescription(const std::string& name, int level)
         description = "Ninjutsu Spell";
         switch (level)
         {
+        case 0:
+            description = "Shot at random nearest enemy";
+            return description;
         case 1:
             description += std::string(" - Level 1") + "\n" + "Shot at random nearest enemy";
             return description;
@@ -175,7 +196,33 @@ std::string getDescription(const std::string& name, int level)
             return "No description available";
         }
     }
-
+    else if (name == "lightning_scroll")
+    {
+        description = "Lightning Strike";
+        switch (level)
+        {
+        case 0:
+            description = "Summon lightning at random enemy and deals AOE damage";
+            return description;
+        case 1:
+            description += std::string(" - Level 1") + "\n" + "Summon lightning at random enemy and deals AOE damage";
+            return description;
+        case 2:
+            description += std::string(" - Level 2") + "\n" + "Reduce CD";
+            return description;
+        case 3:
+            description += std::string(" - Level 3") + "\n" + "Add 1 Lightning Strike & Reduce CD";
+            return description;
+        case 4:
+            description += std::string(" - Level 4") + "\n" + "Add 1 Lightning Strike & Reduce CD";
+            return description;
+        case 5:
+            description += std::string(" - Level 5") + "\n" + "Increase damage & Size";
+            return description;
+        default:
+            return "No description available";
+        }
+    }
 
     // Buffs
     else if (name == "attack")
@@ -373,20 +420,24 @@ std::string getDescription(const std::string& name, int level)
     //Other items
     else if (name == "coin")
     {
+        description = "Coin";
         switch (level)
         {
         case 0:
-            return "Get 25 coin";
+            description += std::string("\n") + "Get 25 coin";
+            return description;
         default:
             return "No description available";
         }
     }
     else if (name == "heart")
     {
+        description = "Heal";
         switch (level)
         {
         case 0:
-            return "Recover 25 HP";
+            description += std::string("\n") + "Recover 25 HP";
+            return description;
         default:
             return "No description available";
         }

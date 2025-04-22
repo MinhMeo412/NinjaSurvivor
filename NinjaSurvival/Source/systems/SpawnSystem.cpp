@@ -40,6 +40,17 @@ void SpawnSystem::init()
         animationComp->currentState = "idle";
     }
 
+    std::string mapName = GameData::getInstance()->getSelectedMap();
+    if (mapName == "Snow Field")
+    {
+        mapSnowField = true;
+        AXLOG("Map Snow Field");
+    }
+    else
+    {
+        AXLOG("Map Plains");
+    }
+
     // Thiết lập callback
     onEnemyDeath = [this]() {
         livingEnemyCount--;
@@ -48,31 +59,29 @@ void SpawnSystem::init()
     };
 
     // Test
-    int gridSize = 2;
-    int spacing  = 16;
-    for (int i = 0; i < 4; i++)
-    {
-        Entity entity = factory->createEntity("enemy", "Octopus");
-        ax::Vec2 spawnPos(800, 1000);
-        if (auto transform = transformMgr.getComponent(entity))
-        {
-            int row      = i / gridSize;  // chỉ số hàng
-            int col      = i % gridSize;  // chỉ số cột
-            transform->x = spawnPos.x + (col * spacing);
-            transform->y = spawnPos.y + (row * spacing);
-        }
-        if (auto spriteComp = spriteMgr.getComponent(entity))
-        {
-            spriteComp->initializeSprite();
-        }
-        if (auto animationComp = animationMgr.getComponent(entity))
-        {
-            animationComp->initializeAnimations();
-            animationComp->currentState = "idle";
-        }
-    }
-
-    // spawnBoss(10);
+    //int gridSize = 2;
+    //int spacing  = 16;
+    //for (int i = 0; i < 4; i++)
+    //{
+    //    Entity entity = factory->createEntity("enemy", "Octopus");
+    //    ax::Vec2 spawnPos(800, 1000);
+    //    if (auto transform = transformMgr.getComponent(entity))
+    //    {
+    //        int row      = i / gridSize;  // chỉ số hàng
+    //        int col      = i % gridSize;  // chỉ số cột
+    //        transform->x = spawnPos.x + (col * spacing);
+    //        transform->y = spawnPos.y + (row * spacing);
+    //    }
+    //    if (auto spriteComp = spriteMgr.getComponent(entity))
+    //    {
+    //        spriteComp->initializeSprite();
+    //    }
+    //    if (auto animationComp = animationMgr.getComponent(entity))
+    //    {
+    //        animationComp->initializeAnimations();
+    //        animationComp->currentState = "idle";
+    //    }
+    //}
 }
 
 void SpawnSystem::update(float dt)
@@ -89,15 +98,23 @@ void SpawnSystem::update(float dt)
     float elapsedTime = timeSystem->getElapsedTime();
 
     // Spawn enemy mỗi spawnInterval = 2s
-    // if (spawnTimer >= spawnInterval)
-    //{
-    //    spawnEnemies(elapsedTime);
-    //    spawnBoss(elapsedTime);
-    //    spawnTimer = 0.0f;  // Reset timer
-    //}
+    if (spawnTimer >= spawnInterval)
+    {
+        if (!mapSnowField)
+        {
+            spawnEnemies_m1(elapsedTime);
+            spawnBoss_m1(elapsedTime);
+        }
+        else
+        {
+            spawnEnemies_m2(elapsedTime);
+            spawnBoss_m2(elapsedTime);
+        }
+        spawnTimer = 0.0f;  // Reset timer
+    }
 }
 
-void SpawnSystem::spawnEnemies(float elapsedTime)
+void SpawnSystem::spawnEnemies_m1(float elapsedTime)
 {
     int numEnemies;  // Số enemy spawn
     int minute = elapsedTime / 60;
@@ -202,16 +219,118 @@ void SpawnSystem::spawnEnemies(float elapsedTime)
     }
 }
 
-void SpawnSystem::spawnBoss(float elapsedTime)
+void SpawnSystem::spawnEnemies_m2(float elapsedTime)
 {
-    // if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
+    int numEnemies;  // Số enemy spawn
+    int minute = elapsedTime / 60;
+    numEnemies = (4 + minute) * spawnRate;
+
+    // Giới hạn spawn
+    if (livingEnemyCount < maxEnemies)
+    {
+        numEnemies = std::min(numEnemies, maxEnemies - livingEnemyCount);  // Chỉ spawn tối đa đủ số max
+    }
+    else if (livingEnemyCount >= maxEnemies)
+    {
+        numEnemies = 0;  // Không spawn nữa
+    }
+
+    // Điều chỉnh tỷ lệ spawn khi boss xuất hiện (hoặc cho = 0 để ko spawn)
+    float spawnRateMultiplier = isBossActive ? 0.5f : 1.0f;
+    numEnemies                = static_cast<int>(numEnemies * spawnRateMultiplier);
+
+    // Tỷ lệ spawn từng loại quái
+    float batRatio = 0.0, eyeRatio = 0.0, kappaRatio = 0.0, reptileRatio = 0.0;
+    if (elapsedTime < 180)  // 0-3 phút
+    {
+        kappaRatio = 0.5f;
+        eyeRatio   = 0.5f;
+    }
+    else if (elapsedTime < 420)  // 3-7 phút
+    {
+        eyeRatio   = 0.3f;
+        kappaRatio = 0.3f;
+        batRatio     = 0.2f;
+        reptileRatio = 0.2f;
+    }
+    else if (elapsedTime < 600)  // 7-10 phút
+    {
+        eyeRatio     = 0.25f;
+        kappaRatio   = 0.25f;
+        batRatio     = 0.15f;
+        reptileRatio = 0.35f;
+    }
+    else if (elapsedTime < 840)  // 10-14 phút
+    {
+        batRatio     = 0.25f;
+        kappaRatio   = 0.25f;
+        reptileRatio = 0.5f;
+    }
+    else  // >14 phút
+    {
+        reptileRatio = 1.0f;
+    }
+
+    // Lấy vị trí player
+    auto playerTransform = transformMgr.getComponent(playerEntity);
+    if (!playerTransform)
+        return;
+    ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
+
+    for (int i = 0; i < numEnemies; i++)
+    {
+        float randVal = static_cast<float>(rand()) / RAND_MAX;  // Số ngẫu nhiên từ 0.0 - 1.0
+        Entity enemy;
+
+        // Tính tỷ lệ tích lũy để xác định loại enemy
+        float cumulativeRatio = 0.0f;
+        if (randVal < (cumulativeRatio += eyeRatio))
+        {
+            enemy = spawnEntity("enemy", "Eye", playerPos);
+        }
+        else if (randVal < (cumulativeRatio += kappaRatio))
+        {
+            enemy = spawnEntity("enemy", "Kappa", playerPos);
+        }
+        else if (randVal < (cumulativeRatio += batRatio))
+        {
+            enemy = spawnEntity("enemy", "Blue Bat", playerPos);
+        }
+        else if (randVal < (cumulativeRatio += reptileRatio))
+        {
+            enemy = spawnEntity("enemy", "Reptile", playerPos);
+        }
+        else
+        {
+            // khác
+            enemy = spawnEntity("enemy", "Reptile", playerPos);
+        }
+
+        if (isBossActive)
+        {
+            if (auto health = healthMgr.getComponent(enemy))
+            {
+                health->maxHealth *= 3.0f;
+                health->currentHealth = health->maxHealth;
+                auto speed   = speedMgr.getComponent(enemy);
+                speed->speed = std::min(speed->speed * 1.5f, 500.0f);
+            }
+        }
+
+        livingEnemyCount++;  // Tăng số lượng enemy sống
+    }
+}
+
+void SpawnSystem::spawnBoss_m1(float elapsedTime)
+{
+    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
     {
         auto playerTransform = transformMgr.getComponent(playerEntity);
         if (!playerTransform)
             return;
         ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
 
-        std::string bossName = nameList[Utils::getRandomInt(0, nameList.size() - 1)];
+        std::string bossName = bossNameList1[Utils::getRandomInt(0, bossNameList1.size() - 1)];
         Entity boss          = spawnEntity("boss", bossName, playerPos);
 
         bossSpawnCount++;
@@ -238,10 +357,50 @@ void SpawnSystem::spawnBoss(float elapsedTime)
 
             bossList.push_back(boss);
         }
+        // Gọi cảnh báo boss
+        dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
     }
+}
 
-    // Gọi cảnh báo boss
-    dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
+void SpawnSystem::spawnBoss_m2(float elapsedTime)
+{
+    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0)  // Mỗi 3 phút
+    {
+        auto playerTransform = transformMgr.getComponent(playerEntity);
+        if (!playerTransform)
+            return;
+        ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
+
+        std::string bossName = bossNameList2[Utils::getRandomInt(0, bossNameList2.size() - 1)];
+        Entity boss          = spawnEntity("boss", bossName, playerPos);
+
+        bossSpawnCount++;
+        if (boss)
+        {
+            auto health = healthMgr.getComponent(boss);
+            auto speed  = speedMgr.getComponent(boss);
+            auto attack = attackMgr.getComponent(boss);
+            if (health)  // +50% hp mỗi lần spawn
+            {
+                health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
+                health->currentHealth = health->maxHealth;
+            }
+            if (speed)  // +20% speed mỗi lần spawn
+            {
+                float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                speed->speed         = std::min(speedCalculate, 135.0f);
+            }
+            if (attack)  // +20% attack mỗi lần spawn
+            {
+                attack->baseDamage = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
+            }
+            isBossActive = true;
+
+            bossList.push_back(boss);
+        }
+        // Gọi cảnh báo boss
+        dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
+    }
 }
 
 void SpawnSystem::isBossAlive(bool isBossActive)

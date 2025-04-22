@@ -523,8 +523,19 @@ void WeaponSystem::upgradeNinjutsuSpell(std::string weaponName, int level)
         //auto stAttack   = attackMgr.getComponent(inventNinjutsuSpell);
 
         cooldown->cooldownDuration = stCooldown->cooldownDuration;
-        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.15;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
         //attack->baseDamage         = stAttack->baseDamage;
+
+        int n = 0;
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.1;
+            cooldown->cooldownTimer = stCooldown->cooldownTimer;
+            cooldown->cooldownTimer += n * 0.15;
+            n++;
+        }
 
         break;
     }
@@ -541,13 +552,17 @@ void WeaponSystem::upgradeNinjutsuSpell(std::string weaponName, int level)
         auto stCooldown = cooldownMgr.getComponent(inventNinjutsuSpell);
 
         cooldown->cooldownDuration = stCooldown->cooldownDuration;
-        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.3;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
 
+        int n = 0;
         for (auto ninjutsuSpell : ninjutsuSpellList)
         {
             // Giảm cooldown
             auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
             cooldown->cooldownDuration -= 0.1;
+            cooldown->cooldownTimer = stCooldown->cooldownTimer;
+            cooldown->cooldownTimer += n * 0.15;
+            n++;
         }
 
         break;
@@ -565,13 +580,17 @@ void WeaponSystem::upgradeNinjutsuSpell(std::string weaponName, int level)
         auto stCooldown = cooldownMgr.getComponent(inventNinjutsuSpell);
 
         cooldown->cooldownDuration = stCooldown->cooldownDuration;
-        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.45;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer;
 
+        int n = 0;
         for (auto ninjutsuSpell : ninjutsuSpellList)
         {
             // Giảm cooldown
             auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
             cooldown->cooldownDuration -= 0.1;
+            cooldown->cooldownTimer = stCooldown->cooldownTimer;
+            cooldown->cooldownTimer += n * 0.15;
+            n++;
         }
 
         break;
@@ -586,6 +605,93 @@ void WeaponSystem::upgradeNinjutsuSpell(std::string weaponName, int level)
             // Giảm cooldown
             auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
             cooldown->cooldownDuration -= 0.1;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+// Lightning Scroll
+void WeaponSystem::upgradeLightningScroll(std::string weaponName, int level)
+{
+    if (weaponName != "lightning_scroll")
+        return;
+
+    switch (level)
+    {
+    case 2:
+    {
+        for (auto lightningScroll : lightningScrollList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(lightningScroll);
+            cooldown->cooldownDuration -= 0.5;
+        }
+
+        break;
+    }
+    case 3:
+    {
+        // Thêm 1 spell
+        auto inventLightningScroll = lightningScrollList[0];
+        auto it                  = createWeapon.find(weaponName);
+        auto newLightningScroll    = it->second(weaponName, true);
+        weaponPool.push_back(newLightningScroll);
+
+        auto cooldown = cooldownMgr.getComponent(newLightningScroll);
+
+        auto stCooldown = cooldownMgr.getComponent(inventLightningScroll);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.3;
+
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.5;
+        }
+
+        break;
+    }
+    case 4:
+    {
+        // Thêm 1 spell
+        auto inventLightningScroll = lightningScrollList[0];
+        auto it                    = createWeapon.find(weaponName);
+        auto newLightningScroll    = it->second(weaponName, true);
+        weaponPool.push_back(newLightningScroll);
+
+        auto cooldown = cooldownMgr.getComponent(newLightningScroll);
+
+        auto stCooldown = cooldownMgr.getComponent(inventLightningScroll);
+
+        cooldown->cooldownDuration = stCooldown->cooldownDuration;
+        cooldown->cooldownTimer    = stCooldown->cooldownTimer + 0.6;
+
+        for (auto ninjutsuSpell : ninjutsuSpellList)
+        {
+            // Giảm cooldown
+            auto cooldown = cooldownMgr.getComponent(ninjutsuSpell);
+            cooldown->cooldownDuration -= 0.5;
+        }
+
+        break;
+    }
+    case 5:
+    {
+        for (auto lightningScroll : lightningScrollList)
+        {
+            // Tăng dame
+            auto attack = attackMgr.getComponent(lightningScroll);
+            attack->baseDamage += 5.0;
+            // Tăng size
+            auto transform = transformMgr.getComponent(lightningScroll);
+            transform->scale *= 1.5;
+            auto hitbox = hitboxMgr.getComponent(lightningScroll);
+            hitbox->defaultSize *= 1.5;
         }
         break;
     }
