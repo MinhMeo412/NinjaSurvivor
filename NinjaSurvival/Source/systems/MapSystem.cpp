@@ -337,6 +337,8 @@ std::vector<Vec2> MapSystem::getQuadrantChunks(const std::string& quadrant, cons
 
 void MapSystem::drawCollisionOutline(Chunk& chunk)
 {
+    return;
+
     if (!chunk.tiledMap)
         return;  // Không có tiledMap thì bỏ qua
 

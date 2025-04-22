@@ -63,6 +63,10 @@ private:
     int shopDataVersion = 0;  // Theo dõi thay đổi dữ liệu
     std::string readFileContent(const std::string& filename);
     std::optional<int> pendingRerollCount;
+
+    void updateCost(std::string name, int level);
+
+    ShopData* findShopItem(std::vector<ShopData>& shopData, const std::string& type, const std::string& name);
 };
 
 #endif

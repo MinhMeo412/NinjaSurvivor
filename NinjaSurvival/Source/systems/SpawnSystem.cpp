@@ -438,10 +438,10 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
 
             int statsMultiplier = elapsedTime / 30;  // 30s tăng stats enemy 1 lần
 
-            health->maxHealth     = health->maxHealth * (1 + (0.5 * statsMultiplier));  // 50% mỗi lần tăng
+            health->maxHealth     = health->maxHealth * (1 + (0.3 * statsMultiplier));  // 30% mỗi lần tăng
             health->currentHealth = health->maxHealth;
 
-            attack->baseDamage = attack->baseDamage * (1 + (0.1 * statsMultiplier));  // 10% mỗi lần tăng
+            attack->baseDamage = attack->baseDamage * (1 + (0.05 * statsMultiplier));  // 5% mỗi lần tăng
 
             if (identity->name != "Octopus")
             {
