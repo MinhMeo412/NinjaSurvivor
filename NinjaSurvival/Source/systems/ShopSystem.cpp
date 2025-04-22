@@ -85,13 +85,13 @@ bool ShopSystem::createSaveGame()
         {"Coin", "", false, std::nullopt, 100000.0f, std::nullopt, std::nullopt, std::nullopt, std::nullopt},
         {"Stat", "Health", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Health: max 10 level, +10% mỗi level
         {"Stat", "Attack", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},          // Attack: max 10 level, +10% mỗi level
-        {"Stat", "Speed", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},            // Speed: max 5 level, +10% mỗi level
-        {"Stat", "XPGain", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},          // XP Gain: max 5 level, +10% mỗi level
+        {"Stat", "Speed", false, 0, 0.0f, 100, 5, 0.1f, 0.1f},            // Speed: max 5 level, +10% mỗi level
+        {"Stat", "XPGain", false, 0, 0.0f, 100, 5, 0.1f, 0.1f},          // XP Gain: max 5 level, +10% mỗi level
         {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f, 0.1f},        // Coin Gain: max 10 level, +10% mỗi level
-        {"Stat", "RerollWeapon", false, 0, 0.0f, 50, 3, 0.0f, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
-        {"Stat", "ReduceCooldown", false, 0, 0.0f, 50, 5, 0.1f, 0.05f},  // Reduce Cooldown: max 5 level, +5% mỗi level
-        {"Stat", "SpawnRate", false, 0, 0.0f, 50, 5, 0.1f, 0.1f},       // Spawn Rate: max 10 level, +10% mỗi level
-        {"Stat", "LootRange", false, 0, 0.0f, 50, 10, 0.1f, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
+        {"Stat", "RerollWeapon", false, 0, 0.0f, 100, 3, 0.0f, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
+        {"Stat", "ReduceCooldown", false, 0, 0.0f, 100, 5, 0.1f, 0.05f},  // Reduce Cooldown: max 5 level, +5% mỗi level
+        {"Stat", "SpawnRate", false, 0, 0.0f, 100, 5, 0.1f, 0.1f},       // Spawn Rate: max 5 level, +10% mỗi level
+        {"Stat", "LootRange", false, 0, 0.0f, 100, 10, 0.1f, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
         {"entities", "Ninja", true, std::nullopt, std::nullopt, 0, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Master", false, std::nullopt, std::nullopt, 200, std::nullopt, std::nullopt, std::nullopt},
         {"entities", "Deidara", false, std::nullopt, std::nullopt, 400, std::nullopt, std::nullopt, std::nullopt},
@@ -207,12 +207,8 @@ bool ShopSystem::upgradeStat(const std::string& name)
                 data.levelValue = data.level.value() * data.valueIncrement.value();
             }
 
-            // Cập nhật cost (trừ RerollWeapon)
-            if (data.name != "RerollWeapon")
-            {
-                int currentCost = data.cost.value();
-                data.cost       = static_cast<int>(currentCost * (1.0f + data.valueIncrease.value()));
-            }
+            // Cập nhật cost
+            updateCost(data.name, data.level.value());
 
             // Lưu và đồng bộ
             shopDataVersion++;
@@ -226,6 +222,217 @@ bool ShopSystem::upgradeStat(const std::string& name)
     }
     AXLOG("Không tìm thấy chỉ số %s", name.c_str());
     return false;
+}
+
+ShopData* ShopSystem::findShopItem(std::vector<ShopData>& shopData, const std::string& type, const std::string& name)
+{
+    for (auto& data : shopData)
+    {
+        if (data.type == type && data.name == name)
+        {
+            return &data;
+        }
+    }
+    return nullptr;
+}
+
+void ShopSystem::updateCost(std::string name, int level)
+{
+    if (name == "Attack" || name == "Health" || name == "CoinGain")
+    {
+        if (auto data = findShopItem(shopData, "Stat", name))
+        {
+            switch (level)
+            {
+            case 1:
+            {
+                data->cost = 100;
+                break;
+            }
+            case 2:
+            {
+                data->cost = 150;
+                break;
+            }
+            case 3:
+            {
+                data->cost = 200;
+                break;
+            }
+            case 4:
+            {
+                data->cost = 250;
+                break;
+            }
+            case 5:
+            {
+                data->cost = 500;
+                break;
+            }
+            case 6:
+            {
+                data->cost = 600;
+                break;
+            }
+            case 7:
+            {
+                data->cost = 700;
+                break;
+            }
+            case 8:
+            {
+                data->cost = 900;
+                break;
+            }
+            case 9:
+            {
+                data->cost = 1000;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    else if (name == "LootRange")
+    {
+        if (auto data = findShopItem(shopData, "Stat", name))
+        {
+            switch (level)
+            {
+            case 1:
+            {
+                data->cost = 200;
+                break;
+            }
+            case 2:
+            {
+                data->cost = 300;
+                break;
+            }
+            case 3:
+            {
+                data->cost = 400;
+                break;
+            }
+            case 4:
+            {
+                data->cost = 500;
+                break;
+            }
+            case 5:
+            {
+                data->cost = 600;
+                break;
+            }
+            case 6:
+            {
+                data->cost = 700;
+                break;
+            }
+            case 7:
+            {
+                data->cost = 800;
+                break;
+            }
+            case 8:
+            {
+                data->cost = 900;
+                break;
+            }
+            case 9:
+            {
+                data->cost = 1000;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    else if (name == "SpawnRate" || name == "Speed")
+    {
+        if (auto data = findShopItem(shopData, "Stat", name))
+        {
+            switch (level)
+            {
+            case 1:
+            {
+                data->cost = 300;
+                break;
+            }
+            case 2:
+            {
+                data->cost = 700;
+                break;
+            }
+            case 3:
+            {
+                data->cost = 1000;
+                break;
+            }
+            case 4:
+            {
+                data->cost = 2000;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    else if (name == "ReduceCooldown" || name == "XPGain")
+    {
+        if (auto data = findShopItem(shopData, "Stat", name))
+        {
+            switch (level)
+            {
+            case 1:
+            {
+                data->cost = 500;
+                break;
+            }
+            case 2:
+            {
+                data->cost = 1000;
+                break;
+            }
+            case 3:
+            {
+                data->cost = 2000;
+                break;
+            }
+            case 4:
+            {
+                data->cost = 3000;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    else if (name == "RerollWeapon")
+    {
+        if (auto data = findShopItem(shopData, "Stat", name))
+        {
+            switch (level)
+            {
+            case 1:
+            {
+                data->cost = 1000;
+                break;
+            }
+            case 2:
+            {
+                data->cost = 5000;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
 }
 
 bool ShopSystem::loadSaveGame()

@@ -44,16 +44,20 @@ bool GameSceneUILayer::init()
     }
     this->addChild(batchNode, 1);
 
+    auto drawNode = DrawNode::create();
+    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
+    this->addChild(drawNode, 0);
+
     // Nền mờ trên
     auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
     backgroundUpper->setContentSize(Size(360, 300));
-    backgroundUpper->setPosition(Vec2(0, 580));
+    backgroundUpper->setPosition(Vec2(0, safeArea.origin.y + safeArea.size.height - 60));
     this->addChild(backgroundUpper, 0);
 
     // Nền mờ dưới
     auto backgroundLower = LayerColor::create(Color4B(0, 0, 0, 180));
     backgroundLower->setContentSize(Size(360, 300));
-    backgroundLower->setPosition(Vec2(0, -300));
+    backgroundLower->setPosition(Vec2(0, safeArea.origin.y - 300));
     this->addChild(backgroundLower, 0);
 
     // Nút Pause
@@ -168,12 +172,12 @@ bool GameSceneUILayer::init()
         auto sprite = Sprite::createWithSpriteFrameName("./iconContain");
 
         // Tính vị trí cho mỗi sprite (2 hàng x 4 cột)
-        float x = origin.x + (i % 4) * (sprite->getContentSize().width + 3) + 12;
-        float y = origin.y + visibleSize.height - (i / 4) * (sprite->getContentSize().height + 3) - 24;
+        float x = safeArea.origin.x + (i % 4) * (sprite->getContentSize().width + 3) + 12;
+        float y = safeArea.origin.y + safeArea.size.height - (i / 4) * (sprite->getContentSize().height + 3) - 24;
 
         sprite->setPosition(Vec2(x, y));
         sprite->setTag(i + 1);
-        batchNode->addChild(sprite,1);
+        batchNode->addChild(sprite, 1);
     }
 
     return true;
