@@ -31,6 +31,7 @@ public:
     void updateSpinnerEntitySprite(Entity entity);
     void updateExplosionKunaiEntitySprite(Entity entity);
     void updateNinjutsuSpellEntitySprite(Entity entity);
+    void updateLightningScrollEntitySprite(Entity entity);
 
     // Hàm để DamageTextSystem gọi
     void setSpriteBatchNodeForSprite(ax::Sprite* sprite, const std::string& type);
@@ -48,7 +49,6 @@ private:
 
     ax::Scene* scene                    = nullptr;
     ax::SpriteBatchNode* enemyBatchNode = nullptr;
-    // ax::SpriteBatchNode* bossBatchNode      = nullptr;
     ax::SpriteBatchNode* itemBatchNode   = nullptr;
     ax::SpriteBatchNode* weaponBatchNode = nullptr;
     ax::SpriteBatchNode* numberBatchNode = nullptr;

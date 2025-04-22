@@ -9,7 +9,7 @@ DamageTextSystem::DamageTextSystem(EntityManager& em,
 void DamageTextSystem::init()
 {
     // Load plist vào SpriteFrameCache
-    ax::SpriteFrameCache::getInstance()->addSpriteFramesWithFile("number.plist"); //Có thể load vào loading scene cho gọn
+    ax::SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Effects/number.plist"); //Có thể load vào loading scene cho gọn
 }
 
 void DamageTextSystem::update(float dt)

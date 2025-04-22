@@ -21,6 +21,7 @@ void WeaponSystem::init()
     createWeapon["spinner"]         = [this](std::string weaponName, bool alreadyHave) { return createSpinner(weaponName, alreadyHave); };
     createWeapon["explosion_kunai"] = [this](std::string weaponName, bool alreadyHave) { return createExplosionKunai(weaponName, alreadyHave); };
     createWeapon["ninjutsu_spell"]  = [this](std::string weaponName, bool alreadyHave) { return createNinjutsuSpell(weaponName, alreadyHave); };
+    createWeapon["lightning_scroll"]= [this](std::string weaponName, bool alreadyHave) { return createLightningScroll(weaponName, alreadyHave); };
 
     // Khai báo các kiểu update weapon
     updateWeapon["energy_ball"]     = [this](Entity weapon, float dt) { updateEnemyProjectile(weapon, dt); };
@@ -32,6 +33,7 @@ void WeaponSystem::init()
     updateWeapon["spinner"]         = [this](Entity weapon, float dt) { updateSpinner(weapon, dt); };
     updateWeapon["explosion_kunai"] = [this](Entity weapon, float dt) { updateExplosionKunai(weapon, dt); };
     updateWeapon["ninjutsu_spell"]  = [this](Entity weapon, float dt) { updateNinjutsuSpell(weapon, dt); };
+    updateWeapon["lightning_scroll"]= [this](Entity weapon, float dt) { updateLightningScroll(weapon, dt); };
 
 
     // Khai báo các kiểu upgrade weapon
@@ -42,6 +44,7 @@ void WeaponSystem::init()
     upgradeWeapon["spinner"]        = [this](std::string weaponName, int level) { upgradeSpinner(weaponName, level); };
     upgradeWeapon["explosion_kunai"]= [this](std::string weaponName, int level) { upgradeExplosionKunai(weaponName, level); };
     upgradeWeapon["ninjutsu_spell"] = [this](std::string weaponName, int level) { upgradeNinjutsuSpell(weaponName, level); };
+    upgradeWeapon["lightning_scroll"] = [this](std::string weaponName, int level) { upgradeLightningScroll(weaponName, level); };
 
     // Khai báo các kiểu upgrade buff
     upgradeBuff["attack"]           = [this](std::string buffName, int level) { upgradeAttack(buffName, level); };
@@ -64,6 +67,8 @@ void WeaponSystem::init()
     }
 
     initializePlayerWeapon(playerEntity);
+
+    dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->updateInventoryUI();
 }
 
 void WeaponSystem::update(float dt)
@@ -215,6 +220,8 @@ void WeaponSystem::upgradeWeaponAndBuff(std::string wpOrBuffName)
                 }
             }
         }
+
+        dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->updateInventoryUI();
     }
     else
     {

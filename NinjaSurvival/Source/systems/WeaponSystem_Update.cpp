@@ -21,7 +21,6 @@ void WeaponSystem::updateEnemyProjectile(Entity weapon, float dt)
 //Sword
 void WeaponSystem::updateSword(Entity weapon,float dt)
 {
-    // Chia update theo từng loại weapon
     auto cooldown = cooldownMgr.getComponent(weapon);
     auto hitbox   = hitboxMgr.getComponent(weapon);
     if (!cooldown || !hitbox)
@@ -195,8 +194,11 @@ void WeaponSystem::updateExplosionKunai(Entity weapon, float dt)
         }
         else
         {
-            velocity->vx = 0.0;
-            velocity->vy = 1.0;
+            float directionX = Utils::getRandomFloat(-1.0, 1.0);
+            float directionY = Utils::getRandomFloat(-1.0, 1.0);
+            ax::Vec2 newVel  = ax::Vec2(directionX, directionY).getNormalized();
+            velocity->vx     = newVel.x;
+            velocity->vy     = newVel.y;
         }
 
         cooldown->cooldownTimer = duration->duration + cooldown->cooldownDuration;
@@ -278,5 +280,35 @@ void WeaponSystem::updateNinjutsuSpell(Entity weapon, float dt)
     else if (cooldown->cooldownTimer <= cooldown->cooldownDuration && hitbox->size.width > 0)
     {
         hitbox->size = ax::Size(0, 0);
+    }
+}
+
+// Lightning Scroll
+void WeaponSystem::updateLightningScroll(Entity weapon, float dt)
+{
+    auto cooldown = cooldownMgr.getComponent(weapon);
+    auto hitbox   = hitboxMgr.getComponent(weapon);
+    if (!cooldown || !hitbox)
+        return;
+
+    // Kiểm tra để tắt hitbox
+    if (cooldown->cooldownTimer > 0.0f && hitbox->size.width > 0)
+    {
+        hitbox->size = ax::Size(0, 0);
+    }
+
+    // Khi cooldownTimer chính xác bằng 0, thực hiện chém
+    else if (cooldown->cooldownTimer == 0.0f)
+    {
+        SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->moveLightningScrollWeapon(weapon, dt);
+
+        // Hiển thị animation
+        SystemManager::getInstance()->getSystem<RenderSystem>()->updateLightningScrollEntitySprite(weapon);
+
+        // Bật hitbox trong 1 frame
+        hitbox->size = hitbox->defaultSize;
+
+
+        cooldown->cooldownTimer = cooldown->cooldownDuration;
     }
 }

@@ -68,14 +68,14 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
 
         if (invent->weapons[i].second < 5)
         {
-            weaponFull                       = false;
-            lookup[invent->weapons[i].first] = invent->weapons[i].second;
+            weaponFull = false;
+            if (invent->weapons[i].second > 0)
+                lookup[invent->weapons[i].first] = invent->weapons[i].second;
         }
 
         if (invent->weapons[i].second == 5)
         {
             exclude.push_back(invent->weapons[i].first);
-            lookup[invent->weapons[i].first] = invent->weapons[i].second;
         }
     }
     for (int i = 0; i < invent->buffs.size(); i++)
@@ -87,14 +87,14 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
 
         if (invent->buffs[i].second < 5)
         {
-            buffFull                       = false;
-            lookup[invent->buffs[i].first] = invent->buffs[i].second;
+            buffFull = false;
+            if (invent->buffs[i].second > 0)
+                lookup[invent->buffs[i].first] = invent->buffs[i].second;
         }
 
         if (invent->buffs[i].second == 5)
         {
             exclude.push_back(invent->buffs[i].first);
-            lookup[invent->buffs[i].first] = invent->buffs[i].second;
         }
     }
 
@@ -243,6 +243,24 @@ std::unordered_map<std::string, int> LevelSystem::upgradeGenerator(bool isLevelU
             {
                 Result[key] = it->second + 1;
                 break;
+            }
+        }
+
+        if (Result.empty())
+        {
+            if (!lookup.empty())
+            {
+                std::vector<std::string> keys;
+                for (const auto& [key, _] : lookup)
+                {
+                    keys.push_back(key);
+                }
+                std::uniform_int_distribution<> dis(0, keys.size() - 1);
+
+                std::string randomKey = keys[dis(gen)];
+                int value             = lookup[randomKey] + 1;
+
+                Result.insert({randomKey, value});
             }
         }
 

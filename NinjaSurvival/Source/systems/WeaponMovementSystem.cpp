@@ -392,3 +392,28 @@ void WeaponMovementSystem::moveNinjutsuSpellWeapon(Entity entity, float dt)
     transform->x += vel->vx * speed->speed * dt;
     transform->y += vel->vy * speed->speed * dt;
 }
+
+// Lightning Scroll
+void WeaponMovementSystem::moveLightningScrollWeapon(Entity entity, float dt)
+{
+    auto spawnSystem     = SystemManager::getInstance()->getSystem<SpawnSystem>();
+    auto collisionSystem = SystemManager::getInstance()->getSystem<CollisionSystem>();
+    if (!spawnSystem || !collisionSystem)
+        return;
+
+    auto enemiesInView = collisionSystem->getEnemyEntitiesInView(spawnSystem->getPlayerPosition());
+
+    auto transform = transformMgr.getComponent(entity);
+    if (!enemiesInView.empty())
+    {
+        int index     = Utils::getRandomInt(0, enemiesInView.size() - 1);
+        auto enemyPos = transformMgr.getComponent(enemiesInView[index]);
+        transform->x  = enemyPos->x;  //+ Utils::getRandomFloat(-10, 10);
+        transform->y  = enemyPos->y;  //+ Utils::getRandomFloat(-10, 10);
+    }
+    else
+    {
+        transform->x = spawnSystem->getPlayerPosition().x + Utils::getRandomFloat(-150, 150);
+        transform->y = spawnSystem->getPlayerPosition().y + Utils::getRandomFloat(-300, 300);
+    }
+}

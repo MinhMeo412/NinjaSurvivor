@@ -69,7 +69,7 @@ void GameOverGamePauseLayer::createUI()
         AXLOG("Lỗi: Không thể tạo coinLabel");
         return;
     }
-    auto coinSprite = Sprite::create("UI/coin.png");
+    auto coinSprite = Sprite::create("UI/coinUI.png");
     if (!coinSprite)
     {
         AXLOG("Lỗi: Không thể tạo coinSprite");
@@ -94,7 +94,7 @@ void GameOverGamePauseLayer::createUI()
         AXLOG("Lỗi: Không thể tạo enemyKillCountLabel");
         return;
     }
-    auto skullSprite = Sprite::create("UI/skull.png");
+    auto skullSprite = Sprite::create("UI/skullUI.png");
     if (!skullSprite)
     {
         AXLOG("Lỗi: Không thể tạo skullSprite");

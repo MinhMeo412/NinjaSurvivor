@@ -150,7 +150,7 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
 // Công thức tính dame
 float HealthSystem::calculateEnemyDamage(const AttackComponent* attack)
 {
-    return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1 * damageReceiveMultiplier);
+    return (attack->baseDamage) * (1.0f + attack->damageMultiplier) * (1.0 + damageReceiveMultiplier);
 }
 float HealthSystem::calculatePlayerDamage(const AttackComponent* attack)
 {
