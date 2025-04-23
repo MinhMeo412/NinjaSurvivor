@@ -158,10 +158,6 @@ void MapSystem::loadChunk(const Vec2& chunkPos)
     chunk.tiledMap->setVisible(false);  // Mặc định ẩn
     parentScene->addChild(chunk.tiledMap, 0);
 
-    auto overlayLayer = chunk.tiledMap->getLayer("OverlayLayer");
-    if (overlayLayer)
-        overlayLayer->setGlobalZOrder(1);
-
     // Vẽ viền ngay sau khi load chunk
     drawCollisionOutline(chunk);
 

@@ -43,29 +43,11 @@ bool MainScene::init()
     shopItem = Utils::createMenuItem("UI/buttonShop.png", "UI/buttonShop.png",
                                      AX_CALLBACK_1(MainScene::menuShopCallback, this),
                                      Vec2(origin.x + visibleSize.width / 2, startY - 100));
-    /*
-    Chưa có scene shop vs archive thì chưa cần đến
-    auto shopButton =
-        MenuItemImage::create("UI/buttonShop.png", "UI/buttonShop.png", AX_CALLBACK_1(MainScene::shopCallback, this));
-    shopButton->setPosition(
-        Vec2(origin.x + visibleSize.width / 2, startY - buttonSpacing - shopButton->getContentSize().height));
 
-    /*
-    auto achieveButton = MenuItemImage::create("UI/buttonArchive.png", "UI/buttonArchive.png",
-                                               AX_CALLBACK_1(MainScene::achieveCallback, this));
-    achieveButton->setPosition(Vec2(
-        origin.x + visibleSize.width / 2,
-       startY - 2 * buttonSpacing - shopButton->getContentSize().height - achieveButton->getContentSize().height));
-    */
     auto menu = Menu::create(playItem, shopItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    // Border
-    auto drawNode = DrawNode::create();
-    drawNode->setPosition(Vec2(0, 0));
-    addChild(drawNode);
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
 
     return true;
 }

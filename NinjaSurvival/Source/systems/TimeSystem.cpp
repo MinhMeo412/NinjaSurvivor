@@ -21,6 +21,7 @@ void TimeSystem::init()
     timerLabel->setPosition(ax::Vec2(safeOrigin.x + safeArea.size.width / 2,
                                      safeOrigin.y + safeArea.size.height - 20));  // Xem lại vị trí theo UI
     uiLayer->addChild(timerLabel,5); //Gán vào uiLayer
+    timerLabel->setGlobalZOrder(2);
 
 }
 

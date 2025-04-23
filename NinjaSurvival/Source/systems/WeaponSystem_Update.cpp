@@ -9,6 +9,7 @@
 #include "RenderSystem.h"
 #include "SystemManager.h"
 #include "GameData.h"
+#include "AudioManager.h"
 
 //Enemy projectile
 void WeaponSystem::updateEnemyProjectile(Entity weapon, float dt)
@@ -40,6 +41,7 @@ void WeaponSystem::updateSword(Entity weapon,float dt)
 
         // Hiển thị hoạt ảnh chém
         SystemManager::getInstance()->getSystem<RenderSystem>()->updateSwordEntitySprite(weapon);
+        AudioManager::getInstance()->playSound("sword", false, 1.0f, "effect");
 
         cooldown->cooldownTimer = cooldown->cooldownDuration;
     }
@@ -297,13 +299,15 @@ void WeaponSystem::updateLightningScroll(Entity weapon, float dt)
         hitbox->size = ax::Size(0, 0);
     }
 
-    // Khi cooldownTimer chính xác bằng 0, thực hiện chém
+    // Khi cooldownTimer chính xác bằng 0, thực hiện
     else if (cooldown->cooldownTimer == 0.0f)
     {
         SystemManager::getInstance()->getSystem<MovementSystem>()->getWeaponMoveSystem()->moveLightningScrollWeapon(weapon, dt);
 
         // Hiển thị animation
         SystemManager::getInstance()->getSystem<RenderSystem>()->updateLightningScrollEntitySprite(weapon);
+
+        AudioManager::getInstance()->playSound("lightning_scroll", false, 1.0f, "effect");
 
         // Bật hitbox trong 1 frame
         hitbox->size = hitbox->defaultSize;

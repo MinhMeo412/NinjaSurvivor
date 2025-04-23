@@ -27,7 +27,6 @@ bool GameLoadingScene::init()
 
     createLoadingLabel();
 
-
     // Border
     auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
@@ -67,8 +66,7 @@ void GameLoadingScene::createLoadingLabel()
     this->addChild(loadingLabel);
 
     // Hiệu ứng nhấp nháy
-    auto blink = ax::RepeatForever::create(ax::Sequence::create(ax::FadeOut::create(0.5f), ax::FadeIn::create(0.5f), nullptr));
+    auto blink =
+        ax::RepeatForever::create(ax::Sequence::create(ax::FadeOut::create(0.5f), ax::FadeIn::create(0.5f), nullptr));
     loadingLabel->runAction(blink);
 }
-
-

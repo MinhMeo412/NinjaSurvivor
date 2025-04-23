@@ -7,6 +7,7 @@
 #include "systems/HealthSystem.h"
 #include "systems/LevelSystem.h"
 #include "systems/WeaponSystem.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -44,9 +45,6 @@ bool GameSceneUILayer::init()
     }
     this->addChild(batchNode, 1);
 
-    auto drawNode = DrawNode::create();
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-    this->addChild(drawNode, 0);
 
     // Nền mờ trên
     auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
@@ -54,11 +52,13 @@ bool GameSceneUILayer::init()
     backgroundUpper->setPosition(Vec2(0, safeArea.origin.y + safeArea.size.height - 60));
     this->addChild(backgroundUpper, 0);
 
+
     // Nền mờ dưới
     auto backgroundLower = LayerColor::create(Color4B(0, 0, 0, 180));
     backgroundLower->setContentSize(Size(360, 300));
     backgroundLower->setPosition(Vec2(0, safeArea.origin.y - 300));
     this->addChild(backgroundLower, 0);
+
 
     // Nút Pause
     pauseButton = Utils::createMenuItem("UI/pauseButton.png", "UI/pauseButton.png",
@@ -154,8 +154,8 @@ bool GameSceneUILayer::init()
     }
     hpBarRed->setAnchorPoint(Vec2(0, 0.5f));
     hpBarGray->setAnchorPoint(Vec2(0, 0.5f));
-    batchNode->addChild(hpBarRed, 2);
-    batchNode->addChild(hpBarGray, 1);
+    this->addChild(hpBarRed, 2);
+    this->addChild(hpBarGray, 1);
 
     // Level label
     levelLabel = ax::Label::createWithTTF("Level 1", "fonts/Pixelpurl-0vBPP.ttf", 24);
@@ -163,8 +163,6 @@ bool GameSceneUILayer::init()
         ax::Vec2(safeOrigin.x + safeArea.size.width / 2, xpY - 40)); // Căn giữa ngang, dưới xpBar 40 pixel
     this->addChild(levelLabel, 5);
 
-
-    
 
     // Tạo 8 sprite inventory
     for (int i = 0; i < 8; ++i)
@@ -279,6 +277,8 @@ void GameSceneUILayer::gamePauseCallback(ax::Object *sender)
 
 void GameSceneUILayer::bossAlert()
 {
+    AudioManager::getInstance()->playSound("boss_alert", false, 1.0f, "music");
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // Tạo label "Boss Incoming"

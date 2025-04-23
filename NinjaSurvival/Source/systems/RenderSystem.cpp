@@ -45,13 +45,13 @@ void RenderSystem::init()
     weaponBatchNode = ax::SpriteBatchNode::create("Entity/Weapons/weapon.png");
     numberBatchNode = ax::SpriteBatchNode::create("Effects/number.png");
 
-    scene->addChild(enemyBatchNode, 3);
+    scene->addChild(enemyBatchNode, 4);
     scene->addChild(itemBatchNode, 2);
-    scene->addChild(weaponBatchNode, 5);
-    scene->addChild(numberBatchNode, 6);
+    scene->addChild(weaponBatchNode, 7);
+    scene->addChild(numberBatchNode, 8);
 
     debugDrawNode = ax::DrawNode::create();
-    scene->addChild(debugDrawNode, 10);
+    //scene->addChild(debugDrawNode, 10);
 
     // Khởi tạo sprite cho player
     Entity playerEntity = spawnSystem->getPlayerEntity();
@@ -78,7 +78,7 @@ void RenderSystem::addSpriteToScene(Entity entity)
     {
         if (sprite->gameSceneFrame->getParent() != scene)
         {
-            scene->addChild(sprite->gameSceneFrame, 4);
+            scene->addChild(sprite->gameSceneFrame, 3);
         }
     }
     else if (identity->type == "enemy")
@@ -90,7 +90,7 @@ void RenderSystem::addSpriteToScene(Entity entity)
         // sprite->setBatchNode(bossBatchNode);
         if (sprite->gameSceneFrame->getParent() != scene)
         {
-            scene->addChild(sprite->gameSceneFrame, 4);
+            scene->addChild(sprite->gameSceneFrame, 5);
         }
     }
     else if (identity->type == "item")

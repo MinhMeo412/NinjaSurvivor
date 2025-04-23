@@ -76,38 +76,42 @@ void PickupSystem::applyPickupEffect(std::string& itemName)
 {
     if (itemName == "greenGem" || itemName == "blueGem" || itemName == "redGem")
     {
-        AudioManager::getInstance()->playSound("exp", false, 1.0f, "exp");
+        AudioManager::getInstance()->playSound("exp", false, 1.0f, "item");
         applyXPGem(itemName);
         return;
     }
 
     else if (itemName == "coin")
     {
-        AudioManager::getInstance()->playSound("coin", false, 1.0f, "coin");
+        AudioManager::getInstance()->playSound("coin", false, 1.0f, "item");
         applyCoin();
         return;
     }
 
     else if (itemName == "chest")
     {
+        AudioManager::getInstance()->playSound("chest", false, 1.0f, "item");
         applyChest();
         return;
     }
 
     else if (itemName == "heart")
     {
+        AudioManager::getInstance()->playSound("magnet_heart", false, 1.0f, "item");
         applyHeart();
         return;
     }
 
     else if (itemName == "magnet")
     {
+        AudioManager::getInstance()->playSound("magnet_heart", false, 1.0f, "item");
         applyMagnet();
         return;
     }
 
     else if (itemName == "bomb")
     {
+        AudioManager::getInstance()->playSound("bomb", false, 1.0f, "item");
         applyBomb();
         return;
     }

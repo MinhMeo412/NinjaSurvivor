@@ -21,7 +21,6 @@ bool GameScene::init()
     uiLayer = GameSceneUILayer::create();
     this->addChild(uiLayer, 10);
 
-
     //Khởi tạo object GameWorld
     gameWorld = std::make_unique<GameWorld>();
 

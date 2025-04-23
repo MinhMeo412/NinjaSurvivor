@@ -222,7 +222,7 @@ ax::ui::ScrollView* CharacterChooseScene::createWeaponDesScrollView(const std::s
     label->setPosition(Vec2(0.0f, scrollHeight));
     label->setAlignment(ax::TextHAlignment::LEFT);
     label->setMaxLineWidth(maxWidth);
-    label->setDimensions(200 , 0);
+    label->setDimensions(200, 0);
     scrollView->addChild(label, 0, "weaponDesLabel");
 
     parent->addChild(scrollView, 6, "weaponDesScrollView" + name);
@@ -241,8 +241,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto speedLabel  = dynamic_cast<Label*>(panelDescription->getChildByName("speedLabel" + name));
     auto unlockLabel = dynamic_cast<Label*>(panelDescription->getChildByName("unlockLabel" + name));
 
-    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel ||
-        !unlockLabel)
+    if (!characterLabel || !healthLabel || !weaponLabel || !weaponDesScrollView || !speedLabel || !unlockLabel)
     {
         AXLOG("Lỗi: Thiếu label hoặc ScrollView cho nhân vật %s", name.c_str());
         return;
@@ -271,9 +270,9 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     }
 
     auto templ = entities.at("player").at(name);
-    healthLabel->setString(templ.health.has_value() ? StringUtils::format("Health: %.0f", templ.health->maxHealth)
+    healthLabel->setString(templ.health.has_value() ? StringUtils::format("- Health: %.0f", templ.health->maxHealth)
                                                     : "Health: N/A");
-    speedLabel->setString(templ.speed.has_value() ? StringUtils::format("Speed: %.0f", templ.speed->speed)
+    speedLabel->setString(templ.speed.has_value() ? StringUtils::format("- Speed: %.0f", templ.speed->speed)
                                                   : "Speed: N/A");
 
     std::string mainWpName;
@@ -314,7 +313,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
             mainWpName = "Lightning Strike";
         }
 
-        weaponLabel->setString(StringUtils::format("Main Weapon:\n%s\nInformation:", mainWpName.c_str()));
+        weaponLabel->setString(StringUtils::format("*Main Weapon:\n%s\n*Description:", mainWpName.c_str()));
         desWeapon = templ.weaponInventory->weapons[0].first;
     }
     else
@@ -325,8 +324,7 @@ void CharacterChooseScene::updateCharacterStats(const std::string& name, Node* p
     auto weaponDesLabel = dynamic_cast<Label*>(weaponDesScrollView->getChildByName("weaponDesLabel"));
     if (weaponDesLabel)
     {
-        std::string description =
-            !desWeapon.empty() ? WeaponUpgradeUtils::getDescription(desWeapon, 0) : "None";
+        std::string description = !desWeapon.empty() ? WeaponUpgradeUtils::getDescription(desWeapon, 0) : "None";
         weaponDesLabel->setString(description);
 
         auto labelSize  = weaponDesLabel->getContentSize();
@@ -487,10 +485,10 @@ void CharacterChooseScene::setupCharacterButtons(Node* panelChooseCharacter,
             panelDescription->getContentSize().height * 0.85f - characterLabel->getContentSize().height * 0.5f;
         float baseY = characterLabelBottomY - 10.0f;
 
-        auto weaponLabel = createStatLabel(name, "weaponLabel", baseY - 15, leftMargin, panelDescription);
-        float weaponLabelWidth  = weaponLabel ? weaponLabel->getContentSize().width : 100.0f;
+        auto weaponLabel       = createStatLabel(name, "weaponLabel", baseY - 15, leftMargin, panelDescription);
+        float weaponLabelWidth = weaponLabel ? weaponLabel->getContentSize().width : 100.0f;
         float healthLabelX     = leftMargin + weaponLabelWidth + 170.0f;
-        auto healthLabel = createStatLabel(name, "healthLabel", baseY, healthLabelX, panelDescription);
+        auto healthLabel       = createStatLabel(name, "healthLabel", baseY, healthLabelX, panelDescription);
         auto weaponDesScrollView =
             createWeaponDesScrollView(name, "weaponDesScrollView", baseY - 70.0f, leftMargin, panelDescription);
         auto speedLabel  = createStatLabel(name, "speedLabel", baseY - 15.0f, healthLabelX, panelDescription);
