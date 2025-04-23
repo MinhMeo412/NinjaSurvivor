@@ -112,11 +112,6 @@ void ShopScene::menuUISetup()
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     this->addChild(coinLabel, 5, "coinLabel");
 
-    // Vẽ viền debug cho safeArea
-    auto drawNode = DrawNode::create();
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-    this->addChild(drawNode, 0);
-
     // Khởi tạo menu items
     Vector<MenuItem*> menuItems;
 

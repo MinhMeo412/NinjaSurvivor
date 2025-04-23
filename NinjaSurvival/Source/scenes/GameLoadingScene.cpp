@@ -27,12 +27,6 @@ bool GameLoadingScene::init()
 
     createLoadingLabel();
 
-    // Border
-    auto drawNode = DrawNode::create();
-    drawNode->setPosition(Vec2(0, 0));
-    addChild(drawNode);
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-
     scheduleUpdate();
 
     return true;

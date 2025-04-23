@@ -83,7 +83,7 @@ void PickupSystem::applyPickupEffect(std::string& itemName)
 
     else if (itemName == "coin")
     {
-        AudioManager::getInstance()->playSound("coin", false, 1.0f, "item");
+        AudioManager::getInstance()->playSound("coin", false, 0.5f, "item");
         applyCoin();
         return;
     }

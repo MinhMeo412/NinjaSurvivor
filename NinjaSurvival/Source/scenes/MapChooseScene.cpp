@@ -103,10 +103,6 @@ void MapChooseScene::menuUISetup()
     panel->setPosition(safeOrigin.x + safeSize.width / 2, safeOrigin.y + safeSize.height / 2 - 10);
     this->addChild(panel, 2);
 
-    auto drawNode = DrawNode::create();
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-    this->addChild(drawNode, 0);
-
     // Hiển thị coin
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =

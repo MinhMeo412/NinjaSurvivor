@@ -32,7 +32,7 @@ void HealthSystem::init()
     // set callback trong init
     onPlayerOutOfHealth = [this]() {
         //Nhạc game over
-        AudioManager::getInstance()->playSound("game_over", false, 1.0f, "music");
+        AudioManager::getInstance()->playSound("game_over", false, 1.5f, "music");
 
         //Gọi UI game over
         auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
@@ -126,7 +126,7 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
 
                             SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
                             SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(e);
-                            AudioManager::getInstance()->playSound("hit", false, 1.0f, "effect");
+                            AudioManager::getInstance()->playSound("hit", false, 1.5f, "effect");
 
                             AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
                                   pair.first, health->currentHealth);
