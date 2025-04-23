@@ -61,7 +61,7 @@ void LoadingScene::update(float dt) {}
 
 void LoadingScene::createLoadingLabel()
 {
-    loadingLabel = ax::Label::createWithTTF("Loading...", "fonts/Marker Felt.ttf", 30);
+    loadingLabel = ax::Label::createWithTTF("Loading...", "fonts/Pixelpurl-0vBPP.ttf", 30);
     loadingLabel->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(loadingLabel);
 

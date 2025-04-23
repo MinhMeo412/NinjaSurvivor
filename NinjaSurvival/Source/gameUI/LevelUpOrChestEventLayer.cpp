@@ -143,7 +143,7 @@ void LevelUpOrChestEventLayer::createUI()
         }
         
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 18);
         itemLabel->setDimensions(250, 0);  // Hơi nhỏ hơn 300 để có lề
         itemLabel->setAlignment(TextHAlignment::LEFT);
         itemLabel->setAnchorPoint(Vec2(0, 0.5));
@@ -181,9 +181,10 @@ void LevelUpOrChestEventLayer::createUI()
     confirmButton = MenuItemImage::create("UI/confirmButton.png", "UI/confirmButton.png",
                                           AX_CALLBACK_1(LevelUpOrChestEventLayer::onConfirm, this));
     confirmButton->setScale(0.7);
-    confirmButton->setPosition(
-         + panelLevelUp->getContentSize().width * 0.58f,  // Căn giữa ngang
-                               panelLevelUp->getContentSize().height * (1.5 / 3));  // 1.5/3 chiều cao
+    confirmButton->setPosition(Vec2(
+         panelLevelUp->getContentSize().width * 0.58f,  // Căn giữa ngang
+                                        panelLevelUp->getPositionY() *
+                                            (1.9 / 3)));  // 1.5/3 chiều cao
 
     confirmButton->setVisible(isLevelUp ? false : true);
 
@@ -193,11 +194,11 @@ void LevelUpOrChestEventLayer::createUI()
         rerollButton = MenuItemImage::create("UI/rerollbutton.png", "UI/rerollbutton.png",
                                              AX_CALLBACK_1(LevelUpOrChestEventLayer::onReroll, this));
         rerollButton->setScale(0.7);
-        rerollButton->setPosition(panelLevelUp->getContentSize().width * (4.4 / 5),  // 4.4/5 chiều rộng
-                                  panelLevelUp->getContentSize().height * (1.73 / 3));
+        rerollButton->setPosition(Vec2(panelLevelUp->getContentSize().width * (4.6 / 5),  // 4.4/5 chiều rộng
+                                panelLevelUp->getPositionY() * (2.15 / 3)));
 
         // Tạo label hiển thị số lần reroll
-        rerollCountLabel = Label::createWithTTF(std::to_string(rerollCount), "fonts/Pixelpurl-0vBPP.ttf", 23);
+        rerollCountLabel = Label::createWithTTF(std::to_string(rerollCount), "fonts/Pixelpurl-0vBPP.ttf", 26);
         rerollCountLabel->setPosition(rerollButton->getContentSize().width / 2, rerollButton->getContentSize().height / 2);
         rerollButton->addChild(rerollCountLabel, 20);
 
@@ -278,8 +279,8 @@ void LevelUpOrChestEventLayer::onReroll(ax::Object* sender)
             displayText += WeaponUpgradeUtils::getDescription(upgrade.first, upgrade.second);
         }
 
-        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 20);
-        itemLabel->setDimensions(280, 0);  // Hơi nhỏ hơn 300 để có lề
+        auto itemLabel = Label::createWithTTF(displayText, "fonts/Pixelpurl-0vBPP.ttf", 18);
+        itemLabel->setDimensions(250, 0);  // Hơi nhỏ hơn 300 để có lề
         itemLabel->setAlignment(TextHAlignment::LEFT);
         itemLabel->setAnchorPoint(Vec2(0, 0.5));
         itemLabel->setPosition(Vec2(10, subPanelSprite->getContentSize().height / 2));  // Vị trí với lề trái

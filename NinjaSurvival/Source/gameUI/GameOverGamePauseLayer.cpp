@@ -76,7 +76,7 @@ void GameOverGamePauseLayer::createUI()
         return;
     }
     // Tính coinY dựa trên safeArea, đồng bộ với GameSceneUILayer
-    float coinY = 635.000f - 20; // Dưới xpBar 30 pixel, khớp với GameSceneUILayer
+    float coinY = safeOrigin.y + safeArea.size.height - 25;  // Dưới xpBar 30 pixel, khớp với GameSceneUILayer
     coinLabel->setAnchorPoint(Vec2(1, 0.5));
     coinLabel->setAlignment(ax::TextHAlignment::RIGHT);
     getCoin();
@@ -121,6 +121,7 @@ void GameOverGamePauseLayer::createUI()
     timerLabel->setPosition(ax::Vec2(safeOrigin.x + safeArea.size.width / 2, safeOrigin.y + safeArea.size.height - 20));
     this->addChild(timerLabel, 5);
     setTimeTemp();
+
 
     // Tạo vector chứa các menu item
     Vector<MenuItem *> menuItems;
