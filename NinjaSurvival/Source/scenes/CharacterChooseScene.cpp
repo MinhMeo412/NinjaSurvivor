@@ -73,10 +73,6 @@ void CharacterChooseScene::menuUISetup()
     panelChooseCharacter->setPosition(safeOrigin.x + safeSize.width / 2, panelY);
     this->addChild(panelChooseCharacter, 2);
 
-    auto drawNode = DrawNode::create();
-    drawNode->drawRect(safeArea.origin + Vec2(1, 1), safeArea.origin + safeArea.size, Color4F::BLUE);
-    this->addChild(drawNode, 0);
-
     // Hiển thị coin
     auto shopData = ShopSystem::getInstance();
     auto coinLabel =
