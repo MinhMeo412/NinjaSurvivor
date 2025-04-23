@@ -14,13 +14,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 70.0,
+                "speed": 80.0,
                 "hitbox": {
                     "width": 16.0,
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 60.0
+                    "maxHealth": 70.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/Deidara.plist",
@@ -81,13 +81,13 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 50.0,
+                "speed": 65.0,
                 "hitbox": {
                     "width": 12.0,
                     "height": 12.0
                 },
                 "health": {
-                    "maxHealth": 80.0
+                    "maxHealth": 100.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/master.plist",
@@ -130,7 +130,7 @@
                     "vx": 0.0,
                     "vy": 0.0
                 },
-                "speed": 40.0,
+                "speed": 50.0,
                 "hitbox": {
                     "width": 12.0,
                     "height": 12.0
@@ -468,7 +468,7 @@
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 11.0
+                    "maxHealth": 10.0
                 },
                 "attack": {
                     "baseDamage": 7.0,
@@ -526,7 +526,7 @@
                     "height": 16.0
                 },
                 "health": {
-                    "maxHealth": 11.0
+                    "maxHealth": 10.0
                 },
                 "attack": {
                     "baseDamage": 7.0,
@@ -639,7 +639,7 @@
                     "height": 32.0
                 },
                 "health": {
-                    "maxHealth": 600.0
+                    "maxHealth": 400.0
                 },
                 "attack": {
                     "baseDamage": 10.0,
@@ -700,7 +700,7 @@
                     "height": 62.0
                 },
                 "health": {
-                    "maxHealth": 800.0
+                    "maxHealth": 600.0
                 },
                 "attack": {
                     "baseDamage": 20.0,
@@ -782,7 +782,7 @@
                     "height": 37.0
                 },
                 "health": {
-                    "maxHealth": 900.0
+                    "maxHealth": 700.0
                 },
                 "attack": {
                     "baseDamage": 20.0,
@@ -840,7 +840,7 @@
                     "height": 50.0
                 },
                 "health": {
-                    "maxHealth": 700.0
+                    "maxHealth": 500.0
                 },
                 "attack": {
                     "baseDamage": 15.0,
@@ -904,7 +904,7 @@
                     "height": 45.0
                 },
                 "health": {
-                    "maxHealth": 800.0
+                    "maxHealth": 600.0
                 },
                 "attack": {
                     "baseDamage": 15.0,
@@ -965,7 +965,7 @@
                     "height": 35.0
                 },
                 "health": {
-                    "maxHealth": 1000.0
+                    "maxHealth": 800.0
                 },
                 "attack": {
                     "baseDamage": 25.0,
@@ -1269,7 +1269,7 @@
                     "height": 15.0
                 },
                 "attack": {
-                    "baseDamage": 10.0,
+                    "baseDamage": 15.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
@@ -1328,7 +1328,7 @@
                     "height": 12.0
                 },
                 "attack": {
-                    "baseDamage": 10.0,
+                    "baseDamage": 15.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 4.0,
@@ -1358,7 +1358,7 @@
                     "height": 10.0
                 },
                 "attack": {
-                    "baseDamage": 4.0,
+                    "baseDamage": 5.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 1.0,

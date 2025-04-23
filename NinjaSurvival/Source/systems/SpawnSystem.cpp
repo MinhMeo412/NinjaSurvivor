@@ -344,14 +344,14 @@ void SpawnSystem::spawnBoss_m1(float elapsedTime)
                 health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
                 health->currentHealth = health->maxHealth;
             }
-            if (speed)  // +20% speed mỗi lần spawn
+            if (speed)  // +10% speed mỗi lần spawn
             {
-                float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
                 speed->speed         = std::min(speedCalculate, 135.0f);
             }
-            if (attack)  // +20% attack mỗi lần spawn
+            if (attack)  // +10% attack mỗi lần spawn
             {
-                attack->baseDamage = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
             }
             isBossActive = true;
 
@@ -385,14 +385,14 @@ void SpawnSystem::spawnBoss_m2(float elapsedTime)
                 health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
                 health->currentHealth = health->maxHealth;
             }
-            if (speed)  // +20% speed mỗi lần spawn
+            if (speed)  // +10% speed mỗi lần spawn
             {
-                float speedCalculate = speed->speed * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
                 speed->speed         = std::min(speedCalculate, 135.0f);
             }
-            if (attack)  // +20% attack mỗi lần spawn
+            if (attack)  // +10% attack mỗi lần spawn
             {
-                attack->baseDamage = attack->baseDamage * (1.0 + (0.2 * (bossSpawnCount - 1)));
+                attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
             }
             isBossActive = true;
 
@@ -436,7 +436,7 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
             auto attack   = attackMgr.getComponent(entity);
             auto identity = identityMgr.getComponent(entity);
 
-            int statsMultiplier = elapsedTime / 30;  // 30s tăng stats enemy 1 lần
+            int statsMultiplier = elapsedTime / 45;  // 45s tăng stats enemy 1 lần
 
             health->maxHealth     = health->maxHealth * (1 + (0.3 * statsMultiplier));  // 30% mỗi lần tăng
             health->currentHealth = health->maxHealth;
