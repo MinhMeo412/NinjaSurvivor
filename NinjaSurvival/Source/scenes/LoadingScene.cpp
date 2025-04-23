@@ -66,7 +66,8 @@ void LoadingScene::createLoadingLabel()
     this->addChild(loadingLabel);
 
     // Hiệu ứng nhấp nháy
-    auto blink = ax::RepeatForever::create(ax::Sequence::create(ax::FadeOut::create(0.5f), ax::FadeIn::create(0.5f), nullptr));
+    auto blink =
+        ax::RepeatForever::create(ax::Sequence::create(ax::FadeOut::create(0.5f), ax::FadeIn::create(0.5f), nullptr));
     loadingLabel->runAction(blink);
 }
 
@@ -78,8 +79,7 @@ void LoadingScene::onLoadComplete(float dt)
     loadingLabel->setOpacity(255);
 
     auto listener          = ax::EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [this](ax::Touch*, ax::Event*)
-    {
+    listener->onTouchBegan = [this](ax::Touch*, ax::Event*) {
         this->menuPlayCallback(nullptr);
         return true;
     };

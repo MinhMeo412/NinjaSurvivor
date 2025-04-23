@@ -12,6 +12,7 @@
 #include "CleanupSystem.h"
 #include "gameUI/GameOverGamePauseLayer.h"
 #include "scenes/GameScene.h"
+#include "AudioManager.h"
 
 using namespace ax;
 
@@ -30,6 +31,10 @@ void HealthSystem::init()
 
     // set callback trong init
     onPlayerOutOfHealth = [this]() {
+        //Nhạc game over
+        AudioManager::getInstance()->playSound("game_over", false, 1.0f, "music");
+
+        //Gọi UI game over
         auto gameScene = dynamic_cast<GameScene*>(SystemManager::getInstance()->getCurrentScene());
         if (gameScene)
         {
@@ -86,6 +91,7 @@ void HealthSystem::handleCollision(Entity e1, Entity e2)
                 if (auto health = healthMgr.getComponent(e1))
                 {
                     float damage = calculateEnemyDamage(attack);
+                    AudioManager::getInstance()->playSound("get_hit", false, 1.0f, "effect");
                     applyDamage(e1, damage);
                     resetCooldown(e2);
                     AXLOG("Player %u took %f damage from %s %u. HP left: %f", e1, damage, type2.c_str(), e2,
@@ -118,12 +124,17 @@ void HealthSystem::handleWeaponCollision(std::unordered_map<Entity, std::vector<
                             float damage = calculatePlayerDamage(attack);
                             applyDamage(e, damage);
 
+                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, e);
+                            SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(e);
+                            AudioManager::getInstance()->playSound("hit", false, 1.0f, "effect");
+
                             AXLOG("%s %u took %f damage from weapon %u. HP left: %f", type2.c_str(), e, damage,
                                   pair.first, health->currentHealth);
 
                             // Gây dame xung quanh nếu là explosion_kunai
                             if (identityMgr.getComponent(pair.first)->name == "explosion_kunai")
                             {
+                                AudioManager::getInstance()->playSound("explosion_kunai", false, 1.0f, "effect");
                                 SystemManager::getInstance()->getSystem<DamageTextSystem>()->showExplosionEffect(e);
                                 auto nearbyEnemies = SystemManager::getInstance()->getSystem<CollisionSystem>()->getNearbyEnemyEntities(e);
                                 for (auto& enemy : nearbyEnemies)
@@ -162,10 +173,7 @@ void HealthSystem::applyDamage(Entity target, float damage)
     if (auto health = healthMgr.getComponent(target))
     {
         health->currentHealth -= damage;
-
-        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showDamage(damage, target);
-        SystemManager::getInstance()->getSystem<DamageTextSystem>()->showHitEffect(target);
-
+     
         AXLOG("%d : %f", target, health->currentHealth);
         if (health->currentHealth <= 0.0f)
         {

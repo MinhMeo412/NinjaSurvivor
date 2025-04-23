@@ -33,12 +33,32 @@ AudioManager::~AudioManager()
 void AudioManager::init()
 {
     // Preload các file âm thanh khi khởi động
-    _soundFiles["background_music"] = "Musics/12 - Temple.ogg";
-    _soundFiles["exp"]     = "Sounds/Game/Gold2.wav";
-    _soundFiles["explosion"]        = "Sounds/Game/Explosion.wav";
-    _soundFiles["coin"]                 = "Sounds/Game/Coin.wav";
-    _soundFiles["button_click"]                  = "Sounds/Game/Bonus.wav";
-    _soundFiles["gamebackground_music"] = "Musics/17 - Fight.ogg";
+    //Music
+    _soundFiles["background_music"]         = "Sounds/Musics/12 - Temple.ogg";
+    _soundFiles["gamebackground_music"]     = "Sounds/Musics/17 - Fight.ogg";
+    _soundFiles["game_over"]                = "Sounds/Musics/GameOver.wav";
+
+    //SFX
+    _soundFiles["button_click"]             = "Sounds/GameSFX/ButtonClick.wav";
+    _soundFiles["exp"]                      = "Sounds/GameSFX/Exp.wav";
+    _soundFiles["bomb"]                     = "Sounds/GameSFX/Bomb.wav";
+    _soundFiles["coin"]                     = "Sounds/GameSFX/Coin.wav";
+    _soundFiles["magnet_heart"]             = "Sounds/GameSFX/Magnet.wav";
+    _soundFiles["chest"]                    = "Sounds/GameSFX/Chest.wav";
+
+    _soundFiles["get_hit"]                  = "Sounds/GameSFX/GetHit.wav";
+    _soundFiles["hit"]                      = "Sounds/GameSFX/Hit.wav";
+
+    _soundFiles["boss_alert"]               = "Sounds/GameSFX/BossAlert.wav";
+
+    _soundFiles["sword"]                    = "Sounds/GameSFX/Sword.wav";
+    _soundFiles["explosion_kunai"]          = "Sounds/GameSFX/Explosion_kunai.wav";
+    _soundFiles["lightning_scroll"]         = "Sounds/GameSFX/LightningStrike.wav";
+
+
+    
+
+
 
     // Preload tất cả âm thanh trong map
     for (const auto& pair : _soundFiles)

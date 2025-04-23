@@ -87,7 +87,7 @@
                     "height": 12.0
                 },
                 "health": {
-                    "maxHealth": 70.0
+                    "maxHealth": 80.0
                 },
                 "sprite": {
                     "plist": "Entity/Character/master.plist",
@@ -1177,11 +1177,11 @@
                     "gameSceneFrame": "./sword"
                 },
                 "hitbox": {
-                    "width": 40.0,
-                    "height": 20.0
+                    "width": 45.0,
+                    "height": 25.0
                 },
                 "attack": {
-                    "baseDamage": 10.0,
+                    "baseDamage": 13.0,
                     "damageMultiplier": 0.0
                 },
                 "cooldown": 2.0
