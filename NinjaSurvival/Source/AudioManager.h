@@ -46,6 +46,8 @@ public:
     // Lấy audioID của một category cụ thể
     int getSoundID(const std::string& category) const;
 
+
+
 private:
     AudioManager();
     ~AudioManager();
@@ -58,6 +60,7 @@ private:
     std::vector<int> _activeAudioIDs;
     // Âm lượng toàn cục
     float _globalVolume;
+
 };
 
 #endif  // __AUDIO_MANAGER_H__

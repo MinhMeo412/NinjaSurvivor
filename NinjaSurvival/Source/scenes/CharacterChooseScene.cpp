@@ -406,7 +406,7 @@ MenuItemSprite* CharacterChooseScene::createBuyButton(MenuItemSprite* nextButton
         // Cập nhật coinLabel
         updateCoinLabel(shopData->getCoins());
 
-        shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
+        shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.dat");
         AXLOG("Đã mở khóa nhân vật: %s", selectedCharacterName.c_str());
     }, Vec2(x, y), 0.8f, false));
 }

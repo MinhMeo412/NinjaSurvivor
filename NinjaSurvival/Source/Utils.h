@@ -24,7 +24,6 @@ ax::MenuItemImage* createMenuItem(std::string normalImage,
                                   const ax::ccMenuCallback& callback,
                                   const ax::Vec2& position);
 
-
 // Create map button
 ax::MenuItemSprite* createMapButton(const std::string& spritePath,
                                     const std::string& buttonName,
@@ -66,7 +65,7 @@ bool in(const T& value, Args... args)
     return ((value == args) || ...);
 }
 
-//Lấy giá trị ngẫu nhiên
+// Lấy giá trị ngẫu nhiên
 float getRandomFloat(float min, float max);
 int getRandomInt(int min, int max);
 

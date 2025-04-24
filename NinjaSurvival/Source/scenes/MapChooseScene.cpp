@@ -217,7 +217,7 @@ MenuItemSprite* MapChooseScene::createBuyButton(MenuItemSprite* playButton, Node
             // Cập nhật coinLabel
             updateCoinLabel(shopData->getCoins());
 
-            shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
+            shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.dat");
             AXLOG("Đã mở khóa map: %s", selectedMapName.c_str());
         }
         else

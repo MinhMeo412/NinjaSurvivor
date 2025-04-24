@@ -17,7 +17,6 @@ struct ShopData
     std::optional<float> levelValue;
     std::optional<int> cost;
     std::optional<int> levelLimit;
-    std::optional<float> valueIncrease;
     std::optional<float> valueIncrement;
 };
 
@@ -43,7 +42,6 @@ public:
     int getCost(const std::string& type, const std::string& name) const;
     int getLevel(const std::string& type, const std::string& name) const;
     int getLevelLimit(const std::string& type, const std::string& name) const;
-    float getValueIncrease(const std::string& type, const std::string& name) const;
     float getValueIncrement(const std::string& type, const std::string& name) const;
     float getStatLevelValue(const std::string& type, const std::string& name) const;
     float getShopBuff(const std::string& buffName) const;
@@ -53,9 +51,10 @@ public:
     void syncCharactersWithGameData();
     void syncMapsWithGameData();
     void syncCoinsWithGameData(float coinMultiplier);
-    void syncRerollCountWithLevelSystem();
 
     int getShopDataVersion() const { return shopDataVersion; }
+
+
 
 private:
     static std::unique_ptr<ShopSystem> instance;
@@ -64,9 +63,13 @@ private:
     std::string readFileContent(const std::string& filename);
     std::optional<int> pendingRerollCount;
 
+
     void updateCost(std::string name, int level);
 
     ShopData* findShopItem(std::vector<ShopData>& shopData, const std::string& type, const std::string& name);
+
+    std::string encodeXOR(const std::string& input) const;
+    std::string decodeXOR(const std::string& input) const;
 };
 
 #endif

@@ -124,6 +124,8 @@ void GameOverGamePauseLayer::createUI()
     // Tạo vector chứa các menu item
     Vector<MenuItem*> menuItems;
 
+
+
     // Tạo nút Quit
     Vec2 quitPos = isPlayerDead ? Vec2(panel->getContentSize().width / 2, panel->getContentSize().height / 2)
                                 : Vec2(panel->getContentSize().width / 2, panel->getContentSize().height * 2 / 9);
@@ -152,6 +154,7 @@ void GameOverGamePauseLayer::createUI()
         {
             AXLOG("Failed to create returnButton");
         }
+
     }
     else
     {
