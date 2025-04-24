@@ -112,7 +112,7 @@ void LevelUpOrChestEventLayer::createUI()
     {
         if (i >= maxDisplay)
             break;
-
+        
         // Tạo sprite cho sub-panel
         auto subPanelSprite = Sprite::create("UI/panelChooseUp.png");
         if (!subPanelSprite)
@@ -146,6 +146,23 @@ void LevelUpOrChestEventLayer::createUI()
         itemLabel->setAlignment(TextHAlignment::LEFT);
         itemLabel->setAnchorPoint(Vec2(0, 0.5));
         itemLabel->setPosition(Vec2(10, subPanelSprite->getContentSize().height / 2));  // Vị trí với lề trái
+
+        // Xử lý iconSprite
+        if (Utils::not_in(upgrade.first, "coin", "heart"))
+        {
+            // Tạo sprite dựa trên tên vũ khí/buff
+            std::string iconPath = "./icon_" + upgrade.first;
+            auto iconSprite      = ax::Sprite::createWithSpriteFrameName(iconPath);
+            if (iconSprite)
+            {
+                iconSprite->setPosition(itemLabel->getPosition().x + 235, itemLabel->getPosition().y + 15);
+                menuItem->addChild(iconSprite);  // Thêm iconSprite
+            }
+            else
+            {
+                AXLOG("Error: Failed to load iconSprite for %s", iconPath.c_str());
+            }
+        }
 
         // Thêm nhãn vào menu item
         menuItem->addChild(itemLabel);

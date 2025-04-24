@@ -280,10 +280,21 @@ void MapChooseScene::setupMapButtons(Node* panel,
 
     // Tạo mapOrder từ MapData
     std::vector<std::pair<std::string, int>> mapOrder;
-    int index = 0;
+    int index = 2;
     for (const auto& [name, mapData] : maps)
     {
-        mapOrder.emplace_back(name, index++);
+        if (name == "Plains")
+        {
+            mapOrder.emplace_back(name, 0);
+        }
+        else if (name == "Snow Field")
+        {
+            mapOrder.emplace_back(name, 1);
+        }
+        else
+        {
+            mapOrder.emplace_back(name, index++);
+        }
     }
 
     // Thiết lập lưới: 1 cột
@@ -309,7 +320,7 @@ void MapChooseScene::setupMapButtons(Node* panel,
             }
         }
 
-        // Bỏ qua nếu không tìm thấy (trường hợp này khó xảy ra vì mapOrder được tạo từ maps)
+        // Bỏ qua nếu không tìm thấy
         if (index == -1)
         {
             AXLOG("Cảnh báo: Map %s không có trong mapOrder, bỏ qua", name.c_str());
