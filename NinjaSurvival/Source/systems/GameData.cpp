@@ -388,7 +388,7 @@ void GameData::syncStatsWithShopSystem()
     // Cập nhật entityTemplates
     for (auto& [type, templates] : entityTemplates)
     {
-        if (!Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
+        if (Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
         {
             AXLOG("Bỏ qua type không được hỗ trợ: %s", type.c_str());
             continue;
