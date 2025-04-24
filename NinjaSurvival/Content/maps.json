@@ -1,46 +1,6 @@
 {
     "maps": [
         {
-            "name": "Plains",
-            "sprite": "Map/Plains.png",
-            "available": true,
-            "mapSize": {
-                "width": 8,
-                "height": 8
-            },
-            "upRightCornerTMXFile": [
-                "Map/URC.tmx"
-            ],
-            "downRightCornerTMXFile": [
-                "Map/LRC.tmx"
-            ],
-            "upLeftCornerTMXFile": [
-                "Map/ULC.tmx"
-            ],
-            "downLeftCornerTMXFile": [
-                "Map/LLC.tmx"
-            ],
-            "upRearTMXFile": [
-                "Map/UpperR.tmx"
-            ],
-            "downRearTMXFile": [
-                "Map/LowerR.tmx"
-            ],
-            "leftRearTMXFile": [
-                "Map/LeftR.tmx"
-            ],
-            "rightRearTMXFile": [
-                "Map/RightR.tmx"
-            ],
-            "middleTMXFile": [
-                "Map/Middle1.tmx",
-                "Map/Middle2.tmx",
-                "Map/Middle3.tmx",
-                "Map/Middle4.tmx",
-                "Map/Middle5.tmx"
-            ]
-        },
-        {
             "name": "Snow Field",
             "sprite": "Map/SnowField.png",
             "available": false,
@@ -78,6 +38,46 @@
                 "Map/IceMiddle3.tmx",
                 "Map/IceMiddle4.tmx",
                 "Map/IceMiddle5.tmx"
+            ]
+        },
+        {
+            "name": "Plains",
+            "sprite": "Map/Plains.png",
+            "available": true,
+            "mapSize": {
+                "width": 8,
+                "height": 8
+            },
+            "upRightCornerTMXFile": [
+                "Map/URC.tmx"
+            ],
+            "downRightCornerTMXFile": [
+                "Map/LRC.tmx"
+            ],
+            "upLeftCornerTMXFile": [
+                "Map/ULC.tmx"
+            ],
+            "downLeftCornerTMXFile": [
+                "Map/LLC.tmx"
+            ],
+            "upRearTMXFile": [
+                "Map/UpperR.tmx"
+            ],
+            "downRearTMXFile": [
+                "Map/LowerR.tmx"
+            ],
+            "leftRearTMXFile": [
+                "Map/LeftR.tmx"
+            ],
+            "rightRearTMXFile": [
+                "Map/RightR.tmx"
+            ],
+            "middleTMXFile": [
+                "Map/Middle1.tmx",
+                "Map/Middle2.tmx",
+                "Map/Middle3.tmx",
+                "Map/Middle4.tmx",
+                "Map/Middle5.tmx"
             ]
         }
     ]
