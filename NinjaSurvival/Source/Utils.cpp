@@ -151,7 +151,8 @@ ax::MenuItemSprite* createMapButton(const std::string& spritePath,
 
     std::string displayName = available ? buttonName : "Locked";
     auto mapLabel           = ax::Label::createWithTTF(displayName, "fonts/Pixelpurl-0vBPP.ttf", 35);
-    mapLabel->setPosition(normalSprite->getContentSize().width / 2, normalSprite->getContentSize().height + (mapLabel->getContentSize().height / 2));
+    mapLabel->setPosition(normalSprite->getContentSize().width / 2,
+                          normalSprite->getContentSize().height + (mapLabel->getContentSize().height / 2));
     mapLabel->setColor(ax::Color3B::BLACK);
     // mapLabel->setScale(3);
     mapLabel->setVisible(false);

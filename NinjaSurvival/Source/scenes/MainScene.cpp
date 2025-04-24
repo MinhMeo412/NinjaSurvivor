@@ -3,63 +3,64 @@
 #include "CharacterChooseScene.h"
 #include "ShopScene.h"
 #include "AudioManager.h"
+#include "systems/ShopSystem.h"
 
 using namespace ax;
 
 //// Định nghĩa các phím sẽ sử dụng
-//static const ax::EventKeyboard::KeyCode keyMap[] = {
-//    EventKeyboard::KeyCode::KEY_1, EventKeyboard::KeyCode::KEY_2, EventKeyboard::KeyCode::KEY_3,
-//    EventKeyboard::KeyCode::KEY_4, EventKeyboard::KeyCode::KEY_Q, EventKeyboard::KeyCode::KEY_W,
-//    EventKeyboard::KeyCode::KEY_E, EventKeyboard::KeyCode::KEY_R, EventKeyboard::KeyCode::KEY_A,
-//    EventKeyboard::KeyCode::KEY_S, EventKeyboard::KeyCode::KEY_D, EventKeyboard::KeyCode::KEY_F};
+// static const ax::EventKeyboard::KeyCode keyMap[] = {
+//     EventKeyboard::KeyCode::KEY_1, EventKeyboard::KeyCode::KEY_2, EventKeyboard::KeyCode::KEY_3,
+//     EventKeyboard::KeyCode::KEY_4, EventKeyboard::KeyCode::KEY_Q, EventKeyboard::KeyCode::KEY_W,
+//     EventKeyboard::KeyCode::KEY_E, EventKeyboard::KeyCode::KEY_R, EventKeyboard::KeyCode::KEY_A,
+//     EventKeyboard::KeyCode::KEY_S, EventKeyboard::KeyCode::KEY_D, EventKeyboard::KeyCode::KEY_F};
 //// Định nghĩa tên phím hiển thị
-//static const std::string keyNames[] = {"Key 1", "Key 2", "Key 3", "Key 4", "Key Q", "Key W",
-//                                       "Key E", "Key R", "Key A", "Key S", "Key D", "Key F"};
+// static const std::string keyNames[] = {"Key 1", "Key 2", "Key 3", "Key 4", "Key Q", "Key W",
+//                                        "Key E", "Key R", "Key A", "Key S", "Key D", "Key F"};
 //// Hàm xử lý âm thanh tùy chỉnh cho từng phím
-//void playCustomSound(EventKeyboard::KeyCode keyCode)
+// void playCustomSound(EventKeyboard::KeyCode keyCode)
 //{
-//    switch (keyCode)
-//    {
-//    case EventKeyboard::KeyCode::KEY_1:
-//        AudioManager::getInstance()->playSound("game_over", false, 1.5f, "music");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_2:
-//        AudioManager::getInstance()->playSound("exp", false, 1.0f, "item");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_3:
-//        AudioManager::getInstance()->playSound("bomb", false, 1.0f, "item");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_4:
-//        AudioManager::getInstance()->playSound("coin", false, 0.5f, "item");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_Q:
-//        AudioManager::getInstance()->playSound("magnet_heart", false, 1.0f, "item");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_W:
-//        AudioManager::getInstance()->playSound("chest", false, 1.0f, "item");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_E:
-//        AudioManager::getInstance()->playSound("get_hit", false, 1.0f, "effect");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_R:
-//        AudioManager::getInstance()->playSound("hit", false, 1.5f, "effect");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_A:
-//        AudioManager::getInstance()->playSound("sword", false, 1.0f, "effect");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_S:
-//        AudioManager::getInstance()->playSound("explosion_kunai", false, 1.0f, "effect");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_D:
-//        AudioManager::getInstance()->playSound("lightning_scroll", false, 1.0f, "effect");
-//        break;
-//    case EventKeyboard::KeyCode::KEY_F:
-//        AudioManager::getInstance()->playSound("boss_alert", false, 1.0f, "music");
-//        break;
-//    default:
-//        break;
-//    }
-//}
+//     switch (keyCode)
+//     {
+//     case EventKeyboard::KeyCode::KEY_1:
+//         AudioManager::getInstance()->playSound("game_over", false, 1.5f, "music");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_2:
+//         AudioManager::getInstance()->playSound("exp", false, 1.0f, "item");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_3:
+//         AudioManager::getInstance()->playSound("bomb", false, 1.0f, "item");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_4:
+//         AudioManager::getInstance()->playSound("coin", false, 0.5f, "item");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_Q:
+//         AudioManager::getInstance()->playSound("magnet_heart", false, 1.0f, "item");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_W:
+//         AudioManager::getInstance()->playSound("chest", false, 1.0f, "item");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_E:
+//         AudioManager::getInstance()->playSound("get_hit", false, 1.0f, "effect");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_R:
+//         AudioManager::getInstance()->playSound("hit", false, 1.5f, "effect");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_A:
+//         AudioManager::getInstance()->playSound("sword", false, 1.0f, "effect");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_S:
+//         AudioManager::getInstance()->playSound("explosion_kunai", false, 1.0f, "effect");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_D:
+//         AudioManager::getInstance()->playSound("lightning_scroll", false, 1.0f, "effect");
+//         break;
+//     case EventKeyboard::KeyCode::KEY_F:
+//         AudioManager::getInstance()->playSound("boss_alert", false, 1.0f, "music");
+//         break;
+//     default:
+//         break;
+//     }
+// }
 
 MainScene::MainScene() : SceneBase("MainScene") {}
 
@@ -70,7 +71,6 @@ bool MainScene::init()
         return false;
     }
 
-    // Backgound music
     AudioManager::getInstance()->playSound("background_music", true, 0.5f, "background");
 
     float itemSpacing = 50.0;
@@ -99,31 +99,34 @@ bool MainScene::init()
                                      AX_CALLBACK_1(MainScene::menuShopCallback, this),
                                      Vec2(origin.x + visibleSize.width / 2, startY - 100));
 
-    auto menu = Menu::create(playItem, shopItem, NULL);
+    closeItem = Utils::createMenuItem("UI/buttonQuit.png", "UI/buttonQuit.png",
+                                      AX_CALLBACK_1(MainScene::menuCloseCallback, this),
+                                      Vec2(origin.x + visibleSize.width / 2, startY - 200));
+
+    auto menu = Menu::create(playItem, shopItem, closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-
     //// Tạo label để hiển thị phím được nhấn
-    //auto label = Label::createWithTTF("Press a key...", "fonts/Marker Felt.ttf", 24);
-    //label->setPosition(Vec2(100,100));
-    //this->addChild(label, 1);
+    // auto label = Label::createWithTTF("Press a key...", "fonts/Marker Felt.ttf", 24);
+    // label->setPosition(Vec2(100,100));
+    // this->addChild(label, 1);
     //// Tạo keyboard listener
-    //auto keyboardListener          = EventListenerKeyboard::create();
-    //keyboardListener->onKeyPressed = [label](EventKeyboard::KeyCode keyCode, Event* event) {
-    //    for (size_t i = 0; i < sizeof(keyMap) / sizeof(keyMap[0]); ++i)
-    //    {
-    //        if (keyCode == keyMap[i])
-    //        {
-    //            std::string keyPressed = "Pressed: " + keyNames[i];
-    //            label->setString(keyPressed);
-    //            AXLOG("Key pressed: %s", keyNames[i].c_str());  // In ra console
-    //            playCustomSound(keyCode);                       // Gọi hàm xử lý âm thanh tùy chỉnh
-    //            break;
-    //        }
-    //    }
-    //};
-    // Đăng ký listener
+    // auto keyboardListener          = EventListenerKeyboard::create();
+    // keyboardListener->onKeyPressed = [label](EventKeyboard::KeyCode keyCode, Event* event) {
+    //     for (size_t i = 0; i < sizeof(keyMap) / sizeof(keyMap[0]); ++i)
+    //     {
+    //         if (keyCode == keyMap[i])
+    //         {
+    //             std::string keyPressed = "Pressed: " + keyNames[i];
+    //             label->setString(keyPressed);
+    //             AXLOG("Key pressed: %s", keyNames[i].c_str());  // In ra console
+    //             playCustomSound(keyCode);                       // Gọi hàm xử lý âm thanh tùy chỉnh
+    //             break;
+    //         }
+    //     }
+    // };
+    //  Đăng ký listener
     //_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 
     return true;

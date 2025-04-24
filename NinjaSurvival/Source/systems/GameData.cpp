@@ -388,7 +388,7 @@ void GameData::syncStatsWithShopSystem()
     // Cập nhật entityTemplates
     for (auto& [type, templates] : entityTemplates)
     {
-        if (Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
+        if (!Utils::not_in(type, "player", "weapon_melee", "weapon_projectile"))
         {
             AXLOG("Bỏ qua type không được hỗ trợ: %s", type.c_str());
             continue;
@@ -427,20 +427,21 @@ void GameData::syncStatsWithShopSystem()
 
             // kéo sâu xuống entities.json check
             // Cập nhật Cooldown 
-            if (Utils::in(type, "weapon_melee", "weapon_projectile") && templ.cooldown.has_value() && baseTempl.cooldown.has_value())
+            if (Utils::in(type, "weapon_melee", "weapon_projectile") && templ.cooldown.has_value() &&
+                baseTempl.cooldown.has_value())
             {
                 float baseCooldown = baseTempl.cooldown->cooldownDuration;
                 float cooldownBuff = shop->getStatLevelValue("Stat", "ReduceCooldown");
 
                 templ.cooldown = CooldownComponent{baseCooldown * (1.0f - cooldownBuff)};
                 AXLOG("Đồng bộ Cooldown cho %s (%s): cơ bản=%.2f, giảm=%.2f, cuối=%.2f", name.c_str(), type.c_str(),
-                        baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
+                      baseCooldown, cooldownBuff, templ.cooldown->cooldownDuration);
             }
             else
             {
                 AXLOG("Lỗi: Type %s không được hỗ trợ cho Cooldown", type.c_str());
             }
-        }   
+        }
     }
 
     lastShopSyncVersion = shop->getShopDataVersion();

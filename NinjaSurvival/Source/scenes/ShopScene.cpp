@@ -19,11 +19,11 @@ bool ShopScene::init()
     auto shopData = ShopSystem::getInstance();
     if (!shopData->loadSaveGame())
     {
-        AXLOG("Không thể tải savegame.json trong ShopScene::init()");
+        AXLOG("Không thể tải savegame.dat trong ShopScene::init()");
     }
     else
     {
-        AXLOG("Đã tải thành công savegame.json trong ShopScene::init()");
+        AXLOG("Đã tải thành công savegame.dat trong ShopScene::init()");
     }
 
     menuUISetup();
@@ -223,7 +223,7 @@ void ShopScene::menuBuyCallback(Object* sender)
             successLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
         }
 
-        shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.json");
+        shopData->saveToFile(FileUtils::getInstance()->getWritablePath() + "savegame.dat");
         AXLOG("Đã nâng cấp stat: %s, level=%d, buff=%.2f, cost=%d", selectedStatName.c_str(), newLevel, newBuff,
               newCost);
     }
@@ -376,12 +376,12 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         nextBuff = static_cast<float>(level + 1);  // levelValue tiếp theo = level + 1
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: +%d", static_cast<int>(currentBuff));
+            bonusText = StringUtils::format("Bonus: %d", static_cast<int>(currentBuff));
         }
         else
         {
             bonusText =
-                StringUtils::format("Bonus: +%d -> +%d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+                StringUtils::format("Bonus: %d -> %d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
     else if (name == "ReduceCooldown")

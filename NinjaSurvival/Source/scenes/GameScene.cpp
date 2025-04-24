@@ -31,8 +31,6 @@ bool GameScene::init()
     //Gọi init các system
     systemManager->initSystems(this, gameWorld.get(), uiLayer);
 
-    ShopSystem::getInstance()->syncRerollCountWithLevelSystem();
-
     //Update
     //for (int i = 0; i < 10; i++)
     {

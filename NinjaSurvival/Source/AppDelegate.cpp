@@ -31,6 +31,7 @@ void AppDelegate::initGLContextAttrs()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+    // bool audio_status = true/ false
     // Khởi tạo âm thanh
     AudioManager::getInstance()->init();
 
