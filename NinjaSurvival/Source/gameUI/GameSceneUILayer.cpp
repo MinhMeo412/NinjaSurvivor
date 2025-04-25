@@ -48,7 +48,7 @@ bool GameSceneUILayer::init()
 
     // Nền mờ trên
     auto backgroundUpper = LayerColor::create(Color4B(0, 0, 0, 180));
-    backgroundUpper->setContentSize(Size(360, 300));
+    backgroundUpper->setContentSize(Size(1280, 720));
     backgroundUpper->setPosition(Vec2(0, safeArea.origin.y + safeArea.size.height - 60));
     this->addChild(backgroundUpper, 0);
 

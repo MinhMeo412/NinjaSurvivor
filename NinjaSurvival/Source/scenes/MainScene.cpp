@@ -80,7 +80,7 @@ bool MainScene::init()
 
     // Background image (need update)
 
-    auto background = Sprite::create("UI/background2.png");
+    auto background = Sprite::create("UI/background3.png");
     background->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
     this->addChild(background, 0);
 

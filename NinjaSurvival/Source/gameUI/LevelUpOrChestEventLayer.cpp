@@ -196,7 +196,7 @@ void LevelUpOrChestEventLayer::createUI()
     confirmButton = MenuItemImage::create("UI/confirmButton.png", "UI/confirmButton.png",
                                           AX_CALLBACK_1(LevelUpOrChestEventLayer::onConfirm, this));
     confirmButton->setScale(0.7);
-    confirmButton->setPosition(Vec2(panelLevelUp->getContentSize().width * 0.58f,  // Căn giữa ngang
+    confirmButton->setPosition(Vec2(panelLevelUp->getPositionX() ,                 // Căn giữa ngang
                                     panelLevelUp->getPositionY() * (1.9 / 3)));    // 1.5/3 chiều cao
 
     confirmButton->setVisible(isLevelUp ? false : true);
@@ -207,7 +207,7 @@ void LevelUpOrChestEventLayer::createUI()
         rerollButton = MenuItemImage::create("UI/rerollbutton.png", "UI/rerollbutton.png",
                                              AX_CALLBACK_1(LevelUpOrChestEventLayer::onReroll, this));
         rerollButton->setScale(0.7);
-        rerollButton->setPosition(Vec2(panelLevelUp->getContentSize().width * (4.6 / 5),  // 4.4/5 chiều rộng
+        rerollButton->setPosition(Vec2(panelLevelUp->getPositionX() * 7/6,  // 4.4/5 chiều rộng
                                        panelLevelUp->getPositionY() * (2.15 / 3)));
 
         // Tạo label hiển thị số lần reroll
