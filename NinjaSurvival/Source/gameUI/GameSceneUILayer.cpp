@@ -283,7 +283,7 @@ void GameSceneUILayer::bossAlert()
 
     // Tạo label "Boss Incoming"
     auto bossLabel = Label::createWithTTF("Boss Incoming", "fonts/Pixelpurl-0vBPP.ttf", 36);
-    bossLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    bossLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 2/3));
     bossLabel->setColor(Color3B::RED); // Đặt màu đỏ cho label
     bossLabel->setOpacity(0);          // Bắt đầu ẩn để fade in
     this->addChild(bossLabel, 10);
