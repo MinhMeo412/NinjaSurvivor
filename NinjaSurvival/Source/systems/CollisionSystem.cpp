@@ -391,7 +391,7 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getNearbyEntities(const ax::Ve
 // Lấy danh sách các entity trong view
 std::vector<Entity> CollisionSystem::SpatialGrid::getViewEntities(const ax::Vec2& pos)
 {
-    const float VIEW_WIDTH  = 360.0f;  // Chiều rộng view
+    const float VIEW_WIDTH  = 640.0f;  // Chiều rộng view
     const float VIEW_HEIGHT = 640.0f;  // Chiều cao view
 
     std::vector<Entity> nearby;
@@ -402,7 +402,7 @@ std::vector<Entity> CollisionSystem::SpatialGrid::getViewEntities(const ax::Vec2
 
     // Tính số ô cần duyệt xung quanh, làm tròn xuống và giảm 1 để nhỏ hơn view
     int radiusX = std::floor(VIEW_WIDTH / (2.0f * cellSize.x)) - 1;   // 11 - 1 = 10
-    int radiusY = std::floor(VIEW_HEIGHT / (2.0f * cellSize.y)) - 2;  // 20 - 2 = 18
+    int radiusY = std::floor(VIEW_HEIGHT / (2.0f * cellSize.y)) - 1;  // 20 - 2 = 18
 
     // Tính phạm vi ô cần duyệt
     int startX = cellX - radiusX;

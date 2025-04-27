@@ -171,6 +171,12 @@ void MovementSystem::movePlayer(Entity entity, float dt)
         // Kiểm tra góc cho "moveDown" (255° đến 285°)
         if (angle >= 255.0f && angle <= 285.0f)
             animation->currentState = "moveDown";
+        else if (velocity->vx == 0 && velocity->vy > 0)
+            animation->currentState = "moveLeft";
+        else if (velocity->vx < 0 && velocity->vy > 0)
+            animation->currentState = "moveLeft";
+        else if (velocity->vx > 0 && velocity->vy > 0)
+            animation->currentState = "moveRight";
         else if (velocity->vx < 0)
             animation->currentState = "moveLeft";
         else if (velocity->vx > 0)

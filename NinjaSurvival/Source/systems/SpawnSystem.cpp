@@ -101,16 +101,20 @@ void SpawnSystem::update(float dt)
     if (spawnTimer >= spawnInterval)
     {
         if (!mapSnowField)
-        {
             spawnEnemies_m1(elapsedTime);
-            spawnBoss_m1(elapsedTime);
-        }
         else
-        {
             spawnEnemies_m2(elapsedTime);
+        spawnTimer = 0.0f;
+    }
+
+    // Spawn boss mỗi 180s
+    if (elapsedTime - lastBossSpawnTime >= 180.0f && elapsedTime > 10.0f)
+    {
+        if (!mapSnowField)
+            spawnBoss_m1(elapsedTime);
+        else
             spawnBoss_m2(elapsedTime);
-        }
-        spawnTimer = 0.0f;  // Reset timer
+        lastBossSpawnTime = elapsedTime;  // Cập nhật thời gian spawn boss
     }
 }
 
@@ -323,84 +327,79 @@ void SpawnSystem::spawnEnemies_m2(float elapsedTime)
 
 void SpawnSystem::spawnBoss_m1(float elapsedTime)
 {
-    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Mỗi 3 phút
+    auto playerTransform = transformMgr.getComponent(playerEntity);
+    if (!playerTransform)
+        return;
+    ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
+
+    std::string bossName = bossNameList1[Utils::getRandomInt(0, bossNameList1.size() - 1)];
+    Entity boss          = spawnEntity("boss", bossName, playerPos);
+
+    bossSpawnCount++;
+    if (boss)
     {
-        auto playerTransform = transformMgr.getComponent(playerEntity);
-        if (!playerTransform)
-            return;
-        ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
-
-        std::string bossName = bossNameList1[Utils::getRandomInt(0, bossNameList1.size() - 1)];
-        Entity boss          = spawnEntity("boss", bossName, playerPos);
-
-        bossSpawnCount++;
-        if (boss)
+        auto health = healthMgr.getComponent(boss);
+        auto speed  = speedMgr.getComponent(boss);
+        auto attack = attackMgr.getComponent(boss);
+        if (health)  // +50% hp mỗi lần spawn
         {
-            auto health = healthMgr.getComponent(boss);
-            auto speed  = speedMgr.getComponent(boss);
-            auto attack = attackMgr.getComponent(boss);
-            if (health)  // +50% hp mỗi lần spawn
-            {
-                health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
-                health->currentHealth = health->maxHealth;
-            }
-            if (speed)  // +10% speed mỗi lần spawn
-            {
-                float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
-                speed->speed         = std::min(speedCalculate, 135.0f);
-            }
-            if (attack)  // +10% attack mỗi lần spawn
-            {
-                attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
-            }
-            isBossActive = true;
-
-            bossList.push_back(boss);
+            health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
+            health->currentHealth = health->maxHealth;
         }
-        // Gọi cảnh báo boss
-        dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
+        if (speed)  // +10% speed mỗi lần spawn
+        {
+            float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
+            speed->speed         = std::min(speedCalculate, 135.0f);
+        }
+        if (attack)  // +10% attack mỗi lần spawn
+        {
+            attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
+        }
+        isBossActive = true;
+
+        bossList.push_back(boss);
     }
+    // Gọi cảnh báo boss
+    dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
 }
 
 void SpawnSystem::spawnBoss_m2(float elapsedTime)
 {
-    if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0)  // Mỗi 3 phút
+    auto playerTransform = transformMgr.getComponent(playerEntity);
+    if (!playerTransform)
+        return;
+    ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
+
+    std::string bossName = bossNameList2[Utils::getRandomInt(0, bossNameList2.size() - 1)];
+    Entity boss          = spawnEntity("boss", bossName, playerPos);
+
+    bossSpawnCount++;
+    if (boss)
     {
-        auto playerTransform = transformMgr.getComponent(playerEntity);
-        if (!playerTransform)
-            return;
-        ax::Vec2 playerPos = ax::Vec2(playerTransform->x, playerTransform->y);
-
-        std::string bossName = bossNameList2[Utils::getRandomInt(0, bossNameList2.size() - 1)];
-        Entity boss          = spawnEntity("boss", bossName, playerPos);
-
-        bossSpawnCount++;
-        if (boss)
+        auto health = healthMgr.getComponent(boss);
+        auto speed  = speedMgr.getComponent(boss);
+        auto attack = attackMgr.getComponent(boss);
+        if (health)  // +50% hp mỗi lần spawn
         {
-            auto health = healthMgr.getComponent(boss);
-            auto speed  = speedMgr.getComponent(boss);
-            auto attack = attackMgr.getComponent(boss);
-            if (health)  // +50% hp mỗi lần spawn
-            {
-                health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
-                health->currentHealth = health->maxHealth;
-            }
-            if (speed)  // +10% speed mỗi lần spawn
-            {
-                float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
-                speed->speed         = std::min(speedCalculate, 135.0f);
-            }
-            if (attack)  // +10% attack mỗi lần spawn
-            {
-                attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
-            }
-            isBossActive = true;
-
-            bossList.push_back(boss);
+            health->maxHealth     = health->maxHealth * (1.0 + (0.5 * (bossSpawnCount - 1)));
+            health->currentHealth = health->maxHealth;
         }
-        // Gọi cảnh báo boss
-        dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
+        if (speed)  // +10% speed mỗi lần spawn
+        {
+            float speedCalculate = speed->speed * (1.0 + (0.1 * (bossSpawnCount - 1)));
+            speed->speed         = std::min(speedCalculate, 135.0f);
+        }
+        if (attack)  // +10% attack mỗi lần spawn
+        {
+            attack->baseDamage = attack->baseDamage * (1.0 + (0.1 * (bossSpawnCount - 1)));
+        }
+        isBossActive = true;
+
+        bossList.push_back(boss);
     }
+    // Gọi cảnh báo boss
+    dynamic_cast<GameSceneUILayer*>(SystemManager::getInstance()->getSceneLayer())->bossAlert();
+    
 }
 
 void SpawnSystem::isBossAlive(bool isBossActive)
@@ -462,8 +461,8 @@ Entity SpawnSystem::spawnEntity(const std::string& type, const std::string& name
 
 ax::Vec2 SpawnSystem::getRandomSpawnPosition(Entity entity, const ax::Vec2& playerPosition)
 {
-    const float VIEW_WIDTH   = 360.0f;  // Chiều rộng view
-    const float VIEW_HEIGHT  = 640.0f;  // Chiều cao view
+    const float VIEW_WIDTH   = 1280.0f;  // Chiều rộng view
+    const float VIEW_HEIGHT  = 720.0f;  // Chiều cao view
     const float SPAWN_MARGIN = 200.0f;  // Khoảng cách spawn bên ngoài viền
 
     // Kích thước vùng spawn (view + margin hai bên)

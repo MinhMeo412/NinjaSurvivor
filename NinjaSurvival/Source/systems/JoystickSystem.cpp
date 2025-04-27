@@ -7,96 +7,86 @@ JoystickSystem::JoystickSystem() {}
 
 void JoystickSystem::init()
 {
-    parentLayer = SystemManager::getInstance()->getSceneLayer();
+    // Tạo listener cho bàn phím
+    auto listener = EventListenerKeyboard::create();
 
-    if (!parentLayer)
-    {
-        AXLOG("Error: No layer set for JoystickSystem");
-        return;
-    }
-
-    joystickBase = Sprite::create("Joystick.png");
-    //joystickBase->setPosition(Vec2(640, 300)); //Không còn cố định vị trí
-    joystickBase->setOpacity(128);
-    joystickBase->setVisible(false);  //Ẩn joystick
-    parentLayer->addChild(joystickBase, 9);
-    joystickBase->setGlobalZOrder(9);
-
-    joystickHandle = Sprite::create("Handle.png");
-    //joystickHandle->setPosition(joystickBase->getPosition()); //Không còn cố định vị trí
-    joystickHandle->setOpacity(128);
-    joystickHandle->setVisible(false);  // Ẩn joystick
-    parentLayer->addChild(joystickHandle, 9);
-    joystickHandle->setGlobalZOrder(9);
-
-    maxDistance = joystickBase->getContentSize().width / 2;
-
-    //Tạo listenẻ
-    auto listener          = EventListenerTouchOneByOne::create();
-
-    //Khi chạm
-    listener->onTouchBegan = [this](Touch* touch, Event* event) {
-        if (isDragging) return false; // Nếu đã có chạm khác, không xử lý thêm
-
-        Vec2 touchLocation = touch->getLocation();
-
-        joystickBase->setPosition(touchLocation);
-        joystickHandle->setPosition(touchLocation);
-        joystickBase->setVisible(true);     // Hiện joystick
-        joystickHandle->setVisible(true);  // Hiện handle
-        isDragging = true;
-        isVisible  = true;
-        direction  = Vec2::ZERO;
-
-        return true;
-    };
-
-    //Khi di chuyển
-    listener->onTouchMoved = [this](Touch* touch, Event* event) {
-        if (isDragging)
+    // Khi nhấn phím
+    listener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) {
+        switch (keyCode)
         {
-            Vec2 touchLocation = touch->getLocation();
-            Vec2 baseLocation  = joystickBase->getPosition();
-            Vec2 delta         = touchLocation - baseLocation;
-
-            float distance = delta.length();
-            if (distance > maxDistance)
-            {
-                delta = delta.getNormalized() * maxDistance;
-            }
-
-            joystickHandle->setPosition(baseLocation + delta);
-
-            // Trả về hướng đi (chuẩn hóa vector delta)
-            if (distance > 0)  // Tránh chia cho 0
-            {
-                delta.normalize();
-                direction = delta;  // Gán hướng đã chuẩn hóa
-            }
-            else
-            {
-                direction = Vec2::ZERO;  // Tại tâm, hướng = (0, 0)
-            }
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            isKeyUpPressed = true;
+            break;
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            isKeyDownPressed = true;
+            break;
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            isKeyLeftPressed = true;
+            break;
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            isKeyRightPressed = true;
+            break;
+        default:
+            break;
         }
     };
 
-    //Khi kết thúc chạm
-    listener->onTouchEnded = [this](Touch* touch, Event* event) {
-        if (isDragging)
+    // Khi thả phím
+    listener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event* event) {
+        switch (keyCode)
         {
-        isDragging = false;
-        isVisible  = false;
-        joystickBase->setVisible(false);    // Ẩn joystick
-        joystickHandle->setVisible(false);  // Ẩn handle
-        direction = Vec2::ZERO;
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            isKeyUpPressed = false;
+            break;
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            isKeyDownPressed = false;
+            break;
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            isKeyLeftPressed = false;
+            break;
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            isKeyRightPressed = false;
+            break;
+        default:
+            break;
         }
     };
 
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, parentLayer);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
+        listener, SystemManager::getInstance()->getSceneLayer());
 }
 
-void JoystickSystem::update(float dt) {}
+void JoystickSystem::update(float dt)
+{
+    // Tính toán hướng dựa trên trạng thái phím
+    direction = Vec2::ZERO;
 
+    // Xử lý trục X
+    if (isKeyRightPressed && !isKeyLeftPressed)
+    {
+        direction.x = 1.0f;
+    }
+    else if (isKeyLeftPressed && !isKeyRightPressed)
+    {
+        direction.x = -1.0f;
+    }
+
+    // Xử lý trục Y
+    if (isKeyUpPressed && !isKeyDownPressed)
+    {
+        direction.y = 1.0f;
+    }
+    else if (isKeyDownPressed && !isKeyUpPressed)
+    {
+        direction.y = -1.0f;
+    }
+
+    // Chuẩn hóa vector hướng để đảm bảo độ dài = 1 khi di chuyển chéo
+    if (direction != Vec2::ZERO)
+    {
+        direction.normalize();
+    }
+}
 
 Vec2 JoystickSystem::getDirection() const
 {

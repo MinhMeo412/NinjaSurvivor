@@ -308,8 +308,8 @@ void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
     }
 
     // Kích thước màn hình cố định
-    const float screenWidth  = 360.0f;
-    const float screenHeight = 640.0f;
+    const float screenWidth  = 1280.0f;
+    const float screenHeight = 720.0f;
     const float kunaiSize    = hitbox->defaultSize.width;
 
     // Lấy vị trí player
@@ -322,8 +322,8 @@ void WeaponMovementSystem::moveBigKunaiWeapon(Entity entity, float dt)
     float bottomEdge = playerPos.y - screenHeight / 2.0f;
 
     // Cập nhật vị trí kunai
-    transform->x += vel->vx * speed->speed * dt;
-    transform->y += vel->vy * speed->speed * dt;
+    transform->x += vel->vx * speed->speed * 2 * dt;
+    transform->y += vel->vy * speed->speed * 2 * dt;
 
     // Kiểm tra va chạm với rìa màn hình
     // Rìa trái || Rìa phải

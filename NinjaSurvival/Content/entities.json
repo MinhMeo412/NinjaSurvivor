@@ -1229,7 +1229,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 300.0,
+                "speed": 350.0,
                 "sprite": {
                     "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./kunai"
@@ -1259,7 +1259,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 150.0,
+                "speed": 200.0,
                 "sprite": {
                     "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./big_kunai"
@@ -1318,7 +1318,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 200.0,
+                "speed": 300.0,
                 "sprite": {
                     "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./explosion_kunai"
@@ -1348,7 +1348,7 @@
                     "vx": 1.0,
                     "vy": 0.0
                 },
-                "speed": 250.0,
+                "speed": 350.0,
                 "sprite": {
                     "plist": "Entity/Weapons/weapon.plist",
                     "gameSceneFrame": "./bird"

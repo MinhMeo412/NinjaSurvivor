@@ -80,6 +80,7 @@ private:
     float spawnRate      = 0;
     bool isBossActive    = false;
     int bossSpawnCount   = 0;
+    float lastBossSpawnTime = 0.0f;
     std::vector<Entity> bossList;
     std::vector<std::string> bossNameList1 = {"Giant Slime", "Giant Bamboo", "Racoon"};
     std::vector<std::string> bossNameList2 = {"Cyclop", "Flame", "Tengu"};
