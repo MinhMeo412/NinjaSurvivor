@@ -97,29 +97,24 @@ void SpawnSystem::update(float dt)
     }
     float elapsedTime = timeSystem->getElapsedTime();
 
-    if (!mapSnowField)
+    // Spawn enemy mỗi spawnInterval = 2s
+    if (spawnTimer >= spawnInterval)
     {
-        if (spawnTimer >= spawnInterval) // Spawn enemy mỗi spawnInterval = 2s
-        {
+        if (!mapSnowField)
             spawnEnemies_m1(elapsedTime);
-            spawnTimer = 0.0f;
-        }
-        if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0) // Boss mỗi 3p
-        {
-            spawnBoss_m1(elapsedTime);
-        }
-    }
-    else
-    {
-        if (spawnTimer >= spawnInterval)
-        {
+        else
             spawnEnemies_m2(elapsedTime);
-            spawnTimer = 0.0f;
-        }
-        if (static_cast<int>(elapsedTime) % 180 == 0 && elapsedTime > 0)
-        {
+        spawnTimer = 0.0f;
+    }
+
+    // Spawn boss mỗi 180s
+    if (elapsedTime - lastBossSpawnTime >= 180.0f && elapsedTime > 10.0f)
+    {
+        if (!mapSnowField)
+            spawnBoss_m1(elapsedTime);
+        else
             spawnBoss_m2(elapsedTime);
-        }
+        lastBossSpawnTime = elapsedTime;  // Cập nhật thời gian spawn boss
     }
 }
 
