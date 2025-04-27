@@ -376,12 +376,12 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         nextBuff = static_cast<float>(level + 1);  // levelValue tiếp theo = level + 1
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: %d", static_cast<int>(currentBuff));
+            bonusText = StringUtils::format("Reroll changes: %d", static_cast<int>(currentBuff));
         }
         else
         {
             bonusText =
-                StringUtils::format("Bonus: %d -> %d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+                StringUtils::format("Reroll changes: %d -> %d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
     else if (name == "ReduceCooldown")
@@ -389,11 +389,11 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         nextBuff = (level + 1) * shopData->getValueIncrement("Stat", name);  // tăng giá trị theo cấp
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: %.0f%%", currentBuff * 100);
+            bonusText = StringUtils::format("Bonus: -%.0f%%", currentBuff * 100);
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: %.0f%% -> %.0f%%", currentBuff * 100, nextBuff * 100);
+            bonusText = StringUtils::format("Bonus: -%.0f%% -> -%.0f%%", currentBuff * 100, nextBuff * 100);
         }
     }
     else
@@ -402,11 +402,11 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
                    shopData->getValueIncrement("Stat", name);  // levelValue tiếp theo = (level + 1) * valueIncrement
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: %.0f%%", currentBuff * 100);
+            bonusText = StringUtils::format("Bonus: +%.0f%%", currentBuff * 100);
         }
         else
         {
-            bonusText = StringUtils::format("Bonus: %.0f%% -> %.0f%%", currentBuff * 100, nextBuff * 100);
+            bonusText = StringUtils::format("Bonus: +%.0f%% -> +%.0f%%", currentBuff * 100, nextBuff * 100);
         }
     }
 
