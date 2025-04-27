@@ -103,7 +103,7 @@ bool MainScene::init()
                                       AX_CALLBACK_1(MainScene::menuCloseCallback, this),
                                       Vec2(origin.x + visibleSize.width / 2, startY - 200));
 
-    auto menu = Menu::create(playItem, shopItem, closeItem, NULL);
+    auto menu = Menu::create(playItem, shopItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
