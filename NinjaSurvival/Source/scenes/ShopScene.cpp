@@ -42,7 +42,7 @@ void ShopScene::menuUISetup()
     const auto& safeSize   = safeArea.size;
 
     float marginX = safeSize.width * 0.05f;
-    float marginY = safeSize.height * 0.025f;
+    float marginY = safeSize.height * 0.065f;
 
     // Tạo background (phủ toàn màn hình)
     auto background = Sprite::create("UI/background3.png");
@@ -118,7 +118,7 @@ void ShopScene::menuUISetup()
     // Tạo nút Return
     returnButton = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                          AX_CALLBACK_1(ShopScene::menuReturnCallback, this),
-                                         Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
+                                         Vec2(safeOrigin.x + marginX, posY));
     if (!returnButton)
     {
         AXLOG("Lỗi: Không thể tạo nút Return");
@@ -376,12 +376,12 @@ void ShopScene::updateStatInfo(const std::string& name, Node* panelDescription, 
         nextBuff = static_cast<float>(level + 1);  // levelValue tiếp theo = level + 1
         if (isMaxLevel)
         {
-            bonusText = StringUtils::format("Bonus: %d", static_cast<int>(currentBuff));
+            bonusText = StringUtils::format("Reroll changes: %d", static_cast<int>(currentBuff));
         }
         else
         {
             bonusText =
-                StringUtils::format("Bonus: %d -> %d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
+                StringUtils::format("Reroll changes: %d -> %d", static_cast<int>(currentBuff), static_cast<int>(nextBuff));
         }
     }
     else if (name == "ReduceCooldown")

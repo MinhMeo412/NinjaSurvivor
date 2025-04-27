@@ -52,7 +52,7 @@ void CharacterChooseScene::menuUISetup()
     const auto& safeOrigin = safeArea.origin;
     const auto& safeSize   = safeArea.size;
     float marginX          = safeSize.width * 0.05f;
-    float marginY          = safeSize.height * 0.025f;
+    float marginY          = safeSize.height * 0.065f;
 
     auto background = Sprite::create("UI/background3.png");
     if (!background)
@@ -113,7 +113,7 @@ void CharacterChooseScene::menuUISetup()
 
     returnButton = Utils::createMenuItem("UI/buttonback.png", "UI/buttonback.png",
                                          AX_CALLBACK_1(CharacterChooseScene::menuReturnCallback, this),
-                                         Vec2(safeOrigin.x + marginX, safeOrigin.y + safeSize.height - marginY));
+                                         Vec2(safeOrigin.x + marginX, posY));
     if (!returnButton)
     {
         AXLOG("Lỗi: Không thể tạo nút Return");

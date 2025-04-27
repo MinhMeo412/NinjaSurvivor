@@ -109,7 +109,7 @@ bool ShopSystem::createSaveGame()
         {"Stat", "Speed", false, 0, 0.0f, 100, 5, 0.1f},            // Speed: max 5 level, +10% mỗi level
         {"Stat", "XPGain", false, 0, 0.0f, 100, 5, 0.1f},           // XP Gain: max 5 level, +10% mỗi level
         {"Stat", "CoinGain", false, 0, 0.0f, 50, 10, 0.1f},         // Coin Gain: max 10 level, +10% mỗi level
-        {"Stat", "RerollWeapon", false, 0, 0.0f, 100, 3, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
+        {"Stat", "RerollWeapon", false, 1, 1.0f, 100, 3, 1.0f},     // RerollWeapon: max 3 level, +1 mỗi level
         {"Stat", "ReduceCooldown", false, 0, 0.0f, 100, 5, 0.05f},  // Reduce Cooldown: max 5 level, +5% mỗi level
         {"Stat", "SpawnRate", false, 0, 0.0f, 100, 5, 0.1f},        // Spawn Rate: max 5 level, +10% mỗi level
         {"Stat", "LootRange", false, 0, 0.0f, 100, 10, 0.2f},       // Loot Range: max 10 level, +20% mỗi level
