@@ -1,4 +1,4 @@
-# 🔥NinjaSurvival - Survival Roguelike Game
+# 🔥NinjaSurvivor - Roguelike Survival Game
 A 2D single survival game with minimalistic gameplay and roguelike elements inspired by Vampire Survivors.
 
 
